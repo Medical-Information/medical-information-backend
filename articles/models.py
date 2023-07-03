@@ -1,9 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
-import uuid
+from django.db import models
 
-from .mixins import UUIDMixin, TimeStampedMixin
+from mixins.models import TimeStampedMixin, UUIDMixin
 
 class Article(UUIDMixin, TimeStampedMixin):
     image = models.ImageField(upload_to='images/')
