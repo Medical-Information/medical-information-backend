@@ -1,30 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.utils.text import slugify
 import uuid
 
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-
-class UUIDMixin(models.Model):
-    class Meta:
-        abstract = True
-
-    pk = models.UUIDField(
-        _('id'),
-        name='id',
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-class TimeStampedMixin(models.Model):
-    class Meta:
-        abstract = True
-
-    created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
-    modified_at = models.DateTimeField(_('modified_at'), auto_now=True)
+from .mixin import UUIDMixin, TimeStampedMixin
 
 class Article(UUIDMixin, TimeStampedMixin, models.Model):
     image = models.ImageField(upload_to='images/')
