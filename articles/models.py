@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from mixins.mixins import TimeStampedMixin, UUIDMixin
+from core.models import TimeStampedMixin, UUIDMixin
 
 
 class Article(UUIDMixin, TimeStampedMixin):
