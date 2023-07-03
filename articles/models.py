@@ -3,12 +3,11 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import uuid
 
-from .mixin import UUIDMixin, TimeStampedMixin
+from .mixins import UUIDMixin, TimeStampedMixin
 
-class Article(UUIDMixin, TimeStampedMixin, models.Model):
+class Article(UUIDMixin, TimeStampedMixin):
     image = models.ImageField(upload_to='images/')
     title = models.CharField(max_length=255)
-    reading_time = models.IntegerField(null=True, blank=True)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     source_name = models.CharField(max_length=255, null=True, blank=True)
@@ -17,15 +16,13 @@ class Article(UUIDMixin, TimeStampedMixin, models.Model):
     tags = models.ManyToManyField('Tags')
     views_count = models.IntegerField(default=0, editable=False)
     likes = models.ManyToManyField('Likes')
-    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title
 
     def calculate_reading_time(self):
-        words_per_minute = 200
         words = len(self.text.split())
-        minutes = words / words_per_minute
+        minutes = words / 200
         return int(minutes)    
 
     def increment_views_count(self):
