@@ -3,6 +3,7 @@ from django.db import models
 
 from mixins.models import TimeStampedMixin, UUIDMixin
 
+
 class Article(UUIDMixin, TimeStampedMixin):
     image = models.ImageField(upload_to='images/')
     title = models.CharField(max_length=255)
@@ -26,7 +27,7 @@ class Article(UUIDMixin, TimeStampedMixin):
     def increment_views_count(self):
         self.views_count += 1
         self.save()
-
+        
     def get_likes_count(self):
         return self.likes.count()
 
@@ -34,6 +35,7 @@ class Article(UUIDMixin, TimeStampedMixin):
         if not self.reading_time and self.text:
             self.reading_time = self.calculate_reading_time()
         super().save(*args, **kwargs)
-    
+
+
     class Meta:
         ordering = ['-created_at']
