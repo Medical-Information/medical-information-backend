@@ -8,12 +8,12 @@ class Article(UUIDMixin, TimeStampedMixin):
     image = models.ImageField(upload_to='images/')
     title = models.CharField(max_length=255)
     text = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     source_name = models.CharField(max_length=255, null=True, blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     source_link = models.URLField(max_length=2047, null=True, blank=True)
     is_published = models.BooleanField(default=False)
-    tags = models.ManyToManyField('Tags')
     views_count = models.IntegerField(default=0, editable=False)
+    tags = models.ManyToManyField('Tags')
     likes = models.ManyToManyField('Likes')
 
     def __str__(self):
@@ -28,13 +28,13 @@ class Article(UUIDMixin, TimeStampedMixin):
         self.views_count += 1
         self.save()
 
-    def get_likes_count(self):
-        return self.likes.count()
+    class Meta:
+        ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
         if not self.reading_time and self.text:
             self.reading_time = self.calculate_reading_time()
         super().save(*args, **kwargs)
 
-    class Meta:
-        ordering = ['-created_at']
+    def get_likes_count(self):
+        return self.likes.count()
