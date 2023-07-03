@@ -22,12 +22,12 @@ class Article(UUIDMixin, TimeStampedMixin):
     def calculate_reading_time(self):
         words = len(self.text.split())
         minutes = words / 200
-        return int(minutes)    
+        return int(minutes)
 
     def increment_views_count(self):
         self.views_count += 1
         self.save()
-        
+
     def get_likes_count(self):
         return self.likes.count()
 
@@ -35,7 +35,6 @@ class Article(UUIDMixin, TimeStampedMixin):
         if not self.reading_time and self.text:
             self.reading_time = self.calculate_reading_time()
         super().save(*args, **kwargs)
-
 
     class Meta:
         ordering = ['-created_at']
