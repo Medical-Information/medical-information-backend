@@ -9,7 +9,7 @@ class Article(UUIDMixin, TimeStampedMixin):
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     source_name = models.CharField(max_length=255, null=True, blank=True)
-    source_link = models.TextField(max_length=2047, null=True, blank=True)
+    source_link = models.URLField(max_length=2047, null=True, blank=True)
     is_published = models.BooleanField(default=False)
     tags = models.ManyToManyField('Tags')
     views_count = models.IntegerField(default=0, editable=False)
