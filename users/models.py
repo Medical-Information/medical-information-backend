@@ -1,9 +1,11 @@
+from typing import List
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from users.managers import UserManager
 
 from core.models import TimeStampedMixin, UUIDMixin
+from users.managers import UserManager
 
 
 class User(TimeStampedMixin, UUIDMixin, AbstractUser):
@@ -19,7 +21,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
         verbose_name_plural = _('users')
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: List[str] = []
 
     USER = 'user'
     MODER = 'moderator'
