@@ -2,10 +2,24 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import UserManager
-from .mixins import TimestampMixin, CustomIdMixin
+from core.models import TimeStampedMixin, UUIDMixin
 
 
-class User(TimestampMixin, CustomIdMixin, AbstractUser):
+class User(TimeStampedMixin, UUIDMixin, AbstractUser):
+    """"
+    Класс User представляет пользовательскую модель с дополнительным
+    функционалом, таким как автоматическая генерация временных меток,
+    добавление уникального идентификатора (UUID) и базовая реализация
+    пользовательских атрибутов и методов.
+    """
+    class Meta:
+        ordering = ['id']
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     USER = 'user'
     MODER = 'moderator'
     ADMIN = 'admin'
@@ -13,16 +27,17 @@ class User(TimestampMixin, CustomIdMixin, AbstractUser):
              (MODER, 'moderator'),
              (ADMIN, 'admin')]
 
+    date_joined = None
+    username = None
     email = models.EmailField(unique=True)
-
     role = models.CharField(choices=roles,
                             default='user',
                             max_length=50)
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    def __str__(self):
+        return self.email
 
     @property
     def is_moderator(self):
@@ -31,14 +46,3 @@ class User(TimestampMixin, CustomIdMixin, AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.ADMIN
-
-    date_joined = None
-    username = None
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
-
-    def __str__(self):
-        return self.email
