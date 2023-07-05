@@ -16,8 +16,18 @@ class Article(UUIDMixin, TimeStampedMixin):
     image = models.ImageField(upload_to='images/')
     title = models.CharField(_('title'), max_length=255)
     text = models.TextField(_('text'))
-    source_name = models.CharField(_('source name'), max_length=255, null=True, blank=True)
-    source_link = models.URLField(_('source link'), max_length=2047, null=True, blank=True)
+    source_name = models.CharField(
+            _('source name'),
+            max_length=255,
+            null=True,
+            blank=True
+        )
+    source_link = models.URLField(
+            _('source link'),
+            max_length=2047,
+            null=True,
+            blank=True
+        )
     is_published = models.BooleanField(_('is published'), default=False)
     views_count = models.IntegerField(_('views'), default=0, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
