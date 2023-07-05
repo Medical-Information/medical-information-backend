@@ -20,14 +20,12 @@ class Article(UUIDMixin, TimeStampedMixin):
             _('source name'),
             max_length=255,
             null=True,
-            blank=True
-        )
+            blank=True)
     source_link = models.URLField(
             _('source link'),
             max_length=2047,
             null=True,
-            blank=True
-        )
+            blank=True)
     is_published = models.BooleanField(_('is published'), default=False)
     views_count = models.IntegerField(_('views'), default=0, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
