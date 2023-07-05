@@ -29,8 +29,8 @@ class Article(UUIDMixin, TimeStampedMixin):
     is_published = models.BooleanField(_('is published'), default=False)
     views_count = models.IntegerField(_('views'), default=0, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    # tags = models.ManyToManyField('Tags')
-    # likes = models.ManyToManyField('Users')
+    # tags = models.ManyToManyField('Tags') # noqa
+    # likes = models.ManyToManyField('Users') # noqa
 
     def __str__(self):
         return self.title
