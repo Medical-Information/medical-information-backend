@@ -1,23 +1,36 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
+
+User = settings.AUTH_USER_MODEL
 
 
 class Article(UUIDMixin, TimeStampedMixin):
     class Meta:
         ordering = ['-created_at']
+        verbose_name = _('article')
+        verbose_name_plural = _('articles')
 
     image = models.ImageField(upload_to='images/')
-    title = models.CharField(max_length=255)
-    text = models.TextField()
-    source_name = models.CharField(max_length=255, null=True, blank=True)
-    source_link = models.URLField(max_length=2047, null=True, blank=True)
-    is_published = models.BooleanField(default=False)
-    views_count = models.IntegerField(default=0, editable=False)
+    title = models.CharField(_('title'), max_length=255)
+    text = models.TextField(_('text'))
+    source_name = models.CharField(
+            _('source name'),
+            max_length=255,
+            null=True,
+            blank=True)
+    source_link = models.URLField(
+            _('source link'),
+            max_length=2047,
+            null=True,
+            blank=True)
+    is_published = models.BooleanField(_('is published'), default=False)
+    views_count = models.IntegerField(_('views'), default=0, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    tags = models.ManyToManyField('Tags')
-    likes = models.ManyToManyField('Likes')
+    # tags = models.ManyToManyField('Tags') # noqa
+    # likes = models.ManyToManyField('Users') # noqa
 
     def __str__(self):
         return self.title
