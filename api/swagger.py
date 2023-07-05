@@ -7,7 +7,9 @@ schema_view = get_schema_view(
         default_version='v1',
         description='API documentation powered by Swagger',
         terms_of_service='https://stethoscope.acceleratorpracticum.ru/terms/',
-        contact=openapi.Contact(email='info@stethoscope.acceleratorpracticum.ru'),
+        contact=openapi.Contact(
+            email='info@stethoscope.acceleratorpracticum.ru',
+        ),
         license=openapi.License(name='BSD License'),
     ),
     public=True,
