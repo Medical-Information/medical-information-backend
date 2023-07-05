@@ -4,6 +4,7 @@ from django.urls import path
 from api.swagger import schema_view
 
 urlpatterns = [
+    path('v1/about/', include('about.urls')),
     path(
         'v1/swagger/',
         schema_view.with_ui('swagger', cache_timeout=0),
