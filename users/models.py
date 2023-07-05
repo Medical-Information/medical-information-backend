@@ -49,3 +49,29 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.ADMIN
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscriber'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscribing'
+    )
+
+    def __str__(self):
+        return f'{self.user} {self.author}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name=_('unique_subscription'),
+            ),
+        ]
+        verbose_name = _('subscription')
+        verbose_name_plural = _('subscriptions')
