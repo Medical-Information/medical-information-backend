@@ -1,5 +1,14 @@
 # medical-information-backend
 
+## Стек технологий
+[![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/-Django-464646?style=flat-square&logo=Django)](https://www.djangoproject.com/)
+[![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/)
+[![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat-square&logo=PostgreSQL)](https://www.postgresql.org/)
+[![Nginx](https://img.shields.io/badge/-NGINX-464646?style=flat-square&logo=NGINX)](https://nginx.org/ru/)
+[![gunicorn](https://img.shields.io/badge/-gunicorn-464646?style=flat-square&logo=gunicorn)](https://gunicorn.org/)
+[![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)
+
 ## Развертывание в режиме разработчика
 ### Клонировать репозиторий
 ```
@@ -34,6 +43,10 @@ pip install -r ./stethoscope/requirements/dev.txt
 | POSTGRES_PASSWORD | postgres | Пароль пользователя (владельца) базы данных |
 | POSTGRES_HOST | 127.0.0.1 | ip-адрес хоста, на котором находится база данных |
 | POSTGRES_PORT | 5432 | порт, который слушает база данных |
+| EMAIL_HOST | *** | адрес smtp-сервера
+| EMAIL_HOST_USER | *** | адрес электронной почты
+| EMAIL_HOST_PASSWORD | *** | пароль к электронной почте
+| EMAIL_PORT | *** | порт smtp-сервера |
 ### Применить миграции
 ```
 python manage.py migrate
@@ -55,3 +68,12 @@ python manage.py runserver
 ```
 pre-commit install
 ```
+
+### Запросы к API
+- Получить список всех пользователей/регистрация пользователя [localhost:8000/api/v1/users/](http://localhost:8000/api/v1/users/)
+- Получить (изменить, удалить) информацию о себе [localhost:8000/api/v1/users/me/](http://localhost:8000/api/v1/users/me/)
+- Изменения пароля пользователя [localhost:8000/api/v1/users/set_password/](http://localhost:8000/api/v1/users/set_password/)
+- Сброс пароля [localhost:8000/api/v1/users/reset_password/](http://localhost:8000/api/v1/users/reset_password/)
+- Подтверждение сброса пароля [localhost:8000/api/v1/users/reset_password_confirm/](http://localhost:8000/api/v1/users/reset_password_confirm/)
+- Получить токен авторизации [localhost:8000/api/v1/auth/token/login/](http://localhost:8000/api/v1/auth/token/login/)
+- Удалить токен авторизации [localhost:8000/api/v1/auth/token/logout/](http://localhost:8000/api/v1/auth/token/logout/)
