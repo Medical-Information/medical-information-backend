@@ -1,9 +1,9 @@
-from djoser.serializers import UserSerializer
+from djoser import serializers
 
 from users.models import User
 
 
-class CustomUserSerializer(UserSerializer):
+class UserSerializer(serializers.UserSerializer):
     class Meta:
         model = User
         fields = ('uuid',
@@ -13,7 +13,7 @@ class CustomUserSerializer(UserSerializer):
                   )
 
 
-class CustomUserCreateSerializer(UserSerializer):
+class UserCreateSerializer(serializers.UserSerializer):
     class Meta:
         model = User
         fields = ('email',

@@ -4,17 +4,17 @@ from rest_framework import routers
 
 from api.swagger import schema_view
 
-from api.views import UsersViewSet
+from api.views import UserViewSet
 
 app_name = 'api'
 
 router_v1 = routers.DefaultRouter()
 
-router_v1.register(r'users', UsersViewSet, basename='users')
+router_v1.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [
-    path('', include(router_v1.urls)),
-    path('auth/', include('djoser.urls.authtoken')),
+    path('v1/', include(router_v1.urls)),
+    path('v1/auth/', include('djoser.urls.authtoken')),
     path(
         'v1/swagger/',
         schema_view.with_ui('swagger', cache_timeout=0),
