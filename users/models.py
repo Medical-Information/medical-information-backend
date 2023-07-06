@@ -16,7 +16,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     пользовательских атрибутов и методов.
     """
     class Meta:
-        ordering = ['uuid']
+        ordering = ['id']
         verbose_name = _('user')
         verbose_name_plural = _('users')
 
