@@ -13,7 +13,7 @@ WORKDIR $APP_HOME
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV DJANGO_SETTINGS_MODULE platform_x10.settings.stage
+ENV DJANGO_SETTINGS_MODULE stethoscope.settings
 
 # Create a user to avoid running containers as root in production
 RUN addgroup --system backend_user \
