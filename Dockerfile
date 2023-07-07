@@ -20,7 +20,7 @@ RUN addgroup --system backend_user \
     && adduser --system --ingroup backend_user backend_user
 
 COPY . .
-RUN  mkdir data staticfiles media \
+RUN  mkdir staticfiles media \
     && chown -R backend_user:backend_user $APP_HOME
 
 # change user
