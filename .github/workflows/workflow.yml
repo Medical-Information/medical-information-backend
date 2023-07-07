@@ -108,8 +108,11 @@ jobs:
             echo USE_SQLITE=${{ vars.USE_SQLITE }} >> .env
             echo EMAIL_HOST=${{ vars.EMAIL_HOST }} >> .env
             echo EMAIL_HOST_USER=${{ vars.EMAIL_HOST_USER }} >> .env
-            echo "EMAIL_HOST_PASSWORD=${{ vars.EMAIL_HOST_PASSWORD }}" >> .env
+            echo DEFAULT_FROM_EMAIL=${{ vars.DEFAULT_FROM_EMAIL }} >> .env
+            echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env
             echo EMAIL_PORT=${{ vars.EMAIL_PORT }} >> .env
+            echo EMAIL_USE_SSL=${{ vars.EMAIL_USE_SSL }} >> .env
+            echo EMAIL_USE_TLS=${{ vars.EMAIL_USE_TLS }} >> .env
             sudo docker image rm ${{ vars.DOCKER_USERNAME }}/stethoscope-backend
             sudo docker pull ${{ vars.DOCKER_USERNAME }}/stethoscope-backend
             sudo docker compose up -d
