@@ -58,4 +58,4 @@ jobs:
           token: ${{ secrets.PAT }}
           repository: "Medical-Information/medical-information-portal"
           event-type: update_remote
-          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "module": "Medical-Information/medical-information-backend", "branch": "develop"}'
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "module": "backend", "branch": "develop"}'
