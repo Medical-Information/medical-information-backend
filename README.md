@@ -45,8 +45,12 @@ pip install -r ./stethoscope/requirements/dev.txt
 | POSTGRES_PORT | 5432 | порт, который слушает база данных |
 | EMAIL_HOST | *** | адрес smtp-сервера
 | EMAIL_HOST_USER | *** | адрес электронной почты
+| DEFAULT_FROM_EMAIL | *** | адрес электронной почты
 | EMAIL_HOST_PASSWORD | *** | пароль к электронной почте
 | EMAIL_PORT | *** | порт smtp-сервера |
+| EMAIL_USE_SSL | True or False | True если формат шифрования SSL, тогда EMAIL_USE_TLS=False |
+| EMAIL_USE_TLS | True or False | True если формат шифрования TLS, тогда EMAIL_USE_SSL=False |
+
 ### Применить миграции
 ```
 python manage.py migrate
