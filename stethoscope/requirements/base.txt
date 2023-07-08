@@ -2,7 +2,8 @@ Django==4.2.2
 django-extensions==3.2.1
 djangorestframework==3.14.0
 djoser==2.1.0
-drf-yasg
+drf-yasg==1.21.6
+drf_extra_fields==3.5.0
 Pillow==10.0.0
 pre-commit==3.3.3
 python-dotenv==1.0.0
