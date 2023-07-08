@@ -100,7 +100,7 @@ jobs:
             echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
             echo POSTGRES_HOST=${{ vars.POSTGRES_HOST }} >> .env
             echo POSTGRES_PORT=${{ vars.POSTGRES_PORT }} >> .env
-            echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
             echo "ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}" >> .env
             echo "CSRF_TRUSTED_ORIGINS=${{ vars.CSRF_TRUSTED_ORIGINS }}" >> .env
             echo USE_SQLITE=${{ vars.USE_SQLITE }} >> .env
