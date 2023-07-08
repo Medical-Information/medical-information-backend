@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
-from djoser.serializers import UserSerializer
+from djoser import serializers
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
 from articles.models import Article
 
 User = get_user_model()
 
 
-class UserSerializer(UserSerializer):
+class UserSerializer(serializers.UserSerializer):
     class Meta:
         model = User
         fields = ('uuid',
@@ -18,7 +18,7 @@ class UserSerializer(UserSerializer):
                   )
 
 
-class UserCreateSerializer(UserSerializer):
+class UserCreateSerializer(serializers.UserSerializer):
     class Meta:
         model = User
         fields = ('email',
@@ -39,7 +39,7 @@ class UserCreateSerializer(UserSerializer):
         return user
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ArticleSerializer(ModelSerializer):
     """Article serializer."""
     class Meta:
         model = Article
