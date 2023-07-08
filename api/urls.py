@@ -3,14 +3,14 @@ from django.urls import include, path
 from rest_framework import routers
 
 from api.swagger import schema_view
-
-from api.views import UserViewSet
+from api.views import ArticleViewSet, UserViewSet
 
 app_name = 'api'
 
 router_v1 = routers.DefaultRouter()
 
 router_v1.register(r'users', UserViewSet, basename='users')
+router_v1.register(r'articles', ArticleViewSet, basename='articles')
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),
