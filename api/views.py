@@ -20,6 +20,6 @@ class UserViewSet(UViewSet):
 class ArticleViewSet(ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    permission_classes = [ReadOnly | IsAdmin]  # [AllowAny]  for debug
-    filter_backends = [ArticleTextSearchFilter]
-    search_fields = ['text']
+    permission_classes = (ReadOnly | IsAdmin)  # (permissions.AllowAny,)  for debug
+    filter_backends = (ArticleTextSearchFilter,)
+    search_fields = ('text',)

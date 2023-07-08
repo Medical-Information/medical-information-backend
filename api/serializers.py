@@ -43,6 +43,6 @@ class ArticleSerializer(ModelSerializer):
     """Article serializer."""
     class Meta:
         model = Article
-        exclude = ('id', )
+        fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
     image = Base64ImageField()

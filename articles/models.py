@@ -36,7 +36,8 @@ class Article(UUIDMixin, TimeStampedMixin):
         return self.title
 
     def save(self, *args, **kwargs):
-        if self.text:  # if not self.reading_time and self.text:
+        # if not self.reading_time and self.text:
+        if self.text:
             self.reading_time = self.calculate_reading_time()
         super().save(*args, **kwargs)
 
