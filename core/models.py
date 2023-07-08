@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class TimeStampedMixin(models.Model):
@@ -16,4 +17,10 @@ class UUIDMixin(models.Model):
     class Meta:
         abstract = True
 
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    pk = models.UUIDField(
+        _('id'),
+        name='id',
+        default=uuid.uuid4,
+        primary_key=True,
+        editable=False,
+    )
