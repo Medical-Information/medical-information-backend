@@ -31,17 +31,9 @@ class UserAdmin(admin.ModelAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
-		(None, {
+        (None, {
             'classes': ('wide',),
-            'fields': (
-                'email',
-                'password1',
-                'password2',
-                'role',
-                'is_active',
-                'is_staff',
-                'is_superuser',
-            ),
+            'fields': ('email', 'password1', 'password2', 'role', 'is_active', 'is_staff', 'is_superuser'),
         }),
     )
 
