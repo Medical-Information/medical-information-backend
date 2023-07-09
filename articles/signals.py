@@ -66,13 +66,13 @@ def remove_lower_tags(instance, pk_set):
 @receiver(m2m_changed, sender=Tag.children.through)
 def change_parents(action, instance, pk_set, **kwargs):
     """При добавлении/удалении тегов-потомков добавляет/удаляет у потомков родителя."""
-    sym_relatives(change_parents, 'children', action, instance, pk_set)
+    sym_relatives(change_children, 'parents', action, instance, pk_set)
 
 
 @receiver(m2m_changed, sender=Tag.parents.through)
 def change_children(action, instance, pk_set, **kwargs):
     """При добавлении/удалении тегов-родителей добавляет/удаляет у родителей потомков."""
-    sym_relatives(change_children, 'parents', action, instance, pk_set)
+    sym_relatives(change_parents, 'children', action, instance, pk_set)
 
 
 def sym_relatives(func, field, action, instance, pk_set):
