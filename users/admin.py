@@ -10,9 +10,9 @@ class UserAdmin(admin.ModelAdmin):
         'email',
         'first_name',
         'last_name',
-		 'role',
-		 'is_active',
-		 'is_staff',
+		'role',
+		'is_active',
+		'is_staff',
 	)
 	list_filter = ('role', 'is_active', 'is_staff')
 	search_fields = ('email', 'first_name', 'last_name')
