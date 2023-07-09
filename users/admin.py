@@ -34,8 +34,8 @@ class UserAdmin(admin.ModelAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-				'email', 'password1', 'password2', 'role', 'is_active', 'is_staff', 'is_superuser',
-			),
+                'email', 'password1', 'password2', 'role', 'is_active', 'is_staff', 'is_superuser',
+            ),
         }),
     )
 
