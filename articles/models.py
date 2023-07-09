@@ -91,26 +91,30 @@ class Tag(UUIDMixin):
 
 
 @receiver(m2m_changed, sender=Tag.children.through)
-def change_parents(action, instance, **kwargs):
-    """При удалении тегов-потомков удаляет у потомков родителя."""
-    m2m_changed.disconnect(change_children, sender=Tag.parents.through)
-    if action == 'post_add':
-        for child in instance.children.all():
-            child.parents.add(instance)
-    elif action == 'pre_remove':
-        for child in instance.children.all():
-            child.parents.remove(instance)
-    m2m_changed.connect(change_children, sender=Tag.parents.through)
+def change_parents(action, instance, pk_set, **kwargs):
+    """При добавлении/удалении тегов-потомков добавляет/удаляет у потомков родителя."""
+
+    sym_relatives(change_parents, 'children', action, instance, pk_set)
 
 
 @receiver(m2m_changed, sender=Tag.parents.through)
-def change_children(action, instance, **kwargs):
-    """При удалении тегов-родителей удаляет у родителей потомков."""
-    m2m_changed.disconnect(change_parents, sender=Tag.children.through)
+def change_children(action, instance, pk_set, **kwargs):
+    """При добавлении/удалении тегов-родителей добавляет/удаляет у родителей потомков."""
+
+    sym_relatives(change_children, 'parents', action, instance, pk_set)
+
+
+def sym_relatives(func, field, action, instance, pk_set):
+    """Добавляет/удаляет связи у тегов по переданным параметрам."""
+
+    sender = Tag.parents.through if field == 'parents' else Tag.children.through
+    m2m_changed.disconnect(func, sender=sender)
     if action == 'post_add':
-        for parent in instance.parents.all():
-            parent.children.add(instance)
-    elif action == 'pre_remove':
-        for parent in instance.parents.all():
-            parent.children.remove(instance)
-    m2m_changed.connect(change_parents, sender=Tag.children.through)
+        for pk in pk_set:
+            relative = Tag.objects.get(pk=pk)
+            getattr(relative, field).add(instance)
+    elif action == 'post_remove':
+        for pk in pk_set:
+            relative = Tag.objects.get(pk=pk)
+            getattr(relative, field).remove(instance)
+    m2m_changed.connect(func, sender=sender)
