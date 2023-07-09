@@ -11,21 +11,23 @@ User = get_user_model()
 class UserSerializer(serializers.UserSerializer):
     class Meta:
         model = User
-        fields = ('uuid',
-                  'email',
-                  'first_name',
-                  'last_name',
-                  )
+        fields = (
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+        )
 
 
 class UserCreateSerializer(serializers.UserSerializer):
     class Meta:
         model = User
-        fields = ('email',
-                  'password',
-                  'first_name',
-                  'last_name',
-                  )
+        fields = (
+            'email',
+            'password',
+            'first_name',
+            'last_name',
+        )
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -41,8 +43,10 @@ class UserCreateSerializer(serializers.UserSerializer):
 
 class ArticleSerializer(ModelSerializer):
     """Article serializer."""
+
     class Meta:
         model = Article
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
     image = Base64ImageField()
