@@ -5,7 +5,7 @@ from users.models import User
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = (
+	list_display = (
 		'pk',
 		'email',
 		'first_name',
@@ -14,8 +14,16 @@ class UserAdmin(admin.ModelAdmin):
 		'is_active',
 		'is_staff',
 	)
-	list_filter = ('role', 'is_active', 'is_staff')
-	search_fields = ('email', 'first_name', 'last_name')
+	list_filter = (
+		'role',
+		'is_active',
+		'is_staff',
+	)
+	search_fields = (
+		'email',
+		'first_name',
+		'last_name',
+	)
 	fieldsets = (
 		(None, {'fields': ('email', 'password')}),
 		(_('Personal Info'), {'fields': ('role',)}),
