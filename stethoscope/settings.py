@@ -107,6 +107,16 @@ REST_FRAMEWORK = {
     ],
 }
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+        },
+    },
+}
+
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
@@ -116,7 +126,7 @@ DJOSER = {
         'current_user': 'api.serializers.UserSerializer',
         'user_create': 'api.serializers.UserCreateSerializer',
     },
-    'HIDE_USERS': False,
+    'HIDE_USERS': True,
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
