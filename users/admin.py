@@ -6,10 +6,10 @@ from users.models import User
 
 class UserAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
-        'email',
-        'first_name',
-        'last_name',
+		'pk',
+		'email',
+		'first_name',
+		'last_name',
 		'role',
 		'is_active',
 		'is_staff',
@@ -22,11 +22,11 @@ class UserAdmin(admin.ModelAdmin):
 		(_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser')}),
 		(_('Important dates'), {'fields': ('last_login', 'date_joined')}),
 	)
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': (
-			    'email',
+	add_fieldsets = (
+		(None, {
+			'classes': ('wide',),
+			'fields': (
+				'email',
 				'password1',
 				'password2',
 				'role',
@@ -34,8 +34,8 @@ class UserAdmin(admin.ModelAdmin):
 				'is_staff',
 				'is_superuser',
 			),
-        }),
-    )	
+		}),
+	)
 
 
 admin.site.register(User, UserAdmin)
