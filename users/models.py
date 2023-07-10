@@ -1,17 +1,12 @@
 from typing import List
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
 from users.managers import UserManager
-
-
-validate_name = RegexValidator(
-        r'^[a-zA-Zа-яА-Я\s\-]+$', _('Only letters, spaces, and hyphens are allowed.'),
-        )
+from users.validators import validate_name
 
 
 class User(TimeStampedMixin, UUIDMixin, AbstractUser):
