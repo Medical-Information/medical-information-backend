@@ -26,20 +26,42 @@ class TagForm(ModelForm):
     в родительских и дочерних тегах.
     """
 
-    def check_tags_matches(self, instance):
-        for parent in instance.parents.all():
-            if parent in instance.children.all():
-                return False, parent.name
+    def check_looping_tags(self, instance):
+        """Проверяет на отсутсиве закольцованности тегов,
+        если находит, то сообщает имена закольцовывающих тегов."""
+
+        def find_relatives(relation, relatives):
+            list_relatives = set()
+            for relative in relatives:
+                list_relatives = list_relatives.union(getattr(relative, relation).all())
+            return list_relatives
+
+        parents = set(instance.parents.all())
+        new_parents = parents.copy()
+        children = set(instance.children.all())
+        new_children = children.copy()
+        while True:
+            doubles = new_children.intersection(parents)
+            doubles = doubles.union(new_parents.intersection(children))
+            if len(doubles) > 0:
+                doubles = ', '.join(double.name for double in doubles)
+                return False, doubles
+            parents = parents.union(new_parents)
+            children = children.union(new_children)
+            new_parents = find_relatives('parents', new_parents)
+            new_children = find_relatives('children', new_children)
+            if len(new_parents) + len(new_children) == 0:
+                break
         return True, None
 
     def clean(self):
         ok = False
         with transaction.atomic(savepoint=True, durable=False):
-            ok, double = self.check_tags_matches(self.save(commit=True))
+            ok, doubles = self.check_looping_tags(self.save(commit=True))
             transaction.set_rollback(True)
         if not ok:
             raise ValidationError(
-                _('The tag %(double)s cannot be parent and child') % {'double': double},
+                _('A tag or tags: %(dbl)s - breaks the hierarchy') % {'dbl': doubles},
             )
         return super().clean()
 
