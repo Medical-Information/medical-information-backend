@@ -10,7 +10,7 @@ from users.managers import UserManager
 
 
 validate_name = RegexValidator(
-        r'^[a-zA-Zа-яА-Я\s\-]+$', _('Only letters, spaces, and hyphens are allowed.')
+        r'^[a-zA-Zа-яА-Я\s\-]+$', _('Only letters, spaces, and hyphens are allowed.'),
         )
 
 
