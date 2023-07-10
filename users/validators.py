@@ -1,7 +1,6 @@
-﻿from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+﻿from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
 
 def validate_name(value):
     validator = RegexValidator(r'^[a-zA-Zа-яА-Я\s\-]+$',
-                              'Only letters, spaces, and hyphens are allowed.')
-    validator(value)
+                              _('Only letters, spaces, and hyphens are allowed.'))
