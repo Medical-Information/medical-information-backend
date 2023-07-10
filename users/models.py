@@ -6,8 +6,10 @@ from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
 from users.managers import UserManager
-from users.validators import validate_name
 
+
+validate_name = RegexValidator(r'^[a-zA-Zа-яА-Я\s\-]+$',
+                              _('Only letters, spaces, and hyphens are allowed.'))
 
 class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     """"
@@ -30,10 +32,17 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     roles = [(USER, 'user'),
              (MODER, 'moderator'),
              (ADMIN, 'admin')]
-
-    first_name = models.CharField(_('first name'), max_length=50, validators=[validate_name])
-    second_name = models.CharField(_('second name'), max_length=50, validators=[validate_name])
-    
+             
+    first_name = models.CharField(
+            _('first name'), 
+            max_length=50,
+            validators=[validate_name]
+            )
+    second_name = models.CharField(
+            _('second name'),
+            max_length=50,
+            validators=[validate_name]
+            )    
     date_joined = None
     username = None
     email = models.EmailField(unique=True)
