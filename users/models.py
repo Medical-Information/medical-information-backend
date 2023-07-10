@@ -1,7 +1,7 @@
-from typing import List
+﻿from typing import List
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -39,12 +39,12 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     first_name = models.CharField(
             _('first name'),
             max_length=50,
-            validators=[validate_name],
+            validators=[MinLengthValidator(1), validate_name],
             )
     second_name = models.CharField(
             _('second name'),
             max_length=50,
-            validators=[validate_name],
+            validators=[MinLengthValidator(1), validate_name],
             )
     date_joined = None
     username = None
