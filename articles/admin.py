@@ -4,7 +4,7 @@ from django.db import transaction
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
-from articles.models import Article, Tag
+from articles.models import Article, FavoriteArticle, Tag
 
 
 @admin.register(Article)
@@ -18,7 +18,7 @@ class ArticleAdmin(admin.ModelAdmin):
         'views_count',
     )
     list_filter = ('author', 'is_published')
-    search_fields = ('author',)
+    search_fields = ('author__email', 'title')
 
 
 class TagForm(ModelForm):
@@ -96,3 +96,11 @@ class TagAdmin(admin.ModelAdmin):
         'children',
         'parents',
     )
+
+
+@admin.register(FavoriteArticle)
+class FavoriteRecipeAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'article', 'user')
+    list_filter = ('article', 'user')
+    search_fields = ('user__email', 'article__title')
+    autocomplete_fields = ('article', 'user')

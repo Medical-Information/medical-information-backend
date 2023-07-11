@@ -9,8 +9,8 @@ class TimeStampedMixin(models.Model):
     class Meta:
         abstract = True
 
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(_('created_at'), default=timezone.now)
+    updated_at = models.DateTimeField(_('updated_at'), auto_now=True)
 
 
 class UUIDMixin(models.Model):

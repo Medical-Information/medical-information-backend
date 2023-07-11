@@ -8,19 +8,20 @@ from django.utils.translation import gettext_lazy as _
 from core.models import TimeStampedMixin, UUIDMixin
 from users.managers import UserManager
 
-
 validate_name = RegexValidator(
-        r'^[a-zA-Zа-яА-Я\s\-]+$', _('Only letters, spaces, and hyphens are allowed.'),
-        )
+    r'^[a-zA-Zа-яА-Я\s\-]+$',
+    _('Only letters, spaces, and hyphens are allowed.'),
+)
 
 
 class User(TimeStampedMixin, UUIDMixin, AbstractUser):
-    """"
+    """ "
     Класс User представляет пользовательскую модель с дополнительным
     функционалом, таким как автоматическая генерация временных меток,
     добавление уникального идентификатора (UUID) и базовая реализация
     пользовательских атрибутов и методов.
     """
+
     class Meta:
         ordering = ['id']
         verbose_name = _('user')
@@ -32,26 +33,22 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     USER = 'user'
     MODER = 'moderator'
     ADMIN = 'admin'
-    roles = [(USER, 'user'),
-             (MODER, 'moderator'),
-             (ADMIN, 'admin')]
+    roles = [(USER, 'user'), (MODER, 'moderator'), (ADMIN, 'admin')]
 
     first_name = models.CharField(
-            _('first name'),
-            max_length=50,
-            validators=[MinLengthValidator(1), validate_name],
-            )
-    second_name = models.CharField(
-            _('second name'),
-            max_length=50,
-            validators=[MinLengthValidator(1), validate_name],
-            )
+        _('first name'),
+        max_length=50,
+        validators=[MinLengthValidator(1), validate_name],
+    )
+    last_name = models.CharField(
+        _('last name'),
+        max_length=50,
+        validators=[MinLengthValidator(1), validate_name],
+    )
     date_joined = None
     username = None
     email = models.EmailField(unique=True)
-    role = models.CharField(choices=roles,
-                            default='user',
-                            max_length=50)
+    role = models.CharField(choices=roles, default='user', max_length=50)
 
     objects = UserManager()
 

@@ -86,3 +86,34 @@ class Tag(UUIDMixin):
 
     def __str__(self) -> str:
         return self.name
+
+
+class FavoriteArticle(UUIDMixin):
+    """Избранная статья пользователя (закладка)."""
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name='%(app_label)s_%(class)s_unique_favorite',
+                fields=['article', 'user'],
+            ),
+        ]
+        verbose_name = _('favorite article')
+        verbose_name_plural = _('favorite articles')
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_('user'),
+        help_text=_('select user'),
+    )
+
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        verbose_name=_('article'),
+        help_text=_('select article'),
+    )
+
+    def __str__(self) -> str:
+        return f'Избранное (пользователь: {self.user}, статья {self.article})'
