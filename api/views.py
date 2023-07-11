@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet as UViewSet
 from rest_framework.viewsets import ModelViewSet
-
+from api.mixins import LikedMixin
 from api.filters import ArticleTextSearchFilter
 from api.permissions import IsAdmin, ReadOnly
 from api.serializers import ArticleSerializer, UserSerializer
@@ -15,7 +15,7 @@ class UserViewSet(UViewSet):
     serializer_class = UserSerializer
 
 
-class ArticleViewSet(ModelViewSet):
+class ArticleViewSet(LikedMixin, ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     permission_classes = (ReadOnly | IsAdmin,)  # (permissions.AllowAny,)  for debug
