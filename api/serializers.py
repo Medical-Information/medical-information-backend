@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
-from djoser import serializers
+from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import BooleanField, ModelSerializer
 
 from articles.models import Article
 
 User = get_user_model()
 
 
-class UserSerializer(serializers.UserSerializer):
+class UserSerializer(DjoserUserSerializer):
     class Meta:
         model = User
         fields = (
@@ -19,7 +19,7 @@ class UserSerializer(serializers.UserSerializer):
         )
 
 
-class UserCreateSerializer(serializers.UserSerializer):
+class UserCreateSerializer(DjoserUserSerializer):
     class Meta:
         model = User
         fields = (
@@ -46,7 +46,8 @@ class ArticleSerializer(ModelSerializer):
 
     class Meta:
         model = Article
-        fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at')
+        fields = '__all__'  # TODO заменить на кортеж полей
+        read_only_fields = ('created_at', 'updated_at', 'is_favorited')
 
     image = Base64ImageField()
+    is_favorited = BooleanField()

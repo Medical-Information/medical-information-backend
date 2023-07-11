@@ -1,0 +1,143 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-11 09:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: api/views.py:31
+#, fuzzy
+#| msgid "favorite article"
+msgid "Is favorited article"
+msgstr "избранное"
+
+#: articles/apps.py:8 articles/models.py:16
+msgid "articles"
+msgstr "статьи"
+
+#: articles/models.py:15 articles/models.py:142
+msgid "article"
+msgstr "статья"
+
+#: articles/models.py:19
+msgid "title"
+msgstr ""
+
+#: articles/models.py:20
+msgid "text"
+msgstr ""
+
+#: articles/models.py:22
+msgid "source name"
+msgstr ""
+
+#: articles/models.py:28
+msgid "source link"
+msgstr ""
+
+#: articles/models.py:33
+msgid "is published"
+msgstr ""
+
+#: articles/models.py:34
+msgid "views"
+msgstr ""
+
+#: articles/models.py:39
+msgid "tags"
+msgstr ""
+
+#: articles/models.py:71
+msgid "Tags"
+msgstr ""
+
+#: articles/models.py:72
+msgid "Tag"
+msgstr ""
+
+#: articles/models.py:74
+msgid "Tag name"
+msgstr ""
+
+#: articles/models.py:79
+msgid "Children"
+msgstr ""
+
+#: articles/models.py:85
+msgid "Parents"
+msgstr ""
+
+#: articles/models.py:129
+msgid "favorite article"
+msgstr "избранное"
+
+#: articles/models.py:130
+msgid "favorite articles"
+msgstr "избранное"
+
+#: articles/models.py:135 users/models.py:28
+msgid "user"
+msgstr ""
+
+#: articles/models.py:136
+msgid "select user"
+msgstr "выбрать пользователя"
+
+#: articles/models.py:143
+msgid "select article"
+msgstr "выбрать статью"
+
+#: core/models.py:12
+msgid "created_at"
+msgstr "создано"
+
+#: core/models.py:13
+msgid "updated_at"
+msgstr "изменено"
+
+#: core/models.py:21
+msgid "id"
+msgstr ""
+
+#: users/admin.py:30
+msgid "Personal Info"
+msgstr ""
+
+#: users/admin.py:31
+msgid "Permissions"
+msgstr ""
+
+#: users/admin.py:32
+msgid "Important dates"
+msgstr ""
+
+#: users/models.py:14
+msgid "Only letters, spaces, and hyphens are allowed."
+msgstr ""
+
+#: users/models.py:29
+msgid "users"
+msgstr ""
+
+#: users/models.py:40
+msgid "first name"
+msgstr ""
+
+#: users/models.py:45
+msgid "last name"
+msgstr ""
