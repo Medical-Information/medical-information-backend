@@ -60,18 +60,3 @@ class ArticleSerializer(ModelSerializer):
 
     def get_total_likes(self, obj):
         return obj.likes_count
-
-
-class FanSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'email',
-            'first_name',
-            'last_name',
-        )
-
-    full_name = SerializerMethodField()
-
-    def get_full_name(self, obj):
-        return obj.get_full_name()
