@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
+from likes.models import LikeDislike
 
 User = settings.AUTH_USER_MODEL
 
@@ -37,7 +39,7 @@ class Article(UUIDMixin, TimeStampedMixin):
         verbose_name=_('tags'),
         blank=True,
     )
-    # likes = models.ManyToManyField('Users') # noqa
+    votes = GenericRelation(LikeDislike, related_query_name='articles')
 
     def __str__(self):
         return self.title
@@ -48,6 +50,18 @@ class Article(UUIDMixin, TimeStampedMixin):
             self.reading_time = self.calculate_reading_time()
         super().save(*args, **kwargs)
 
+    @property
+    def likes_count(self):
+        return self.votes.likes().count()
+
+    @property
+    def dislikes_count(self):
+        return self.votes.dislikes().count()
+
+    @property
+    def rating(self):
+        return self.votes.sum_rating()
+
     def calculate_reading_time(self):
         words = len(self.text.split())
         minutes = words / 200
@@ -56,9 +70,6 @@ class Article(UUIDMixin, TimeStampedMixin):
     def increment_views_count(self):
         self.views_count += 1
         self.save()
-
-    def get_likes_count(self):
-        return self.likes.count()
 
 
 class Tag(UUIDMixin):

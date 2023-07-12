@@ -21,6 +21,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='user',
             name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='updated_at'),
+            field=models.DateTimeField(
+                auto_now=True,
+                verbose_name='updated_at',
+            ),
         ),
     ]
