@@ -10,7 +10,7 @@ max-cognitive-complexity=10
 max-line-length=89
 
 [tool.isort]
-known_first_party=['users', 'api', 'core']
+known_first_party=['users', 'api', 'core', 'likes']
 profile='black'
 
 [tool.mypy]
