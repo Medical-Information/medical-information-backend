@@ -34,9 +34,8 @@ class LikedMixin:
         """
         votes = {'fans': LikeDislike.LIKE, 'haters': LikeDislike.DISLIKE}
         obj = self.get_object()
-        try:
-            users = services.get_group(obj, votes[votes_group])
-        except KeyError:
+        if votes_group not in votes:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        users = services.get_group(obj, votes[votes_group])
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
