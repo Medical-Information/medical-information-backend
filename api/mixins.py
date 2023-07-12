@@ -8,7 +8,7 @@ from likes.models import LikeDislike
 
 
 class LikedMixin:
-    @action(methods=['POST'], detail=True, url_path='vote/(?P<vote_type>\\w+)')
+    @action(methods=['POST'], detail=True, url_path='vote/(?P<vote_type>\\w+)', permission_classes=(IsAuthenticated,),)
     def vote(self, request, pk=None, vote_type=None):
         """Likes or dislikes obj depending on the type of voice (like or dislike).
         """
