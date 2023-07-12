@@ -1,5 +1,5 @@
-from rest_framework.pagination import CursorPagination
+from rest_framework.pagination import CursorPagination as CPagination
 
 
-class CursorPagination(CursorPagination):
+class CursorPagination(CPagination):
     ordering = '-created_at'
