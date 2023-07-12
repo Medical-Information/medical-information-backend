@@ -1,5 +1,6 @@
 Django==4.2.2
 django-extensions==3.2.1
+django-filter==23.2
 djangorestframework==3.14.0
 djoser==2.1.0
 drf-extra-fields==3.5.0

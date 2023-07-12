@@ -1,7 +1,11 @@
 from django.contrib.auth import get_user_model
-from djoser import serializers
+from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import (
+    BooleanField,
+    ModelSerializer,
+    SerializerMethodField,
+)
 
 from articles.models import Article
 from likes import services as likes_services
@@ -10,7 +14,7 @@ from likes.models import LikeDislike
 User = get_user_model()
 
 
-class UserSerializer(serializers.UserSerializer):
+class UserSerializer(DjoserUserSerializer):
     class Meta:
         model = User
         fields = (
@@ -21,7 +25,7 @@ class UserSerializer(serializers.UserSerializer):
         )
 
 
-class UserCreateSerializer(serializers.UserSerializer):
+class UserCreateSerializer(DjoserUserSerializer):
     class Meta:
         model = User
         fields = (
@@ -48,10 +52,8 @@ class ArticleSerializer(ModelSerializer):
 
     class Meta:
         model = Article
-        fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at',
-                            'total_likes', 'total_dislikes',
-                            )
+        fields = '__all__'  # TODO заменить на кортеж полей
+        read_only_fields = ('created_at', 'updated_at', 'is_favorited')
 
     is_fan = SerializerMethodField()
     is_hater = SerializerMethodField()
@@ -59,6 +61,7 @@ class ArticleSerializer(ModelSerializer):
     total_dislikes = SerializerMethodField()
     rating = SerializerMethodField()
     image = Base64ImageField()
+    is_favorited = BooleanField()
 
     def get_is_fan(self, obj) -> bool:
         user = self.context.get('request').user

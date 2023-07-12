@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
@@ -101,27 +99,32 @@ class Tag(UUIDMixin):
         return self.name
 
 
-@receiver(m2m_changed, sender=Tag.children.through)
-def change_parents(action, instance, **kwargs):
-    """При удалении тегов-потомков удаляет у потомков родителя."""
-    m2m_changed.disconnect(change_children, sender=Tag.parents.through)
-    if action == 'post_add':
-        for child in instance.children.all():
-            child.parents.add(instance)
-    elif action == 'pre_remove':
-        for child in instance.children.all():
-            child.parents.remove(instance)
-    m2m_changed.connect(change_children, sender=Tag.parents.through)
+class FavoriteArticle(UUIDMixin):
+    """Избранная статья пользователя (закладка)."""
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name='%(app_label)s_%(class)s_unique_favorite',
+                fields=['article', 'user'],
+            ),
+        ]
+        verbose_name = _('favorite article')
+        verbose_name_plural = _('favorite articles')
 
-@receiver(m2m_changed, sender=Tag.parents.through)
-def change_children(action, instance, **kwargs):
-    """При удалении тегов-родителей удаляет у родителей потомков."""
-    m2m_changed.disconnect(change_parents, sender=Tag.children.through)
-    if action == 'post_add':
-        for parent in instance.parents.all():
-            parent.children.add(instance)
-    elif action == 'pre_remove':
-        for parent in instance.parents.all():
-            parent.children.remove(instance)
-    m2m_changed.connect(change_parents, sender=Tag.children.through)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_('user'),
+        help_text=_('select user'),
+    )
+
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        verbose_name=_('article'),
+        help_text=_('select article'),
+    )
+
+    def __str__(self) -> str:
+        return f'Избранное (пользователь: {self.user}, статья {self.article})'
