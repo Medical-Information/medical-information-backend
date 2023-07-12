@@ -14,10 +14,9 @@ class LikedMixin:
         """
         votes = {'like': LikeDislike.LIKE, 'dislike': LikeDislike.DISLIKE}
         obj = self.get_object()
-        try:
-            services.add_likedislike(obj, request.user, votes[vote_type])
-        except KeyError:
+        if vote_type not in votes:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        services.add_likedislike(obj, request.user, votes[vote_type])
         return Response()
 
     @action(methods=['POST'], detail=True)
