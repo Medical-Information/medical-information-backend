@@ -19,7 +19,7 @@ class LikedMixin:
         services.add_likedislike(obj, request.user, votes[vote_type])
         return Response()
 
-    @action(methods=['POST'], detail=True)
+    @action(methods=['POST'], detail=True, permission_classes=(IsAuthenticated,),)
     def unvote(self, request, pk=None):
         """Removes the user's voice from obj.
         """
