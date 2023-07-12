@@ -1,57 +1,42 @@
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from likes import services
 from api.serializers import UserSerializer
+from likes import services
+from likes.models import LikeDislike
 
 
 class LikedMixin:
-    @action(methods=['POST'], detail=True)
-    def like(self, request, pk=None):
-        """Лайкает `obj`.
+    @action(methods=['POST'], detail=True, url_path='vote/(?P<vote_type>\w+)')
+    def vote(self, request, pk=None, vote_type=None):
+        """Likes or dislikes obj depending on the type of voice (like or dislike).
         """
+        votes = {'like': LikeDislike.LIKE, 'dislike': LikeDislike.DISLIKE}
         obj = self.get_object()
-        services.add_like(obj, request.user)
+        try:
+            services.add_likedislike(obj, request.user, votes[vote_type])
+        except KeyError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response()
 
     @action(methods=['POST'], detail=True)
-    def unlike(self, request, pk=None):
-        """Удаляет лайк с `obj`.
+    def unvote(self, request, pk=None):
+        """Removes the user's voice from obj.
         """
         obj = self.get_object()
-        services.remove_like(obj, request.user)
+        services.remove_vote(obj, request.user)
         return Response()
 
-    @action(methods=['GET'], detail=True)
-    def fans(self, request, pk=None):
-        """Получает всех пользователей, которые лайкнули `obj`.
+    @action(methods=['GET'], detail=True, url_path='votes/(?P<votes_group>\w+)')
+    def votes(self, request, pk=None, votes_group=None):
+        """Get fans or haters obj.
         """
+        votes = {'fans': LikeDislike.LIKE, 'haters': LikeDislike.DISLIKE}
         obj = self.get_object()
-        fans = services.get_fans(obj)
-        serializer = UserSerializer(fans, many=True)
-        return Response(serializer.data)
-
-    @action(methods=['POST'], detail=True)
-    def dislike(self, request, pk=None):
-        """Дизлайкает `obj`.
-        """
-        obj = self.get_object()
-        services.add_like(obj, request.user)
-        return Response()
-
-    @action(methods=['POST'], detail=True)
-    def undislike(self, request, pk=None):
-        """Удаляет дизлайк с `obj`.
-        """
-        obj = self.get_object()
-        services.remove_like(obj, request.user)
-        return Response()
-
-    @action(methods=['GET'], detail=True)
-    def haters(self, request, pk=None):
-        """Получает всех пользователей, которые дизлайкнули `obj`.
-        """
-        obj = self.get_object()
-        fans = services.get_fans(obj)
-        serializer = FanSerializer(fans, many=True)
+        try:
+            users = services.get_group(obj, votes[votes_group])
+        except KeyError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSerializer(users, many=True)
         return Response(serializer.data)

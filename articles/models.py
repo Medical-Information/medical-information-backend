@@ -6,7 +6,7 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
-from likes.models import Like
+from likes.models import LikeDislike
 
 User = settings.AUTH_USER_MODEL
 
@@ -41,7 +41,7 @@ class Article(UUIDMixin, TimeStampedMixin):
         verbose_name=_('tags'),
         blank=True,
     )
-    likes = GenericRelation(Like)
+    votes = GenericRelation(LikeDislike, related_query_name='articles')
 
     def __str__(self):
         return self.title
@@ -54,7 +54,15 @@ class Article(UUIDMixin, TimeStampedMixin):
 
     @property
     def likes_count(self):
-        return self.likes.count()
+        return self.votes.likes().count()
+
+    @property
+    def dislikes_count(self):
+        return self.votes.dislikes().count()
+
+    @property
+    def rating(self):
+        return self.votes.sum_rating()
 
     def calculate_reading_time(self):
         words = len(self.text.split())

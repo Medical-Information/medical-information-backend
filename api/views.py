@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet as UViewSet
 from rest_framework.viewsets import ModelViewSet
-from api.mixins import LikedMixin
+
 from api.filters import ArticleTextSearchFilter
+from api.mixins import LikedMixin
 from api.permissions import IsAdmin, ReadOnly
 from api.serializers import ArticleSerializer, UserSerializer
 from articles.models import Article
