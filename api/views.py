@@ -9,14 +9,13 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
-from api.pagination import CursorPagination
-from api.permissions import IsAdmin, ReadOnly
+from api.paginations import CursorPagination
 from api.serializers import ArticleSerializer, UserSerializer
 from articles.models import Article, FavoriteArticle
 
@@ -44,7 +43,7 @@ class UserViewSet(UViewSet):
 class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
-    permission_classes = (ReadOnly | IsAdmin,)  # (permissions.AllowAny,)  for debug
+    permission_classes = (AllowAny,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ArticleFilter
 

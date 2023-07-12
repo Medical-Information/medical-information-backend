@@ -107,9 +107,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'api.pagination.CursorPagination',
-    'PAGE_SIZE': 2,
 }
+
+CURSOR_PAGINATION_PAGE_SIZE = int(os.getenv('CURSOR_PAGINATION_PAGE_SIZE', default=6))
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
