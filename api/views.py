@@ -15,6 +15,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
+from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
 from api.serializers import ArticleSerializer, UserSerializer
 from articles.models import Article, FavoriteArticle
@@ -42,7 +43,8 @@ class UserViewSet(UViewSet):
 )
 class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
-    permission_classes = (ReadOnly | IsAdmin,)  # (permissions.AllowAny,)  for debug
+    pagination_class = CursorPagination
+    permission_classes = (IsAdmin | ReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ArticleFilter
 

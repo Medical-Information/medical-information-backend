@@ -109,6 +109,8 @@ REST_FRAMEWORK = {
     ],
 }
 
+CURSOR_PAGINATION_PAGE_SIZE = int(os.getenv('CURSOR_PAGINATION_PAGE_SIZE', default=6))
+
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Token': {
