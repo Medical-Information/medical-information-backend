@@ -81,3 +81,9 @@ pre-commit install
 - Подтверждение сброса пароля [localhost:8000/api/v1/users/reset_password_confirm/](http://localhost:8000/api/v1/users/reset_password_confirm/)
 - Получить токен авторизации [localhost:8000/api/v1/auth/token/login/](http://localhost:8000/api/v1/auth/token/login/)
 - Удалить токен авторизации [localhost:8000/api/v1/auth/token/logout/](http://localhost:8000/api/v1/auth/token/logout/)
+
+- Поставить лайк статье [localhost:8000/api/v1/articles/<id_articles>/vote/like/](http://localhost:8000/api/v1/articles/<id_articles>/vote/like/)
+- Поставить дизлайк статье [localhost:8000/api/v1/articles/<id_articles>/vote/dislike/](http://localhost:8000/api/v1/articles/<id_articles>/vote/dislike/)
+- Удалить голос за статью [localhost:8000/api/v1/articles/<id_articles>/unvote/](http://localhost:8000/api/v1/articles/<id_articles>/unvote/)
+- Получить список лайкнувших статью [localhost:8000/api/v1/articles/<id_articles>/votes/fans/](http://localhost:8000/api/v1/articles/<id_articles>/votes/fans/)
+- Получить список дизлайкнувших статью [localhost:8000/api/v1/articles/<id_articles>/votes/haters/](http://localhost:8000/api/v1/articles/<id_articles>/votes/haters/)

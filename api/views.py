@@ -8,6 +8,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.viewsets import ModelViewSet
 
+from api.mixins import LikedMixin
 from api.filters import ArticleFilter
 from api.permissions import IsAdmin, ReadOnly
 from api.serializers import ArticleSerializer, UserSerializer
@@ -34,7 +35,7 @@ class UserViewSet(UViewSet):
         ],
     ),
 )
-class ArticleViewSet(ModelViewSet):
+class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
     permission_classes = (ReadOnly | IsAdmin,)  # (permissions.AllowAny,)  for debug
     filter_backends = (DjangoFilterBackend,)
