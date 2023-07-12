@@ -1,4 +1,3 @@
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from rest_framework import routers
 
@@ -26,5 +25,3 @@ urlpatterns = [
         name='schema-redoc',
     ),
 ]
-
-urlpatterns += staticfiles_urlpatterns()
