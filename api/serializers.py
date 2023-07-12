@@ -46,8 +46,8 @@ class ArticleSerializer(ModelSerializer):
 
     class Meta:
         model = Article
-        fields = '__all__'  # TODO заменить на кортеж полей
-        read_only_fields = ('created_at', 'updated_at', 'is_favorited')
+        fields = '__all__'
+        read_only_fields = ('created_at', 'updated_at')
 
     image = Base64ImageField()
-    is_favorited = BooleanField()
+    is_favorited = BooleanField(read_only=True)
