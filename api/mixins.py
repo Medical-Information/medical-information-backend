@@ -8,7 +8,7 @@ from likes.models import LikeDislike
 
 
 class LikedMixin:
-    @action(methods=['POST'], detail=True, url_path='vote/(?P<vote_type>\w+)')
+    @action(methods=['POST'], detail=True, url_path='vote/(?P<vote_type>\\w+)')
     def vote(self, request, pk=None, vote_type=None):
         """Likes or dislikes obj depending on the type of voice (like or dislike).
         """
@@ -28,7 +28,7 @@ class LikedMixin:
         services.remove_vote(obj, request.user)
         return Response()
 
-    @action(methods=['GET'], detail=True, url_path='votes/(?P<votes_group>\w+)')
+    @action(methods=['GET'], detail=True, url_path='votes/(?P<votes_group>\\w+)')
     def votes(self, request, pk=None, votes_group=None):
         """Get fans or haters obj.
         """
