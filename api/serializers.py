@@ -10,6 +10,7 @@ from rest_framework.serializers import (
 from articles.models import Article
 from likes import services as likes_services
 from likes.models import LikeDislike
+from users import services as users_services
 
 User = get_user_model()
 
@@ -22,7 +23,20 @@ class UserSerializer(DjoserUserSerializer):
             'email',
             'first_name',
             'last_name',
+            'rating',
+            'publications',
         )
+
+    rating = SerializerMethodField()
+    publications = SerializerMethodField()
+
+    def get_rating(self, user):
+        user = self.context.get('request').user
+        return users_services.rating(user)
+
+    def get_publications(self, user):
+        user = self.context.get('request').user
+        return users_services.publications(user)
 
 
 class UserCreateSerializer(DjoserUserSerializer):
