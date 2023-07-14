@@ -5,10 +5,9 @@ from likes.models import LikeDislike
 
 
 def rating(user):
-    rating = LikeDislike.objects.filter(
+    return LikeDislike.objects.filter(
         user=user.id,
     ).aggregate(Sum('vote')).get('vote__sum') or 0
-    return rating
 
 
 def publications(user):
