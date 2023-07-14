@@ -16,7 +16,10 @@ class LikedMixin:
         permission_classes=(IsAuthenticated,),
     )
     def vote(self, request, pk=None, vote_type=None):
-        """Likes or dislikes obj depending on the type of voice (like or dislike)."""
+        """
+        Likes or dislikes obj depending on the type of voice
+        (like or dislike).
+        """
         votes = {'like': LikeDislike.LIKE, 'dislike': LikeDislike.DISLIKE}
         obj = self.get_object()
         if vote_type not in votes:
@@ -35,7 +38,11 @@ class LikedMixin:
         services.remove_vote(obj, request.user)
         return Response()
 
-    @action(methods=['GET'], detail=True, url_path='votes/(?P<votes_group>\\w+)')
+    @action(
+        methods=['GET'],
+        detail=True,
+        url_path='votes/(?P<votes_group>\\w+)',
+    )
     def votes(self, request, pk=None, votes_group=None):
         """Get fans or haters obj."""
         votes = {'fans': LikeDislike.LIKE, 'haters': LikeDislike.DISLIKE}
