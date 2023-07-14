@@ -11,7 +11,4 @@ def rating(user):
 
 
 def publications(user):
-    articles_count = Article.objects.filter(
-        author=user,
-    ).count()
-    return articles_count
+    return Article.objects.filter(author=user).count()
