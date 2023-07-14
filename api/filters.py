@@ -10,3 +10,13 @@ class ArticleFilter(django_filters.FilterSet):
 
     is_favorited = django_filters.BooleanFilter()
     text = django_filters.CharFilter(lookup_expr='icontains')
+    tags = django_filters.filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
+        method='filter_tags',
+    )
+
+    def filter_tags(self, queryset, name, value):  # noqa
+        tags = self.request.query_params.getlist('tags')
+        for tag in tags:
+            queryset = queryset.filter(tags__id=tag)
+        return queryset
