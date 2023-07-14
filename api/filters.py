@@ -1,6 +1,6 @@
 import django_filters
 
-from articles.models import Article
+from articles.models import Article, Tag
 
 
 class ArticleFilter(django_filters.FilterSet):
