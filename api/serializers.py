@@ -79,11 +79,19 @@ class ArticleSerializer(ModelSerializer):
 
     def get_is_fan(self, obj) -> bool:
         user = self.context.get('request').user
-        return likes_services.is_group(obj, user, vote_type=LikeDislike.LIKE)
+        return likes_services.is_group(
+            obj,
+            user,
+            vote_type=LikeDislike.LIKE,
+        )
 
     def get_is_hater(self, obj) -> bool:
         user = self.context.get('request').user
-        return likes_services.is_group(obj, user, vote_type=LikeDislike.DISLIKE)
+        return likes_services.is_group(
+            obj,
+            user,
+            vote_type=LikeDislike.DISLIKE,
+        )
 
     def get_total_likes(self, obj):
         return obj.likes_count

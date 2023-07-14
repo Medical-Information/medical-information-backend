@@ -52,10 +52,13 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         qs = Article.objects.all()
 
         user = self.request.user
-        # вычисляем is_favorited - является ли статья избранной для пользователя
+        # вычисляем is_favorited-является ли статья избранной для пользователя
         if user.is_authenticated:
             is_favorited_expression = Exists(
-                FavoriteArticle.objects.filter(article=OuterRef('pk'), user=user),
+                FavoriteArticle.objects.filter(
+                    article=OuterRef('pk'),
+                    user=user,
+                ),
             )
         else:
             is_favorited_expression = Value(False)
@@ -63,10 +66,17 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
 
         return qs
 
-    @action(methods=['post'], detail=True, permission_classes=(IsAuthenticated,))
+    @action(
+        methods=['post'],
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+    )
     def favorite(self, request, pk):
         article = get_object_or_404(Article, id=pk)
-        if FavoriteArticle.objects.filter(article=article, user=request.user).exists():
+        if FavoriteArticle.objects.filter(
+            article=article,
+            user=request.user,
+        ).exists():
             return Response(
                 {'errors': _('Article is favorited already.')},
                 status.HTTP_400_BAD_REQUEST,
@@ -86,5 +96,8 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
                 {'errors': _('Article is not favorited yet.')},
                 status.HTTP_400_BAD_REQUEST,
             )
-        FavoriteArticle.objects.filter(article=article, user=request.user).delete()
+        FavoriteArticle.objects.filter(
+            article=article,
+            user=request.user,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
