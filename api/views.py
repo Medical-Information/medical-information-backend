@@ -52,7 +52,6 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         qs = Article.objects.all()
 
         user = self.request.user
-        # вычисляем is_favorited-является ли статья избранной для пользователя
         if user.is_authenticated:
             is_favorited_expression = Exists(
                 FavoriteArticle.objects.filter(
