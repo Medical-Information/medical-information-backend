@@ -39,16 +39,44 @@ class ArticleForm(ModelForm):
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleForm
+    fieldsets = [
+        (
+            None,
+            {
+                'fields': [
+                    'title',
+                    ('text', 'image'),
+                    ('author', 'is_published'),
+                    ('source_name', 'source_link'),
+                    'tags',
+                ],
+            },
+        ),
+        (
+            _('Statistics'),
+            {
+                'fields': [('created_at', 'updated_at', 'views_count')],
+            },
+        ),
+    ]
+
     list_display = (
         'title',
         'author',
         'source_link',
         'is_published',
         'views_count',
+        'created_at',
+        'updated_at',
     )
     list_filter = ('author', 'is_published', ('tags', TreeRelatedFieldListFilter))
     search_fields = ('author__email', 'title')
     filter_horizontal = ('tags',)
+    readonly_fields = (
+        'created_at',
+        'updated_at',
+        'views_count',
+    )
 
 
 @admin.register(Tag)
