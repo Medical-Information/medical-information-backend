@@ -16,7 +16,10 @@ class ArticleFilter(django_filters.FilterSet):
     )
 
     def filter_tags(self, queryset, name, value):  # noqa
-        tags = self.request.query_params.getlist('tags')
-        for tag in tags:
-            queryset = queryset.filter(tags__id=tag)
-        return queryset
+        if not value:
+            return queryset
+        tagsset = set()
+        for tag in value:
+            if tag not in tagsset:
+                tagsset = tagsset.union(tag.get_descendants(include_self=True))
+        return queryset.filter(tags__in=tagsset).distinct()
