@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 (
                     'created_at',
                     models.DateTimeField(
-                        default=django.utils.timezone.now,
+                        auto_now_add=True,
                         verbose_name='created_at',
                     ),
                 ),
