@@ -4,11 +4,16 @@ from articles.models import Article
 from likes.models import LikeDislike
 
 
-def rating(user):
-    return LikeDislike.objects.filter(
-        user=user.id,
-    ).aggregate(Sum('vote')).get('vote__sum') or 0
+def rating(user) -> int:
+    return (
+        LikeDislike.objects.filter(
+            user=user.id,
+        )
+        .aggregate(Sum('vote'))
+        .get('vote__sum')
+        or 0
+    )
 
 
-def publications(user):
+def publications(user) -> int:
     return Article.objects.filter(author=user).count()

@@ -30,11 +30,11 @@ class UserSerializer(DjoserUserSerializer):
     rating = SerializerMethodField()
     publications = SerializerMethodField()
 
-    def get_rating(self, user):
+    def get_rating(self, user) -> int:
         user = self.context.get('request').user
         return users_services.rating(user)
 
-    def get_publications(self, user):
+    def get_publications(self, user) -> int:
         user = self.context.get('request').user
         return users_services.publications(user)
 
@@ -93,11 +93,11 @@ class ArticleSerializer(ModelSerializer):
             vote_type=LikeDislike.DISLIKE,
         )
 
-    def get_total_likes(self, obj):
+    def get_total_likes(self, obj) -> int:
         return obj.likes_count
 
-    def get_total_dislikes(self, obj):
+    def get_total_dislikes(self, obj) -> int:
         return obj.dislikes_count
 
-    def get_rating(self, obj):
+    def get_rating(self, obj) -> int:
         return obj.rating
