@@ -1,5 +1,3 @@
-import uuid
-
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
@@ -76,7 +74,7 @@ class Article(UUIDMixin, TimeStampedMixin):
         self.save()
 
 
-class Tag(MPTTModel):
+class Tag(UUIDMixin, MPTTModel):
     """Теги."""
 
     class Meta:
@@ -86,13 +84,6 @@ class Tag(MPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-    pk = models.UUIDField(
-        _('id'),
-        name='id',
-        default=uuid.uuid4,
-        primary_key=True,
-        editable=False,
-    )
     name = models.CharField(
         verbose_name=_('Tag name'),
         max_length=100,
