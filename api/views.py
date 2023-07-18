@@ -1,12 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Exists, OuterRef, Value
 from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet as UViewSet
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from djoser.serializers import TokenSerializer
+from djoser.views import TokenCreateView as DjoserTokenCreateView
+from djoser.views import TokenDestroyView as DjoserTokenDestroyView
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -17,30 +17,32 @@ from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer, UserSerializer
+from api.serializers import ArticleSerializer
 from articles.models import Article, FavoriteArticle
 
 User = get_user_model()
 
 
-class UserViewSet(UViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-@method_decorator(
-    name='list',
-    decorator=swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'is_favorited',
-                openapi.IN_QUERY,
-                description=_('Is favorited article'),
-                type=openapi.TYPE_BOOLEAN,
-            ),
-        ],
+@extend_schema_view(
+    post=extend_schema(
+        description='create token',
+        responses={status.HTTP_200_OK: TokenSerializer},
     ),
 )
+class TokenCreateView(DjoserTokenCreateView):
+    pass
+
+
+@extend_schema_view(
+    post=extend_schema(
+        description='destroy token',
+        responses={status.HTTP_204_NO_CONTENT: None},
+    ),
+)
+class TokenDestroyView(DjoserTokenDestroyView):
+    pass
+
+
 class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
