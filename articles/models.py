@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 
 from core.models import TimeStampedMixin, UUIDMixin
 from likes.models import LikeDislike
@@ -33,7 +35,7 @@ class Article(UUIDMixin, TimeStampedMixin):
     is_published = models.BooleanField(_('is published'), default=False)
     views_count = models.IntegerField(_('views'), default=0, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    tags = models.ManyToManyField(
+    tags = TreeManyToManyField(
         'Tag',
         related_name='articles',
         verbose_name=_('tags'),
@@ -72,31 +74,36 @@ class Article(UUIDMixin, TimeStampedMixin):
         self.save()
 
 
-class Tag(UUIDMixin):
+class Tag(UUIDMixin, MPTTModel):
     """Теги."""
 
     class Meta:
-        ordering = ('name',)
         verbose_name_plural = _('Tags')
         verbose_name = _('Tag')
 
-    name = models.CharField(verbose_name=_('Tag name'), max_length=100, unique=True)
-    slug = models.SlugField(unique=True)
-    children = models.ManyToManyField(
-        'Tag',
-        related_name='prnts',
-        verbose_name=_('Children'),
-        blank=True,
+    class MPTTMeta:
+        order_insertion_by = ['name']
+
+    name = models.CharField(
+        verbose_name=_('Tag name'),
+        max_length=100,
+        unique=True,
     )
-    parents = models.ManyToManyField(
-        'Tag',
-        related_name='chldrn',
-        verbose_name=_('Parents'),
+    parent = TreeForeignKey(
+        'self',
+        related_name='children',
+        verbose_name=_('Parent category'),
+        on_delete=models.PROTECT,
         blank=True,
+        null=True,
+        db_index=True,
     )
 
     def __str__(self) -> str:
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('post-by-category', args=[str(self.slug)])
 
 
 class FavoriteArticle(UUIDMixin):

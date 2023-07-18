@@ -10,6 +10,7 @@ from rest_framework.serializers import (
 from articles.models import Article
 from likes import services as likes_services
 from likes.models import LikeDislike
+from users import services as users_services
 
 User = get_user_model()
 
@@ -22,7 +23,20 @@ class UserSerializer(DjoserUserSerializer):
             'email',
             'first_name',
             'last_name',
+            'rating',
+            'publications',
         )
+
+    rating = SerializerMethodField()
+    publications = SerializerMethodField()
+
+    def get_rating(self, user):
+        user = self.context.get('request').user
+        return users_services.rating(user)
+
+    def get_publications(self, user):
+        user = self.context.get('request').user
+        return users_services.publications(user)
 
 
 class UserCreateSerializer(DjoserUserSerializer):
@@ -65,11 +79,19 @@ class ArticleSerializer(ModelSerializer):
 
     def get_is_fan(self, obj) -> bool:
         user = self.context.get('request').user
-        return likes_services.is_group(obj, user, vote_type=LikeDislike.LIKE)
+        return likes_services.is_group(
+            obj,
+            user,
+            vote_type=LikeDislike.LIKE,
+        )
 
     def get_is_hater(self, obj) -> bool:
         user = self.context.get('request').user
-        return likes_services.is_group(obj, user, vote_type=LikeDislike.DISLIKE)
+        return likes_services.is_group(
+            obj,
+            user,
+            vote_type=LikeDislike.DISLIKE,
+        )
 
     def get_total_likes(self, obj):
         return obj.likes_count
