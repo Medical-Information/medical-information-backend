@@ -91,7 +91,7 @@ class TagAdmin(DraggableMPTTAdmin):
     def tree_actions(self, instance):
         try:
             url = instance.get_absolute_url()
-        except Exception:  # Nevermind.
+        except Exception:  # noqa: B902
             url = ''
 
         return format_html(

@@ -15,7 +15,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='*').split()
 
 # SSL
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', default='').split()
-
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
@@ -29,11 +29,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
-    'drf_yasg',
-    'rest_framework',
-    'rest_framework.authtoken',
     'djoser',
     'mptt',
+    'drf_spectacular',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -105,6 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
@@ -120,6 +121,16 @@ SWAGGER_SETTINGS = {
             'in': 'header',
         },
     },
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Stethoscope API Documentation',
+    'DESCRIPTION': 'Stethoscope API Documentation description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'TOS': 'https://stethoscope.acceleratorpracticum.ru/terms/',
+    'CONTACT': {'email': 'info@stethoscope.acceleratorpracticum.ru'},
+    'LICENSE': {'name': 'BSD License'},
 }
 
 DJOSER = {
