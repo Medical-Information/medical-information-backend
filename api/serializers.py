@@ -7,7 +7,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
-from articles.models import Article
+from articles.models import Article, Tag
 from likes import services as likes_services
 from likes.models import LikeDislike
 from users import services as users_services
@@ -101,3 +101,16 @@ class ArticleSerializer(ModelSerializer):
 
     def get_rating(self, obj) -> int:
         return obj.rating
+
+
+class TagSerializer(ModelSerializer):
+    """Tag serializer."""
+
+    class Meta:
+        model = Tag
+        fields = (
+            'pk',
+            'name',
+            'parent',
+            'children',
+        )

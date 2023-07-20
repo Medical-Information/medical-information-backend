@@ -11,14 +11,14 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer
-from articles.models import Article, FavoriteArticle
+from api.serializers import ArticleSerializer, TagSerializer
+from articles.models import Article, FavoriteArticle, Tag
 
 User = get_user_model()
 
@@ -102,3 +102,16 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
             user=request.user,
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TagViewSet(ReadOnlyModelViewSet):
+    """Tag ViewSet."""
+
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+    @action(detail=False)
+    def roots(self, request):
+        all_roots = self.get_queryset().filter(parent__isnull=True)
+        serializer = TagSerializer(all_roots, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
