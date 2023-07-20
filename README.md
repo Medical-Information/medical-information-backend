@@ -87,3 +87,10 @@ pre-commit install
 - Удалить голос за статью [localhost:8000/api/v1/articles/<id_articles>/unvote/](http://localhost:8000/api/v1/articles/<id_articles>/unvote/)
 - Получить список лайкнувших статью [localhost:8000/api/v1/articles/<id_articles>/votes/fans/](http://localhost:8000/api/v1/articles/<id_articles>/votes/fans/)
 - Получить список дизлайкнувших статью [localhost:8000/api/v1/articles/<id_articles>/votes/haters/](http://localhost:8000/api/v1/articles/<id_articles>/votes/haters/)
+
+
+Тестовый запуск дополнительных процессов:
+- celery -A stethoscope celery                      # асинхронная очередь задач
+- celery -A stethoscope beat                        # планировщик заданий celery
+- celery -A stethoscope flower                      # мониторинг
+- docker run -d -p 6379:6379 --name redis redis     # брокер сообщений celery

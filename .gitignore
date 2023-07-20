@@ -130,6 +130,7 @@ celerybeat.pid
 .venv
 env/
 venv/
+myenv/
 ENV/
 env.bak/
 venv.bak/
@@ -166,3 +167,11 @@ cython_debug/
 #.idea/
 
 media/
+
+.bash_history
+.motd_shown
+.sudo_as_admin_successful
+.docker
+.landscape
+.config
+.local

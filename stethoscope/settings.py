@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'articles.apps.ArticlesConfig',
     'likes.apps.LikesConfig',
+    'mailings.apps.MailingsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -179,3 +180,6 @@ if LOGGING_ENABLED:
             },
         },
     }
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
