@@ -7,7 +7,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
-from articles.models import Article
+from articles.models import Article, Tag
 from likes import services as likes_services
 from likes.models import LikeDislike
 from users import services as users_services
@@ -16,6 +16,9 @@ User = get_user_model()
 
 
 class UserSerializer(DjoserUserSerializer):
+    rating = SerializerMethodField()
+    publications_amount = SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -24,19 +27,16 @@ class UserSerializer(DjoserUserSerializer):
             'first_name',
             'last_name',
             'rating',
-            'publications',
+            'publications_amount',
         )
-
-    rating = SerializerMethodField()
-    publications = SerializerMethodField()
 
     def get_rating(self, user) -> int:
         user = self.context.get('request').user
-        return users_services.rating(user)
+        return users_services.get_rating(user)
 
-    def get_publications(self, user) -> int:
+    def get_publications_amount(self, user) -> int:
         user = self.context.get('request').user
-        return users_services.publications(user)
+        return users_services.get_publications_amount(user)
 
 
 class UserCreateSerializer(DjoserUserSerializer):
@@ -62,13 +62,6 @@ class UserCreateSerializer(DjoserUserSerializer):
 
 
 class ArticleSerializer(ModelSerializer):
-    """Article serializer."""
-
-    class Meta:
-        model = Article
-        fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at')
-
     is_fan = SerializerMethodField()
     is_hater = SerializerMethodField()
     total_likes = SerializerMethodField()
@@ -77,9 +70,33 @@ class ArticleSerializer(ModelSerializer):
     image = Base64ImageField()
     is_favorited = BooleanField(read_only=True)
 
+    class Meta:
+        model = Article
+        fields = (
+            'id',
+            'is_fan',
+            'is_hater',
+            'total_likes',
+            'total_dislikes',
+            'rating',
+            'image',
+            'is_favorited',
+            'created_at',
+            'updated_at',
+            'title',
+            'text',
+            'source_name',
+            'source_link',
+            'is_published',
+            'views_count',
+            'author',
+            'tags',
+        )
+        read_only_fields = ('created_at', 'updated_at')
+
     def get_is_fan(self, obj) -> bool:
         user = self.context.get('request').user
-        return likes_services.is_group(
+        return likes_services.is_object_voted_by_user(
             obj,
             user,
             vote_type=LikeDislike.LIKE,
@@ -87,7 +104,7 @@ class ArticleSerializer(ModelSerializer):
 
     def get_is_hater(self, obj) -> bool:
         user = self.context.get('request').user
-        return likes_services.is_group(
+        return likes_services.is_object_voted_by_user(
             obj,
             user,
             vote_type=LikeDislike.DISLIKE,
@@ -101,3 +118,14 @@ class ArticleSerializer(ModelSerializer):
 
     def get_rating(self, obj) -> int:
         return obj.rating
+
+
+class TagSerializer(ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = (
+            'pk',
+            'name',
+            'parent',
+            'children',
+        )

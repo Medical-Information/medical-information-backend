@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.11"]
         linter: ["flake8", "mypy"]
     steps:
     - uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.11"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -112,7 +112,5 @@ jobs:
             echo EMAIL_PORT=${{ vars.EMAIL_PORT }} >> .env
             echo EMAIL_USE_SSL=${{ vars.EMAIL_USE_SSL }} >> .env
             echo EMAIL_USE_TLS=${{ vars.EMAIL_USE_TLS }} >> .env
-            sudo docker image rm ${{ vars.DOCKER_USERNAME }}/stethoscope-backend
-            sudo docker pull ${{ vars.DOCKER_USERNAME }}/stethoscope-backend
-            sudo docker compose down
-            sudo docker compose up -d --build
+            sudo docker compose pull
+            sudo docker compose up -d

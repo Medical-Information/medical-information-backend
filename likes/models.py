@@ -19,13 +19,15 @@ class LikeDislike(models.Model):
     )
     object_id = models.UUIDField()
     objects = LikeDislikeManager()
-    vote = models.SmallIntegerField(verbose_name=_('Vote'),
-                                    choices=VOTES,
-                                    )
-    user = models.ForeignKey(User,
-                             verbose_name=_('User'),
-                             related_name='likes',
-                             on_delete=models.CASCADE,
-                             )
+    vote = models.SmallIntegerField(
+        verbose_name=_('Vote'),
+        choices=VOTES,
+    )
+    user = models.ForeignKey(
+        User,
+        verbose_name=_('User'),
+        related_name='likes',
+        on_delete=models.CASCADE,
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     content_object = GenericForeignKey('content_type', 'object_id')

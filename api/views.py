@@ -11,14 +11,14 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer
-from articles.models import Article, FavoriteArticle
+from api.serializers import ArticleSerializer, TagSerializer
+from articles.models import Article, FavoriteArticle, Tag
 
 User = get_user_model()
 
@@ -51,7 +51,7 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
     filterset_class = ArticleFilter
 
     def get_queryset(self):
-        qs = Article.objects.all()
+        qs = Article.objects.all().select_related('author')
 
         user = self.request.user
         if user.is_authenticated:
@@ -73,32 +73,37 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk):
-        article = get_object_or_404(Article, id=pk)
-        if FavoriteArticle.objects.filter(
-            article=article,
+        if FavoriteArticle.objects.get_or_create(
+            article_id=pk,
             user=request.user,
-        ).exists():
-            return Response(
-                {'errors': _('Article is favorited already.')},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        instance = FavoriteArticle(article=article, user=request.user)
-        instance.save()
-        return Response(status=status.HTTP_201_CREATED)
+        )[1]:
+            return Response(status=status.HTTP_201_CREATED)
+        get_object_or_404(Article, id=pk)
+        return Response(
+            {'errors': _('Article is favorited already.')},
+            status.HTTP_400_BAD_REQUEST,
+        )
 
     @favorite.mapping.delete
     def delete_favorite(self, request, pk):
-        article = get_object_or_404(Article, id=pk)
-        if not FavoriteArticle.objects.filter(
-            article=article,
+        if FavoriteArticle.objects.filter(
+            article_id=pk,
             user=request.user,
-        ).exists():
-            return Response(
-                {'errors': _('Article is not favorited yet.')},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        FavoriteArticle.objects.filter(
-            article=article,
-            user=request.user,
-        ).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        ).delete()[0]:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        get_object_or_404(Article, id=pk)
+        return Response(
+            {'errors': _('Article is not favorited yet.')},
+            status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class TagViewSet(ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+    @action(detail=False)
+    def roots(self, request):
+        all_roots = self.get_queryset().filter(parent__isnull=True)
+        serializer = TagSerializer(all_roots, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
