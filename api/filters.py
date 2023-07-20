@@ -4,10 +4,6 @@ from articles.models import Article, Tag
 
 
 class ArticleFilter(django_filters.FilterSet):
-    class Meta:
-        model = Article
-        fields = ('text',)
-
     is_favorited = django_filters.BooleanFilter()
     text = django_filters.CharFilter(lookup_expr='icontains')
     tags = django_filters.filters.ModelMultipleChoiceFilter(
@@ -15,11 +11,15 @@ class ArticleFilter(django_filters.FilterSet):
         method='filter_tags',
     )
 
-    def filter_tags(self, queryset, name, value):  # noqa
+    class Meta:
+        model = Article
+        fields = ('text',)
+
+    def filter_tags(self, queryset, name, value):  # noqa: WPS122
         if not value:
             return queryset
-        tagsset = set()
+        tags = set()
         for tag in value:
-            if tag not in tagsset:
-                tagsset = tagsset.union(tag.get_descendants(include_self=True))
-        return queryset.filter(tags__in=tagsset).distinct()
+            if tag not in tags:
+                tags = tags.union(tag.get_descendants(include_self=True))
+        return queryset.filter(tags__in=tags).distinct()

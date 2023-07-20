@@ -18,10 +18,6 @@ CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', default='').split()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
-    'api.apps.ApiConfig',
-    'articles.apps.ArticlesConfig',
-    'likes.apps.LikesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,11 +25,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
-    'djoser',
-    'mptt',
     'drf_spectacular',
     'rest_framework',
     'rest_framework.authtoken',
+    'djoser',
+    'mptt',
+    'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
+    'articles.apps.ArticlesConfig',
+    'likes.apps.LikesConfig',
 ]
 
 MIDDLEWARE = [

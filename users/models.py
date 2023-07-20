@@ -15,17 +15,14 @@ validate_name = RegexValidator(
 
 
 class User(TimeStampedMixin, UUIDMixin, AbstractUser):
-    """ "
-    Класс User представляет пользовательскую модель с дополнительным
+    """
+    Класс 'пользователь'.
+
+    Представляет пользовательскую модель с дополнительным
     функционалом, таким как автоматическая генерация временных меток,
     добавление уникального идентификатора (UUID) и базовая реализация
     пользовательских атрибутов и методов.
     """
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS: List[str] = []
@@ -51,6 +48,11 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     role = models.CharField(choices=roles, default='user', max_length=50)
 
     objects = UserManager()
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
 
     def __str__(self):
         return self.email

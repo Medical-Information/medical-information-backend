@@ -12,4 +12,4 @@ class LikeDislikeManager(models.Manager):
         return self.get_queryset().filter(vote__lt=0)
 
     def sum_rating(self):
-        return self.get_queryset().aggregate(Sum('vote')).get('vote__sum') or 0
+        return self.get_queryset().aggregate(Sum('vote')).get('vote__sum', 0)
