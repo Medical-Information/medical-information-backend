@@ -120,12 +120,22 @@ class ArticleSerializer(ModelSerializer):
         return obj.rating
 
 
-class TagSerializer(ModelSerializer):
+class TagRootsSerializer(ModelSerializer):
+    """Сериализатор для корневых тегов, модель Tag."""
+
     class Meta:
         model = Tag
-        fields = (
+        fields = [
             'pk',
             'name',
-            'parent',
             'children',
-        )
+        ]
+
+
+class TagSerializer(TagRootsSerializer):
+    """Сериализатор всех тогов, модель Tag."""
+
+    class Meta(TagRootsSerializer.Meta):
+        fields = TagRootsSerializer.Meta.fields + [
+            'parent',
+        ]
