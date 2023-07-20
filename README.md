@@ -67,7 +67,10 @@ python manage.py runserver
 ### Ссылки
 - Открыть панель администратора [localhost:8000/admin/](http://localhost:8000/admin/)
 - Открыть главную страницу [localhost:8000/](http://localhost:8000/)
-- Открыть страницу документации API [localhost:8000/api/v1/swagger/](http://localhost:8000/api/v1/swagger/)
+- Открыть страницы документации API:
+  * [api.yaml](https://stethoscope.acceleratorpracticum.ru/api/v1/schema/)
+  * [swagger-ui](https://stethoscope.acceleratorpracticum.ru/api/v1/schema/swagger-ui/)
+  * [redoc](https://stethoscope.acceleratorpracticum.ru/api/v1/schema/redoc/)
 ### Установка pre-commit хуков
 ```
 pre-commit install
