@@ -13,7 +13,10 @@ load_dotenv()
 
 @shared_task
 def send_weekly_email():
-    top_articles = TopArticles.objects.values_list('articles__title', 'articles__pk')
+    top_articles = TopArticles.objects.values_list(
+        'articles__title',
+        'articles__pk',
+    )
     links_articles = []
     for title_article, id__article in top_articles:
         links_articles.append(
