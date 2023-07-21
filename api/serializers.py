@@ -9,7 +9,7 @@ from rest_framework.serializers import (
 
 from articles.models import Article, Tag
 from likes import services as likes_services
-from likes.models import Options
+from likes.models import VoteTypes
 from users import services as users_services
 
 User = get_user_model()
@@ -97,7 +97,7 @@ class ArticleSerializer(ModelSerializer):
         return likes_services.is_object_voted_by_user(
             obj,
             user,
-            vote_type=Options.LIKE,
+            vote_type=VoteTypes.LIKE,
         )
 
     def get_is_hater(self, obj) -> bool:
@@ -105,7 +105,7 @@ class ArticleSerializer(ModelSerializer):
         return likes_services.is_object_voted_by_user(
             obj,
             user,
-            vote_type=Options.DISLIKE,
+            vote_type=VoteTypes.DISLIKE,
         )
 
     def get_total_likes(self, obj) -> int:
