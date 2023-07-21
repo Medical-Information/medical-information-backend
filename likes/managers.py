@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Sum
 
 
-class LikeDislikeManager(models.Manager):
+class VoteManager(models.Manager):
     use_for_related_fields = True
 
     def likes(self):

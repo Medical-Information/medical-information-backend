@@ -4,24 +4,21 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from likes.managers import LikeDislikeManager
+from likes.managers import VoteManager
 
 User = get_user_model()
 
 
-class LikeDislike(models.Model):
-    LIKE = 1
-    DISLIKE = -1
+class Vote(models.Model):
+    class Options(models.IntegerChoices):
+        LIKE = 1, _('Like')
+        DISLIKE = -1, _('Dislike')
 
-    VOTES = (
-        (DISLIKE, _('Dislike')),
-        (LIKE, _('Like')),
-    )
     object_id = models.UUIDField()
-    objects = LikeDislikeManager()
-    vote = models.SmallIntegerField(
+    objects = VoteManager()
+    vote = models.IntegerField(
         verbose_name=_('Vote'),
-        choices=VOTES,
+        choices=Options.choices,
     )
     user = models.ForeignKey(
         User,
