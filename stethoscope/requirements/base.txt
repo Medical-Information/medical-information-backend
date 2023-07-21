@@ -9,3 +9,6 @@ drf-spectacular==0.26.3
 Pillow==10.0.0
 pre-commit==3.3.3
 python-dotenv==1.0.0
+celery=5.3.1
+flower=2.0.0
+redis=4.6.0
