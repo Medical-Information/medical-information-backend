@@ -9,7 +9,7 @@ from likes.managers import VoteManager
 User = get_user_model()
 
 
-class Options(models.IntegerChoices):
+class VoteTypes(models.IntegerChoices):
     LIKE = 1, _('Like')
     DISLIKE = -1, _('Dislike')
 
@@ -19,7 +19,7 @@ class Vote(models.Model):
     objects = VoteManager()
     vote = models.IntegerField(
         verbose_name=_('Vote'),
-        choices=Options.choices,
+        choices=VoteTypes.choices,
     )
     user = models.ForeignKey(
         User,
