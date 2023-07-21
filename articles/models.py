@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 
 from core.models import TimeStampedMixin, UUIDMixin
-from likes.models import LikeDislike
+from likes.models import Vote
 
 User = get_user_model()
 
@@ -42,7 +42,7 @@ class Article(UUIDMixin, TimeStampedMixin):
         verbose_name=_('tags'),
         blank=True,
     )
-    votes = GenericRelation(LikeDislike, related_query_name='articles')
+    votes = GenericRelation(Vote, related_query_name='articles')
 
     class Meta:
         ordering = ['-created_at']

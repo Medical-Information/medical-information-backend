@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from api.serializers import UserSerializer
 from likes import services
-from likes.models import LikeDislike
+from likes.models import VoteTypes
 
 
 class LikedMixin:
@@ -15,9 +15,9 @@ class LikedMixin:
         url_path='vote/(?P<vote_type>\\w+)',
         permission_classes=(IsAuthenticated,),
     )
-    def vote(self, request, pk=None, vote_type=None):
+    def add_vote(self, request, pk=None, vote_type=None):
         """Добавляет лайк или дизлайк в зависимости от vote_type."""
-        votes = {'like': LikeDislike.LIKE, 'dislike': LikeDislike.DISLIKE}
+        votes = {'like': VoteTypes.LIKE, 'dislike': VoteTypes.DISLIKE}
         obj = self.get_object()
         if vote_type not in votes:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -40,9 +40,9 @@ class LikedMixin:
         detail=True,
         url_path='votes/(?P<votes_group>\\w+)',
     )
-    def votes(self, request, pk=None, votes_group=None):
+    def get_voters_group(self, request, pk=None, votes_group=None):
         """Возвращает всех пользователей, голосовавших по объекту."""
-        votes = {'fans': LikeDislike.LIKE, 'haters': LikeDislike.DISLIKE}
+        votes = {'fans': VoteTypes.LIKE, 'haters': VoteTypes.DISLIKE}
         obj = self.get_object()
         if votes_group not in votes:
             return Response(status=status.HTTP_400_BAD_REQUEST)

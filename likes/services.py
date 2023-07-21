@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 
-from likes.models import LikeDislike
+from likes.models import Vote
 
 User = get_user_model()
 
@@ -9,7 +9,7 @@ User = get_user_model()
 def add_vote(obj, user, vote_type):
     """Добавляет голос (лайк/дизлайк) пользователя по объекту."""
     obj_type = ContentType.objects.get_for_model(obj)
-    vote, is_created = LikeDislike.objects.get_or_create(
+    vote, is_created = Vote.objects.get_or_create(
         content_type=obj_type,
         object_id=obj.id,
         user=user,
@@ -25,7 +25,7 @@ def add_vote(obj, user, vote_type):
 def remove_vote(obj, user):
     """Удаляет голос (лайк/дизлайк) пользователя по объекту."""
     obj_type = ContentType.objects.get_for_model(obj)
-    LikeDislike.objects.filter(
+    Vote.objects.filter(
         content_type=obj_type,
         object_id=obj.id,
         user=user,
@@ -37,7 +37,7 @@ def is_object_voted_by_user(obj, user, vote_type=None) -> bool:
     if not user.is_authenticated:
         return False
     obj_type = ContentType.objects.get_for_model(obj)
-    likes = LikeDislike.objects.filter(
+    likes = Vote.objects.filter(
         content_type=obj_type,
         object_id=obj.id,
         user=user,
