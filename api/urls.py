@@ -1,8 +1,13 @@
 from django.urls import include, path
+from djoser.views import UserViewSet
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 from rest_framework import routers
 
-from api.swagger import schema_view
-from api.views import ArticleViewSet, UserViewSet
+from api.views import ArticleViewSet, TagViewSet, TokenCreateView, TokenDestroyView
 
 app_name = 'api'
 
@@ -10,18 +15,21 @@ router_v1 = routers.DefaultRouter()
 
 router_v1.register(r'users', UserViewSet, basename='users')
 router_v1.register(r'articles', ArticleViewSet, basename='articles')
+router_v1.register(r'tags', TagViewSet, basename='tags')
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),
-    path('v1/auth/', include('djoser.urls.authtoken')),
+    path('v1/auth/login/', TokenCreateView.as_view(), name='login'),
+    path('v1/auth/logout/', TokenDestroyView.as_view(), name='logout'),
+    path('v1/schema/', SpectacularAPIView.as_view(), name='openapi-schema'),
     path(
-        'v1/swagger/',
-        schema_view.with_ui('swagger', cache_timeout=0),
-        name='schema-swagger-ui',
+        'v1/schema/swagger-ui/',
+        SpectacularSwaggerView.as_view(url_name='api:openapi-schema'),
+        name='swagger-ui',
     ),
     path(
-        'v1/redoc/',
-        schema_view.with_ui('redoc', cache_timeout=0),
-        name='schema-redoc',
+        'v1/schema/redoc/',
+        SpectacularRedocView.as_view(url_name='api:openapi-schema'),
+        name='redoc',
     ),
 ]

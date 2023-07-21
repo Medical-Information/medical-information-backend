@@ -1,9 +1,9 @@
 import pytest
-from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test import Client
 from model_bakery import baker
 
-User = settings.AUTH_USER_MODEL
+User = get_user_model()
 
 
 @pytest.fixture()
