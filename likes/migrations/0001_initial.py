@@ -30,7 +30,8 @@ class Migration(migrations.Migration):
                 (
                     'vote',
                     models.IntegerField(
-                        choices=[(1, 'Like'), (-1, 'Dislike')], verbose_name='Vote'
+                        choices=[(1, 'Like'), (-1, 'Dislike')],
+                        verbose_name='Vote',
                     ),
                 ),
                 (

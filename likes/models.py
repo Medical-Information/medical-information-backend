@@ -9,11 +9,12 @@ from likes.managers import VoteManager
 User = get_user_model()
 
 
-class Vote(models.Model):
-    class Options(models.IntegerChoices):
-        LIKE = 1, _('Like')
-        DISLIKE = -1, _('Dislike')
+class Options(models.IntegerChoices):
+    LIKE = 1, _('Like')
+    DISLIKE = -1, _('Dislike')
 
+
+class Vote(models.Model):
     object_id = models.UUIDField()
     objects = VoteManager()
     vote = models.IntegerField(
