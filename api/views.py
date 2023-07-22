@@ -17,7 +17,7 @@ from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer, TagSerializer
+from api.serializers import ArticleSerializer, TagRootsSerializer, TagSerializer
 from articles.models import Article, FavoriteArticle, Tag
 
 User = get_user_model()
@@ -99,11 +99,18 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
 
 
 class TagViewSet(ReadOnlyModelViewSet):
+    """Вьюсет модели Tag."""
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        if self.action == 'roots':
+            return TagRootsSerializer(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
 
     @action(detail=False)
     def roots(self, request):
         all_roots = self.get_queryset().filter(parent__isnull=True)
-        serializer = TagSerializer(all_roots, many=True)
+        serializer = self.get_serializer(all_roots, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)

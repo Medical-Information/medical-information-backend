@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -10,6 +11,8 @@ from articles.models import Article, FavoriteArticle, Tag
 
 
 class ArticleForm(ModelForm):
+    annotation = forms.CharField(widget=forms.Textarea)
+
     def check_for_sub_tags(self, instance):
         tags = sorted(instance.tags.all(), key=lambda tag: tag.level)
         while len(tags) > 0:
@@ -45,6 +48,7 @@ class ArticleAdmin(admin.ModelAdmin):
             {
                 'fields': [
                     'title',
+                    'annotation',
                     ('text', 'image'),
                     ('author', 'is_published'),
                     ('source_name', 'source_link'),

@@ -1,12 +1,12 @@
 from django.db.models import Sum
 
 from articles.models import Article
-from likes.models import LikeDislike
+from likes.models import Vote
 
 
 def get_rating(user) -> int:
     return (
-        LikeDislike.objects.filter(
+        Vote.objects.filter(
             user=user.id,
         )
         .aggregate(Sum('vote'))
