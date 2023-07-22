@@ -14,6 +14,10 @@ User = get_user_model()
 class Article(UUIDMixin, TimeStampedMixin):
     image = models.ImageField(upload_to='images/')
     title = models.CharField(_('title'), max_length=255)
+    annotation = models.CharField(
+        _('annotation'),
+        max_length=400,
+    )
     text = models.TextField(_('text'))
     source_name = models.CharField(
         _('source name'),
