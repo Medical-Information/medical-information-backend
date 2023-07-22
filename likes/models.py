@@ -23,7 +23,7 @@ class Vote(models.Model):
     )
     user = models.ForeignKey(
         User,
-        verbose_name=_('User'),
+        verbose_name=_('user'),
         related_name='likes',
         on_delete=models.CASCADE,
     )

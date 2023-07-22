@@ -82,6 +82,7 @@ class ArticleSerializer(ModelSerializer):
             'created_at',
             'updated_at',
             'title',
+            'annotation',
             'text',
             'source_name',
             'source_link',
