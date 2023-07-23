@@ -49,8 +49,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# доступ со всех доменов
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = (
+    os.getenv('CORS_ORIGIN_ALLOW_ALL', default='False').lower() == 'true'
+)
+CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'stethoscope.urls'
 
