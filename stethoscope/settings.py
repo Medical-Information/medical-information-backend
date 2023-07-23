@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'mptt',
-    'corsheaders',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
     'articles.apps.ArticlesConfig',
