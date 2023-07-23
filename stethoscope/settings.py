@@ -10,10 +10,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', default='super_secret_key_513115%')
 
 DEBUG = os.getenv('DEBUG', default='False').lower() == 'true'
-CORS_ORIGIN_ALLOW_ALL = (
-    os.getenv('CORS_ORIGIN_ALLOW_ALL', default='False').lower() == 'true'
-)
-CORS_URLS_REGEX = r'^/api/.*$'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='*').split()
 
@@ -52,6 +48,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = (
+    os.getenv('CORS_ORIGIN_ALLOW_ALL', default='False').lower() == 'true'
+)
+CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'stethoscope.urls'
 
