@@ -7,3 +7,4 @@ venv/
 db.sqlite3
 infra/
 staticfiles/
+media/
