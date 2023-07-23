@@ -52,11 +52,6 @@ MIDDLEWARE = [
 # доступ со всех доменов
 CORS_ORIGIN_ALLOW_ALL = True
 
-# доступ c определенных доменов
-# CORS_ALLOWED_ORIGINS = [
-#     '...',
-# ]
-
 ROOT_URLCONF = 'stethoscope.urls'
 
 TEMPLATES = [
