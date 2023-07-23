@@ -10,6 +10,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', default='super_secret_key_513115%')
 
 DEBUG = os.getenv('DEBUG', default='False').lower() == 'true'
+CORS_ORIGIN_ALLOW_ALL = (
+    os.getenv('CORS_ORIGIN_ALLOW_ALL', default='False').lower() == 'true'
+)
+CORS_URLS_REGEX = r'^/api/.*$'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='*').split()
 
@@ -27,6 +31,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
     'rest_framework',
+    'corsheaders',
     'rest_framework.authtoken',
     'djoser',
     'mptt',
@@ -40,6 +45,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
