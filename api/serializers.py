@@ -15,20 +15,31 @@ from users import services as users_services
 User = get_user_model()
 
 
-class UserSerializer(DjoserUserSerializer):
-    rating = SerializerMethodField()
-    publications_amount = SerializerMethodField()
+class UserSimpleSerializer(DjoserUserSerializer):
+    """Сериализатор модели User для сериализатора модели Article."""
 
     class Meta:
         model = User
-        fields = (
+        fields = [
             'id',
-            'email',
             'first_name',
             'last_name',
+        ]
+
+
+class UserSerializer(UserSimpleSerializer):
+    """Полный сериализатор модели User."""
+
+    rating = SerializerMethodField()
+    publications_amount = SerializerMethodField()
+
+    class Meta(UserSimpleSerializer.Meta):
+        model = User
+        fields = UserSimpleSerializer.Meta.fields + [
+            'email',
             'rating',
             'publications_amount',
-        )
+        ]
 
     def get_rating(self, user) -> int:
         return users_services.get_rating(user)
@@ -59,6 +70,36 @@ class UserCreateSerializer(DjoserUserSerializer):
         return user
 
 
+class TagSimpleSerializer(ModelSerializer):
+    """Сериализатор для списка тегов в сериализаторе модели Article."""
+
+    class Meta:
+        model = Tag
+        fields = [
+            'pk',
+            'name',
+        ]
+
+
+class TagRootsSerializer(ModelSerializer):
+    """Сериализатор для корневых тегов, модель Tag."""
+
+    class Meta(TagSimpleSerializer.Meta):
+        model = Tag
+        fields = TagSimpleSerializer.Meta.fields + [
+            'children',
+        ]
+
+
+class TagSerializer(TagRootsSerializer):
+    """Полный сериализатор тегов, модель Tag."""
+
+    class Meta(TagRootsSerializer.Meta):
+        fields = TagRootsSerializer.Meta.fields + [
+            'parent',
+        ]
+
+
 class ArticleSerializer(ModelSerializer):
     is_fan = SerializerMethodField()
     is_hater = SerializerMethodField()
@@ -67,6 +108,8 @@ class ArticleSerializer(ModelSerializer):
     rating = SerializerMethodField()
     image = Base64ImageField()
     is_favorited = BooleanField(read_only=True)
+    author = UserSimpleSerializer(read_only=True)
+    tags = TagSimpleSerializer(many=True, read_only=True)
 
     class Meta:
         model = Article
@@ -117,24 +160,3 @@ class ArticleSerializer(ModelSerializer):
 
     def get_rating(self, obj) -> int:
         return obj.rating
-
-
-class TagRootsSerializer(ModelSerializer):
-    """Сериализатор для корневых тегов, модель Tag."""
-
-    class Meta:
-        model = Tag
-        fields = [
-            'pk',
-            'name',
-            'children',
-        ]
-
-
-class TagSerializer(TagRootsSerializer):
-    """Сериализатор всех тогов, модель Tag."""
-
-    class Meta(TagRootsSerializer.Meta):
-        fields = TagRootsSerializer.Meta.fields + [
-            'parent',
-        ]
