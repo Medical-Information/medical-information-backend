@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from django.db import transaction
 from django.forms import ModelForm
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -13,8 +12,9 @@ from articles.models import Article, FavoriteArticle, Tag
 class ArticleForm(ModelForm):
     annotation = forms.CharField(widget=forms.Textarea)
 
-    def check_for_sub_tags(self, instance):
-        tags = sorted(instance.tags.all(), key=lambda tag: tag.level)
+    def check_for_sub_tags(self, tags):
+        """Проверяет, что среди переданных тегов нет связанных предков и потомков."""
+        tags = sorted(tags, key=lambda tag: tag.level)
         while len(tags) > 0:
             tag = tags.pop()
             ancestors = tag.get_ancestors(include_self=False)
@@ -27,16 +27,15 @@ class ArticleForm(ModelForm):
         return True, None
 
     def clean(self):
-        ok = False
-        with transaction.atomic(savepoint=True, durable=False):
-            ok, related_tags = self.check_for_sub_tags(self.save(commit=True))
-            transaction.set_rollback(True)
+        """Вызывает проверку связанных тегов, если найдены выбрасывает исключение."""
+        tags = self.cleaned_data.get('tags')
+        ok, related_tags = self.check_for_sub_tags(tags)
         if not ok:
             raise ValidationError(
                 _("You can't assign related tags <%(reltags)s> to content!")
                 % {'reltags': related_tags},
             )
-        return super().clean()
+        return self.cleaned_data
 
 
 @admin.register(Article)
