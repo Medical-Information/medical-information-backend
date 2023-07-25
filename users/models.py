@@ -14,6 +14,13 @@ validate_name = RegexValidator(
 )
 
 
+class RolesTypes(models.TextChoices):
+    USER = 'user', _('user')
+    DOCTOR = 'doctor', _('doctor')
+    MODER = 'moderator', _('moderator')
+    ADMIN = 'admin', _('admin')
+
+
 class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     """
     Класс 'пользователь'.
@@ -26,11 +33,6 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS: List[str] = []
-
-    USER = 'user'
-    MODER = 'moderator'
-    ADMIN = 'admin'
-    roles = [(USER, 'user'), (MODER, 'moderator'), (ADMIN, 'admin')]
 
     first_name = models.CharField(
         _('first name'),
@@ -45,7 +47,12 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     date_joined = None
     username = None
     email = models.EmailField(unique=True)
-    role = models.CharField(choices=roles, default='user', max_length=50)
+    role = models.CharField(
+        verbose_name=_('role'),
+        choices=RolesTypes.choices,
+        default=RolesTypes.USER,
+        max_length=50,
+    )
 
     objects = UserManager()
 
