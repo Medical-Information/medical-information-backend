@@ -10,16 +10,31 @@ class ArticleFilter(django_filters.FilterSet):
         queryset=Tag.objects.all(),
         method='filter_tags',
     )
+    tags_exclude = django_filters.filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
+        method='filter_tags_exclude',
+    )
 
     class Meta:
         model = Article
         fields = ('text',)
 
+    def tags_set(self, tags):
+        """Формирует набор тегов (выбранные и их потомки) для фильтров по тегам."""
+        tagsset = set()
+        for tag in tags:
+            if tag not in tagsset:
+                tagsset = tagsset.union(tag.get_descendants(include_self=True))
+        return tagsset
+
     def filter_tags(self, queryset, name, value):  # noqa: WPS122
+        """Фильтрует aticles, выбирая статьи с указанными тегами."""
         if not value:
             return queryset
-        tags = set()
-        for tag in value:
-            if tag not in tags:
-                tags = tags.union(tag.get_descendants(include_self=True))
-        return queryset.filter(tags__in=tags).distinct()
+        return queryset.filter(tags__in=self.tags_set(value)).distinct()
+
+    def filter_tags_exclude(self, queryset, name, value):  # noqa: WPS122
+        """Фильтрует aticles, исключая статьи с указанными тегами."""
+        if not value:
+            return queryset
+        return queryset.exclude(tags__in=self.tags_set(value)).distinct()
