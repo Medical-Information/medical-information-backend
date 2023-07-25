@@ -10,6 +10,10 @@ class ArticleFilter(django_filters.FilterSet):
         queryset=Tag.objects.all(),
         method='filter_tags',
     )
+    tags_exclude = django_filters.filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
+        method='filter_tags_exclude',
+    )
 
     class Meta:
         model = Article
@@ -28,3 +32,9 @@ class ArticleFilter(django_filters.FilterSet):
         if not value:
             return queryset
         return queryset.filter(tags__in=self.tags_set(value)).distinct()
+
+    def filter_tags_exclude(self, queryset, name, value):  # noqa: WPS122
+        """Фильтрует aticles, исключая статьи с указанными тегами."""
+        if not value:
+            return queryset
+        return queryset.exclude(tags__in=self.tags_set(value)).distinct()
