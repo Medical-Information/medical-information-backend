@@ -10,6 +10,10 @@ class ArticleFilter(django_filters.FilterSet):
         queryset=Tag.objects.all(),
         method='filter_tags',
     )
+    tags_exclude = django_filters.filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
+        method='filter_tags_exclude',
+    )
 
     class Meta:
         model = Article
@@ -23,3 +27,12 @@ class ArticleFilter(django_filters.FilterSet):
             if tag not in tags:
                 tags = tags.union(tag.get_descendants(include_self=True))
         return queryset.filter(tags__in=tags).distinct()
+
+    def filter_tags_exclude(self, queryset, name, value):  # noqa: WPS122
+        if not value:
+            return queryset
+        tags = set()
+        for tag in value:
+            if tag not in tags:
+                tags = tags.union(tag.get_descendants(include_self=True))
+        return queryset.exclude(tags__in=tags).distinct()
