@@ -50,6 +50,10 @@ pip install -r ./stethoscope/requirements/dev.txt
 | EMAIL_PORT | *** | порт smtp-сервера |
 | EMAIL_USE_SSL | True or False | True если формат шифрования SSL, тогда EMAIL_USE_TLS=False |
 | EMAIL_USE_TLS | True or False | True если формат шифрования TLS, тогда EMAIL_USE_SSL=False |
+| CURSOR_PAGINATION_PAGE_SIZE | 6 | Размер страницы пагинации по умолчанию |
+| CURSOR_PAGINATION_MAX_PAGE_SIZE | 50 | Максимальный размер страницы пагинации |
+
+
 
 ### Применить миграции
 ```
