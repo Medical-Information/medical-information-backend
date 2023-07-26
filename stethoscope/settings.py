@@ -144,19 +144,35 @@ SPECTACULAR_SETTINGS = {
     'LICENSE': {'name': 'BSD License'},
 }
 
+SITE_NAME = os.environ.get('SITE_NAME')
+DOMAIN = os.environ.get('DOMAIN')
+PASSWORD_RESET_TIMEOUT_DAYS = os.environ.get('PASSWORD_RESET_TIMEOUT_DAYS', 1)
+
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL':
+        'password/reset/confirm/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'EMAIL': {
+        "activation": "core.email_djoser.ActivationEmail",
+        "confirmation": "core.email_djoser.ConfirmationEmail",
+        "password_reset": "core.email_djoser.PasswordResetEmail",
+        "password_changed_confirmation":
+            "core.email_djoser.PasswordConfirmationEmail",
+    },
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    # 'SEND_CONFIRMATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         'user': 'api.serializers.UserSerializer',
         'current_user': 'api.serializers.UserSerializer',
         'user_create': 'api.serializers.UserCreateSerializer',
     },
-    'HIDE_USERS': True,
+    'HIDE_USERS': False,
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')

@@ -175,3 +175,5 @@ media/
 .landscape
 .config
 .local
+.aws
+.azure

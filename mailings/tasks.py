@@ -1,7 +1,9 @@
+from __future__ import absolute_import, unicode_literals
+
 import os
 
 from celery import shared_task
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from dotenv import load_dotenv
 
@@ -25,7 +27,7 @@ def send_weekly_email():
                 'url': f'http://localhost:8000/api/v1/articles/{id__article}',
             },
         )
-    template_name = 'email_template.html'
+    template_name = 'email_weekly.html'
     context = {
         'links_articles': links_articles,
     }
