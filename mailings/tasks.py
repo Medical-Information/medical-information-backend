@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 import os
 
 from celery import shared_task
@@ -25,7 +27,7 @@ def send_weekly_email():
                 'url': f'http://localhost:8000/api/v1/articles/{id__article}',
             },
         )
-    template_name = 'email_template.html'
+    template_name = 'email_weekly.html'
     context = {
         'links_articles': links_articles,
     }
