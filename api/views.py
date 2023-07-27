@@ -51,7 +51,7 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
     filterset_class = ArticleFilter
 
     def get_queryset(self):
-        qs = Article.objects.all().select_related('author')
+        qs = Article.objects.filter(is_published=True).select_related('author')
 
         user = self.request.user
         if user.is_authenticated:
