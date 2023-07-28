@@ -144,9 +144,23 @@ SPECTACULAR_SETTINGS = {
     'LICENSE': {'name': 'BSD License'},
 }
 
+SITE_NAME = os.environ.get('SITE_NAME')
+DOMAIN = os.environ.get('DOMAIN')
+PASSWORD_RESET_TIMEOUT_DAYS = os.environ.get('PASSWORD_RESET_TIMEOUT_DAYS', 1)
+
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL':
+        'password/reset/confirm/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'EMAIL': {
+        'activation': 'core.email_djoser.ActivationEmail',
+        'confirmation': 'core.email_djoser.ConfirmationEmail',
+        'password_reset': 'core.email_djoser.PasswordResetEmail',
+        'password_changed_confirmation':
+            'core.email_djoser.PasswordConfirmationEmail',
+    },
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         'user': 'api.serializers.UserSerializer',

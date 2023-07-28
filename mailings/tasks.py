@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 import os
 
 from celery import shared_task
@@ -18,14 +20,15 @@ def send_weekly_email():
         'articles__pk',
     )
     links_articles = []
+    url_articles = os.environ.get('URL_ARTICLES')
     for title_article, id__article in top_articles:
         links_articles.append(
             {
                 'title': title_article,
-                'url': f'http://localhost:8000/api/v1/articles/{id__article}',
+                'url': f'{url_articles}{id__article}',
             },
         )
-    template_name = 'email_template.html'
+    template_name = 'email_weekly.html'
     context = {
         'links_articles': links_articles,
     }
@@ -38,7 +41,7 @@ def send_weekly_email():
             flat=True,
         ),
     )
-    subject = 'Weekly Email Stethoscope'
+    subject = os.environ.get('WEEKLY_SUBJECT')
     from_email = os.environ.get('EMAIL_HOST_USER')
 
     email = EmailMultiAlternatives(
