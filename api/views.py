@@ -52,17 +52,17 @@ class UserViewSet(DjoserUserViewSet):
     )
     def subscription(self, request):
         user = User.objects.get(pk=request.user.id)
-        if (user.subscriber and request.method == 'PATCH'
-                or not user.subscriber and request.method == 'DELETE'):
+        if (user.subscribed and request.method == 'PATCH'
+                or not user.subscribed and request.method == 'DELETE'):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         if request.method == 'PATCH':
-            user.subscriber = True
+            user.subscribed = True
             user.save()
             return Response(
                 status=status.HTTP_201_CREATED,
             )
         else:
-            user.subscriber = False
+            user.subscribed = False
             user.save()
             return Response(
                 status=status.HTTP_204_NO_CONTENT,
