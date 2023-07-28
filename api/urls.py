@@ -7,18 +7,18 @@ from drf_spectacular.views import (
 from rest_framework import routers
 
 from api.views import (
-    AnnotatedUserViewSet,
     ArticleViewSet,
     TagViewSet,
     TokenCreateView,
     TokenDestroyView,
+    UserViewSet,
 )
 
 app_name = 'api'
 
 router_v1 = routers.DefaultRouter()
 
-router_v1.register(r'users', AnnotatedUserViewSet, basename='users')
+router_v1.register(r'users', UserViewSet, basename='users')
 router_v1.register(r'articles', ArticleViewSet, basename='articles')
 router_v1.register(r'tags', TagViewSet, basename='tags')
 
