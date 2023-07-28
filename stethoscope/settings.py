@@ -49,8 +49,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = (
-    os.getenv('CORS_ORIGIN_ALLOW_ALL', default='False').lower() == 'true'
+CORS_ALLOW_ALL_ORIGINS = (
+    os.getenv('CORS_ALLOW_ALL_ORIGINS', default='False').lower() == 'true'
 )
 CORS_URLS_REGEX = r'^/api/.*$'
 
