@@ -52,7 +52,6 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = (
     os.getenv('CORS_ALLOW_ALL_ORIGINS', default='False').lower() == 'true'
 )
-CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'stethoscope.urls'
 
