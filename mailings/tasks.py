@@ -35,7 +35,6 @@ def send_weekly_email():
     html_message = render_to_string(template_name, context)
     recipient_list = list(
         User.objects.filter(
-            role='user',
             subscriber=True,
         ).values_list(
             'email',
