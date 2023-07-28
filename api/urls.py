@@ -1,5 +1,4 @@
 from django.urls import include, path
-from djoser.views import UserViewSet
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -7,7 +6,13 @@ from drf_spectacular.views import (
 )
 from rest_framework import routers
 
-from api.views import ArticleViewSet, TagViewSet, TokenCreateView, TokenDestroyView
+from api.views import (
+    ArticleViewSet,
+    TagViewSet,
+    TokenCreateView,
+    TokenDestroyView,
+    UserViewSet,
+)
 
 app_name = 'api'
 

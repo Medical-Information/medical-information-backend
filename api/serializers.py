@@ -39,6 +39,7 @@ class UserSerializer(UserSimpleSerializer):
             'email',
             'rating',
             'publications_amount',
+            'subscribed',
         ]
 
     def get_rating(self, user) -> int:
