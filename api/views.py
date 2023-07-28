@@ -52,28 +52,19 @@ class UserViewSet(DjoserUserViewSet):
     )
     def subscription(self, request):
         user = User.objects.get(pk=request.user.id)
+        if (user.subscriber and request.method == 'PATCH'
+                or not user.subscriber and request.method == 'DELETE'):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         if request.method == 'PATCH':
-            if user.subscriber:
-                return Response(
-                    {'error': 'You are already subscribed to the newsletter'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             user.subscriber = True
             user.save()
             return Response(
-                {'error': 'You have subscribed to the newsletter'},
                 status=status.HTTP_201_CREATED,
             )
         else:
-            if not user.subscriber:
-                return Response(
-                    {'error': 'You are not subscribed to the newsletter'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             user.subscriber = False
             user.save()
             return Response(
-                {'error': 'You have unsubscribed from the newsletter'},
                 status=status.HTTP_204_NO_CONTENT,
             )
 
