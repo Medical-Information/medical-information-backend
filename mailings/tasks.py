@@ -36,6 +36,7 @@ def send_weekly_email():
     recipient_list = list(
         User.objects.filter(
             role='user',
+            subscriber=True,
         ).values_list(
             'email',
             flat=True,

@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import TokenSerializer
 from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
+from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
@@ -41,6 +42,40 @@ class TokenCreateView(DjoserTokenCreateView):
 )
 class TokenDestroyView(DjoserTokenDestroyView):
     pass
+
+
+class UserViewSet(DjoserUserViewSet):
+    @action(
+        methods=['PATCH', 'DELETE'],
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscription(self, request):
+        user = User.objects.get(pk=request.user.id)
+        if request.method == 'PATCH':
+            if user.subscriber:
+                return Response(
+                    {'error': 'You are already subscribed to the newsletter'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.subscriber = True
+            user.save()
+            return Response(
+                {'error': 'You have subscribed to the newsletter'},
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            if not user.subscriber:
+                return Response(
+                    {'error': 'You are not subscribed to the newsletter'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.subscriber = False
+            user.save()
+            return Response(
+                {'error': 'You have unsubscribed from the newsletter'},
+                status=status.HTTP_204_NO_CONTENT,
+            )
 
 
 class ArticleViewSet(LikedMixin, ModelViewSet):
