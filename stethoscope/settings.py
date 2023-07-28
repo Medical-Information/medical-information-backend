@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'django_filters',
     'drf_spectacular',
     'rest_framework',
@@ -47,6 +48,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = (
@@ -149,15 +155,13 @@ DOMAIN = os.environ.get('DOMAIN')
 PASSWORD_RESET_TIMEOUT_DAYS = os.environ.get('PASSWORD_RESET_TIMEOUT_DAYS', 1)
 
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL':
-        'password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'EMAIL': {
         'activation': 'core.email_djoser.ActivationEmail',
         'confirmation': 'core.email_djoser.ConfirmationEmail',
         'password_reset': 'core.email_djoser.PasswordResetEmail',
-        'password_changed_confirmation':
-            'core.email_djoser.PasswordConfirmationEmail',
+        'password_changed_confirmation': 'core.email_djoser.PasswordConfirmationEmail',
     },
     'ACTIVATION_URL': 'activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,

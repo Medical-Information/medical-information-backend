@@ -1,11 +1,14 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Exists, OuterRef, Value
+from django.db.models import Count, Exists, OuterRef, Sum, Value
+from django.db.models.functions import Coalesce
+from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import TokenSerializer
 from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
+from djoser.views import UserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
@@ -41,6 +44,18 @@ class TokenCreateView(DjoserTokenCreateView):
 )
 class TokenDestroyView(DjoserTokenDestroyView):
     pass
+
+
+class AnnotatedUserViewSet(UserViewSet):
+    def get_queryset(self) -> QuerySet:
+        return (
+            User.objects.annotate(rating=Coalesce(Sum('likes__vote'), 0))
+            .annotate(publications_amount=Count('articles', distinct=True))
+            .all()
+        )
+
+    def get_instance(self):
+        return self.get_queryset().get(pk=self.request.user.pk)
 
 
 class ArticleViewSet(LikedMixin, ModelViewSet):
