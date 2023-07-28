@@ -13,13 +13,13 @@ class UserAdmin(BaseUserAdmin):
         'first_name',
         'last_name',
         'role',
-        'subscriber',
+        'subscribed',
         'is_active',
         'is_staff',
     )
     list_filter = (
         'role',
-        'subscriber',
+        'subscribed',
         'is_active',
         'is_staff',
     )
