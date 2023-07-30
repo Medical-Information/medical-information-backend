@@ -214,28 +214,16 @@ if LOGGING_ENABLED:
         },
         'loggers': {
             'django.db.backends': {
+                'level': 'DEBUG',
+                'handlers': ['console'],
+            },
+            'django.request': {
                 'handlers': ['console'],
                 'level': 'DEBUG',
+                'propagate': True,
             },
         },
     }
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
 
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')

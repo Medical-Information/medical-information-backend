@@ -16,7 +16,7 @@ git clone git@github.com:Medical-Information/medical-information-backend.git
 ```
 ### Создать виртуальное окружение
 ```
-python3.11 -n venv venv
+python3.11 -m venv venv
 ```
 ### Активировать виртуальное окружение
 ```
