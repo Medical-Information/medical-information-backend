@@ -48,8 +48,9 @@ class TokenDestroyView(DjoserTokenDestroyView):
 
 class UserViewSet(DjoserUserViewSet):
     def get_queryset(self) -> QuerySet:
+        queryset = super().get_queryset()
         return (
-            User.objects.annotate(rating=Coalesce(Sum('likes__vote'), 0))
+            queryset.annotate(rating=Coalesce(Sum('likes__vote'), 0))
             .annotate(publications_amount=Count('articles', distinct=True))
             .all()
         )
