@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Exists, OuterRef, Value
+from django.db.models import Count, Exists, OuterRef, Sum, Value
+from django.db.models.functions import Coalesce
+from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
@@ -45,6 +47,16 @@ class TokenDestroyView(DjoserTokenDestroyView):
 
 
 class UserViewSet(DjoserUserViewSet):
+    def get_queryset(self) -> QuerySet:
+        return (
+            User.objects.annotate(rating=Coalesce(Sum('likes__vote'), 0))
+            .annotate(publications_amount=Count('articles', distinct=True))
+            .all()
+        )
+
+    def get_instance(self):
+        return self.get_queryset().get(pk=self.request.user.pk)
+
     @action(
         methods=['PATCH', 'DELETE'],
         detail=False,
@@ -52,8 +64,12 @@ class UserViewSet(DjoserUserViewSet):
     )
     def subscription(self, request):
         user = User.objects.get(pk=request.user.id)
-        if (user.subscribed and request.method == 'PATCH'
-                or not user.subscribed and request.method == 'DELETE'):
+        if (
+            user.subscribed
+            and request.method == 'PATCH'
+            or not user.subscribed
+            and request.method == 'DELETE'
+        ):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         if request.method == 'PATCH':
             user.subscribed = True

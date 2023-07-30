@@ -10,7 +10,6 @@ from rest_framework.serializers import (
 from articles.models import Article, Tag
 from likes import services as likes_services
 from likes.models import VoteTypes
-from users import services as users_services
 
 User = get_user_model()
 
@@ -43,10 +42,10 @@ class UserSerializer(UserSimpleSerializer):
         ]
 
     def get_rating(self, user) -> int:
-        return users_services.get_rating(user)
+        return user.rating
 
     def get_publications_amount(self, user) -> int:
-        return users_services.get_publications_amount(user)
+        return user.publications_amount
 
 
 class UserCreateSerializer(DjoserUserSerializer):
