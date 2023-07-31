@@ -19,7 +19,7 @@ class ArticleFilter(django_filters.FilterSet):
         model = Article
         fields = ('text',)
 
-    def tags_set(self, tags):
+    def get_tags_with_children(self, tags):
         """Формирует набор тегов (выбранные и их потомки) для фильтров по тегам."""
         unique_tags = set()
         for tag in tags:
@@ -28,13 +28,13 @@ class ArticleFilter(django_filters.FilterSet):
         return unique_tags
 
     def filter_tags(self, queryset, name, value):  # noqa: WPS122
-        """Фильтрует aticles, выбирая статьи с указанными тегами."""
+        """Фильтрует articles, выбирая статьи с указанными тегами."""
         if not value:
             return queryset
-        return queryset.filter(tags__in=self.tags_set(value)).distinct()
+        return queryset.filter(tags__in=self.get_tags_with_children(value)).distinct()
 
     def filter_tags_exclude(self, queryset, name, value):  # noqa: WPS122
-        """Фильтрует aticles, исключая статьи с указанными тегами."""
+        """Фильтрует articles, исключая статьи с указанными тегами."""
         if not value:
             return queryset
-        return queryset.exclude(tags__in=self.tags_set(value)).distinct()
+        return queryset.exclude(tags__in=self.get_tags_with_children(value)).distinct()
