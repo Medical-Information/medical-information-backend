@@ -56,6 +56,9 @@ pip install -r ./stethoscope/requirements/dev.txt
 | EMAIL_USE_TLS | True or False | True если формат шифрования TLS, тогда EMAIL_USE_SSL=False |
 | CURSOR_PAGINATION_PAGE_SIZE | 6 | Размер страницы пагинации по умолчанию |
 | CURSOR_PAGINATION_MAX_PAGE_SIZE | 50 | Максимальный размер страницы пагинации |
+| CELERY_BROKER | redis://localhost:6379/0 | URL брокера |
+| URL_ARTICLES | http://localhost:8000/api/v1/articles/ | URL для получения статей |
+
 
 ### Перейти в директорию infra/dev/
 ```
