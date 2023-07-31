@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db.models import Count, Exists, OuterRef, Sum, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
-from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import TokenSerializer
@@ -114,7 +113,6 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
             user=request.user,
         )[1]:
             return Response(status=status.HTTP_201_CREATED)
-        get_object_or_404(Article, id=pk)
         return Response(
             {'errors': _('Article is favorited already.')},
             status.HTTP_400_BAD_REQUEST,
@@ -127,7 +125,6 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
             user=request.user,
         ).delete()[0]:
             return Response(status=status.HTTP_204_NO_CONTENT)
-        get_object_or_404(Article, id=pk)
         return Response(
             {'errors': _('Article is not favorited yet.')},
             status.HTTP_400_BAD_REQUEST,
