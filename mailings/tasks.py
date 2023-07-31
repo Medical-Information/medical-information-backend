@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from celery import shared_task
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from dotenv import load_dotenv
@@ -20,12 +21,11 @@ def send_weekly_email():
         'articles__pk',
     )
     links_articles = []
-    url_articles = os.environ.get('URL_ARTICLES')
     for title_article, id__article in top_articles:
         links_articles.append(
             {
                 'title': title_article,
-                'url': f'{url_articles}{id__article}',
+                'url': f'{settings.URL_ARTICLES}{id__article}',
             },
         )
     template_name = 'email_weekly.html'

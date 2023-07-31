@@ -20,9 +20,9 @@ class ArticleForm(ModelForm):
         while len(tags) > 0:
             tag = tags.pop()
             ancestors = tag.get_ancestors(include_self=False)
-            intersect_tags = set(tags).intersection(ancestors)
-            if len(intersect_tags) > 0:
-                related_tags = ', '.join(r_tag.name for r_tag in intersect_tags)
+            tags_intersection = set(tags).intersection(ancestors)
+            if len(tags_intersection) > 0:
+                related_tags = ', '.join(r_tag.name for r_tag in tags_intersection)
                 related_tags += f', {tag.name}'
                 return False, related_tags
 

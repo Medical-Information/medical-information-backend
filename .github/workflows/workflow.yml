@@ -105,7 +105,6 @@ jobs:
             echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
             echo "ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}" >> .env
             echo "CSRF_TRUSTED_ORIGINS=${{ vars.CSRF_TRUSTED_ORIGINS }}" >> .env
-            echo USE_SQLITE=${{ vars.USE_SQLITE }} >> .env
             echo EMAIL_HOST=${{ vars.EMAIL_HOST }} >> .env
             echo EMAIL_HOST_USER=${{ vars.EMAIL_HOST_USER }} >> .env
             echo DEFAULT_FROM_EMAIL=${{ vars.DEFAULT_FROM_EMAIL }} >> .env
