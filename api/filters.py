@@ -21,11 +21,11 @@ class ArticleFilter(django_filters.FilterSet):
 
     def tags_set(self, tags):
         """Формирует набор тегов (выбранные и их потомки) для фильтров по тегам."""
-        tagsset = set()
+        unique_tags = set()
         for tag in tags:
-            if tag not in tagsset:
-                tagsset = tagsset.union(tag.get_descendants(include_self=True))
-        return tagsset
+            if tag not in unique_tags:
+                unique_tags = unique_tags.union(tag.get_descendants(include_self=True))
+        return unique_tags
 
     def filter_tags(self, queryset, name, value):  # noqa: WPS122
         """Фильтрует aticles, выбирая статьи с указанными тегами."""
