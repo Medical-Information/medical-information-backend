@@ -64,26 +64,19 @@ class UserViewSet(DjoserUserViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def subscription(self, request):
-        user = User.objects.get(pk=request.user.id)
         if (
-            user.subscribed
+            request.user.subscribed
             and request.method == 'PATCH'
-            or not user.subscribed
+            or not request.user.subscribed
             and request.method == 'DELETE'
         ):
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        if request.method == 'PATCH':
-            user.subscribed = True
-            user.save()
-            return Response(
-                status=status.HTTP_201_CREATED,
-            )
-        else:
-            user.subscribed = False
-            user.save()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+
+        request.user.subscribed = request.method == 'PATCH'
+        request.user.save(update_fields=('subscribed',))
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class ArticleViewSet(LikedMixin, ModelViewSet):
