@@ -8,8 +8,6 @@ from rest_framework.serializers import (
 )
 
 from articles.models import Article, Tag
-from likes import services as likes_services
-from likes.models import VoteTypes
 
 User = get_user_model()
 
@@ -137,20 +135,10 @@ class ArticleSerializer(ModelSerializer):
         read_only_fields = ('created_at', 'updated_at')
 
     def get_is_fan(self, obj) -> bool:
-        user = self.context.get('request').user
-        return likes_services.is_object_voted_by_user(
-            obj,
-            user,
-            vote_type=VoteTypes.LIKE,
-        )
+        return obj.is_fan
 
     def get_is_hater(self, obj) -> bool:
-        user = self.context.get('request').user
-        return likes_services.is_object_voted_by_user(
-            obj,
-            user,
-            vote_type=VoteTypes.DISLIKE,
-        )
+        return obj.is_hater
 
     def get_total_likes(self, obj) -> int:
         return obj.likes_count

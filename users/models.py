@@ -68,8 +68,8 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == self.MODER
+        return self.role == RolesTypes.MODER
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN
+        return self.role == RolesTypes.ADMIN

@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Exists, OuterRef, Sum, Value
+from django.db.models import Exists, OuterRef, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
@@ -20,7 +20,9 @@ from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
 from api.serializers import ArticleSerializer, TagRootsSerializer, TagSerializer
+from api.utils import annotate_user_queryset
 from articles.models import Article, FavoriteArticle, Tag
+from likes.models import Vote, VoteTypes
 
 User = get_user_model()
 
@@ -48,11 +50,7 @@ class TokenDestroyView(DjoserTokenDestroyView):
 class UserViewSet(DjoserUserViewSet):
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
-        return (
-            queryset.annotate(rating=Coalesce(Sum('likes__vote'), 0))
-            .annotate(publications_amount=Count('articles', distinct=True))
-            .all()
-        )
+        return annotate_user_queryset(queryset)
 
     def get_instance(self):
         return self.get_queryset().get(pk=self.request.user.pk)
@@ -86,21 +84,44 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
     filterset_class = ArticleFilter
 
     def get_queryset(self):
-        qs = Article.objects.filter(is_published=True).select_related('author')
+        qs = (
+            Article.objects.filter(is_published=True)
+            .select_related('author')
+            .prefetch_related('tags', 'votes')
+            .annotate(rating=Coalesce(Sum('votes__vote'), 0))
+            .annotate(
+                likes_count=Coalesce(Sum('votes__vote', filter=Q(votes__vote__gt=0)), 0),
+            )
+            .annotate(
+                dislikes_count=Coalesce(
+                    Sum('votes__vote', filter=Q(votes__vote__lt=0)),
+                    0,
+                ),
+            )
+        )
 
         user = self.request.user
         if user.is_authenticated:
-            is_favorited_expression = Exists(
-                FavoriteArticle.objects.filter(
-                    article=OuterRef('pk'),
-                    user=user,
-                ),
+            user_votes = Vote.objects.filter(user=user, object_id=OuterRef('pk'))
+            qs = (
+                qs.annotate(
+                    is_favorited=Exists(
+                        FavoriteArticle.objects.filter(
+                            article=OuterRef('pk'),
+                            user=user,
+                        ),
+                    ),
+                )
+                .annotate(is_fan=Exists(user_votes.filter(vote=VoteTypes.LIKE)))
+                .annotate(is_hater=Exists(user_votes.filter(vote=VoteTypes.DISLIKE)))
             )
         else:
-            is_favorited_expression = Value(False)
-        qs = qs.annotate(is_favorited=is_favorited_expression)
-
-        return qs
+            qs = (
+                qs.annotate(is_favorited=Value(False))
+                .annotate(is_fan=Value(False))
+                .annotate(is_hater=Value(False))
+            )
+        return qs.all()
 
     @action(
         methods=['post'],

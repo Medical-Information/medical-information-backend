@@ -56,18 +56,6 @@ class Article(UUIDMixin, TimeStampedMixin):
     def __str__(self):
         return self.title
 
-    @property
-    def likes_count(self):
-        return self.votes.likes().count()
-
-    @property
-    def dislikes_count(self):
-        return self.votes.dislikes().count()
-
-    @property
-    def rating(self):
-        return self.votes.sum_rating()
-
     def increment_views_count(self):
         self.views_count += 1
         self.save()
