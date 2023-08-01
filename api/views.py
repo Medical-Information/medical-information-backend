@@ -19,7 +19,12 @@ from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer, TagRootsSerializer, TagSerializer
+from api.serializers import (
+    ArticleSerializer,
+    TagRootsSerializer,
+    TagSerializer,
+    TagSubtreeSerializer,
+)
 from api.utils import annotate_user_queryset
 from articles.models import Article, FavoriteArticle, Tag
 from likes.models import Vote, VoteTypes
@@ -161,6 +166,8 @@ class TagViewSet(ReadOnlyModelViewSet):
     def get_serializer(self, *args, **kwargs):
         if self.action == 'roots':
             return TagRootsSerializer(*args, **kwargs)
+        elif self.action == 'subtree':
+            return TagSubtreeSerializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
 
     @action(detail=False)
@@ -168,3 +175,9 @@ class TagViewSet(ReadOnlyModelViewSet):
         all_roots = self.get_queryset().filter(parent__isnull=True)
         serializer = self.get_serializer(all_roots, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True)
+    def subtree(self, request, pk):
+        tag = Tag.objects.filter(pk=pk)
+        seralizer = self.get_serializer(tag, many=True)
+        return Response(data=seralizer.data, status=status.HTTP_200_OK)

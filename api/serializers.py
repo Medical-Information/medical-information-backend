@@ -98,6 +98,17 @@ class TagSerializer(TagRootsSerializer):
         ]
 
 
+class TagSubtreeSerializer(ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ('pk', 'name')
+
+    def get_fields(self):
+        fields = super(TagSubtreeSerializer, self).get_fields()
+        fields['children'] = TagSubtreeSerializer(many=True, required=False)
+        return fields
+
+
 class ArticleSerializer(ModelSerializer):
     is_fan = SerializerMethodField()
     is_hater = SerializerMethodField()
