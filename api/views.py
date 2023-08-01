@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Exists, OuterRef, Q, Sum, Value
+from django.db.models import Exists, OuterRef, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
@@ -20,6 +20,7 @@ from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
 from api.serializers import ArticleSerializer, TagRootsSerializer, TagSerializer
+from api.utils import annotate_user_queryset
 from articles.models import Article, FavoriteArticle, Tag
 from likes.models import Vote, VoteTypes
 
@@ -49,11 +50,7 @@ class TokenDestroyView(DjoserTokenDestroyView):
 class UserViewSet(DjoserUserViewSet):
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
-        return (
-            queryset.annotate(rating=Coalesce(Sum('likes__vote'), 0))
-            .annotate(publications_amount=Count('articles', distinct=True))
-            .all()
-        )
+        return annotate_user_queryset(queryset)
 
     def get_instance(self):
         return self.get_queryset().get(pk=self.request.user.pk)
