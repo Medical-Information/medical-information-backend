@@ -144,10 +144,10 @@ SPECTACULAR_SETTINGS = {
 
 SITE_NAME = os.environ.get('SITE_NAME')
 DOMAIN = os.environ.get('DOMAIN')
-PASSWORD_RESET_TIMEOUT_DAYS = os.environ.get('PASSWORD_RESET_TIMEOUT_DAYS', 1)
+PASSWORD_RESET_TIMEOUT = os.environ.get('PASSWORD_RESET_TIMEOUT', 259200)
 
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'reset-password-confirmation/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'EMAIL': {
         'activation': 'core.email_djoser.ActivationEmail',
@@ -155,8 +155,9 @@ DJOSER = {
         'password_reset': 'core.email_djoser.PasswordResetEmail',
         'password_changed_confirmation': 'core.email_djoser.PasswordConfirmationEmail',
     },
-    'ACTIVATION_URL': 'api/v1/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': False,
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         'user': 'api.serializers.UserSerializer',
