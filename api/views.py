@@ -11,6 +11,7 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotAuthenticated, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
@@ -34,8 +35,12 @@ User = get_user_model()
 
 @extend_schema_view(
     post=extend_schema(
-        description='create token',
-        responses={status.HTTP_200_OK: TokenSerializer},
+        summary='Аутентификация пользователя.',
+        description='При успешной аутентификации возвращается токен.',
+        responses={
+            status.HTTP_200_OK: TokenSerializer,
+            status.HTTP_400_BAD_REQUEST: ValidationError,
+        },
     ),
 )
 class TokenCreateView(DjoserTokenCreateView):
@@ -44,8 +49,12 @@ class TokenCreateView(DjoserTokenCreateView):
 
 @extend_schema_view(
     post=extend_schema(
-        description='destroy token',
-        responses={status.HTTP_204_NO_CONTENT: None},
+        summary='Отзыв аутентификации пользователя.',
+        description='При успешном отзыве аутентификации удаляется токен.',
+        responses={
+            status.HTTP_204_NO_CONTENT: None,
+            status.HTTP_401_UNAUTHORIZED: NotAuthenticated,
+        },
     ),
 )
 class TokenDestroyView(DjoserTokenDestroyView):
