@@ -148,7 +148,7 @@ PASSWORD_RESET_TIMEOUT = os.environ.get('PASSWORD_RESET_TIMEOUT', 259200)
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL':
-        'reset-password-confirmation/?uid={uid}&token={token}',
+        'reset-password-confirmation/?{uid=}&{token=}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'EMAIL': {
         'activation': 'core.email_djoser.ActivationEmail',
