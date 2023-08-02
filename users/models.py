@@ -53,7 +53,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
         default=RolesTypes.USER,
         max_length=50,
     )
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     subscribed = models.BooleanField(default=False)
 
     objects = UserManager()

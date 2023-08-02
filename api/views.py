@@ -25,9 +25,9 @@ from api.serializers import (
     TagSerializer,
     TagSubtreeSerializer,
 )
-from api.utils import annotate_user_queryset
 from articles.models import Article, FavoriteArticle, Tag
 from likes.models import Vote, VoteTypes
+from likes.utils import annotate_user_queryset
 
 User = get_user_model()
 
