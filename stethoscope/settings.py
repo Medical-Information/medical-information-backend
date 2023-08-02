@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'django_filters',
     'drf_spectacular',
     'rest_framework',
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'mptt',
+    'mdeditor',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
     'articles.apps.ArticlesConfig',
@@ -47,6 +49,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = (
@@ -73,24 +80,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'stethoscope.wsgi.application'
 
-if os.getenv('USE_SQLITE', 'True') == 'True':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'data' / 'db.sqlite3',
-        },
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_DB', 'stethoscope_db'),
-            'USER': os.environ.get('POSTGRES_USER', 'stethoscope_user'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'stethoscope_password'),
-            'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
-            'PORT': os.environ.get('POSTGRES_PORT', 5432),
-        },
-    }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'stethoscope_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'stethoscope_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'stethoscope_password'),
+        'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('POSTGRES_PORT', 5432),
+    },
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -148,17 +147,15 @@ DOMAIN = os.environ.get('DOMAIN')
 PASSWORD_RESET_TIMEOUT_DAYS = os.environ.get('PASSWORD_RESET_TIMEOUT_DAYS', 1)
 
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL':
-        'password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'EMAIL': {
         'activation': 'core.email_djoser.ActivationEmail',
         'confirmation': 'core.email_djoser.ConfirmationEmail',
         'password_reset': 'core.email_djoser.PasswordResetEmail',
-        'password_changed_confirmation':
-            'core.email_djoser.PasswordConfirmationEmail',
+        'password_changed_confirmation': 'core.email_djoser.PasswordConfirmationEmail',
     },
-    'ACTIVATION_URL': 'api/v1/activation/{uid}/{token}',
+    'ACTIVATION_URL': 'api/v1/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
@@ -209,28 +206,65 @@ if LOGGING_ENABLED:
         },
         'loggers': {
             'django.db.backends': {
+                'level': 'DEBUG',
+                'handlers': ['console'],
+            },
+            'django.request': {
                 'handlers': ['console'],
                 'level': 'DEBUG',
+                'propagate': True,
             },
         },
     }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
+
+# https://github.com/pylixm/django-mdeditor#customize-the-toolbar
+MDEDITOR_CONFIGS = {
+    'default': {
+        'width': '100%',  # Custom edit box width
+        'height': 400,  # Custom edit box height
+        'toolbar': [
+            'undo',
+            'redo',
+            '|',
+            'bold',
+            'del',
+            'italic',
+            'quote',
+            'uppercase',
+            'lowercase',
+            '|',
+            'h1',
+            'h2',
+            'h3',
+            'h5',
+            'h6',
+            '|',
+            'list-ul',
+            'list-ol',
+            'hr',
+            '|',
+            'link',
+            'reference-link',
+            'table',
+            'emoji',
+            '|',
+            'preview',
+            'watch',
+            'fullscreen',
+        ],  # custom edit box toolbar
+        'theme': 'default',  # edit box theme, dark / default
+        'preview_theme': 'default',  # Preview area theme, dark / default
+        'editor_theme': 'default',  # edit area theme, pastel-on-dark / default
+        'toolbar_autofixed': True,  # Whether the toolbar capitals
+        'search_replace': True,  # Whether to open the search for replacement
+        'emoji': True,  # whether to open the expression function
+        'watch': False,  # Live preview
+        'lineWrapping': False,  # lineWrapping
+        'lineNumbers': False,  # lineNumbers
+        'language': 'en',  # zh / en / es
+    },
+}

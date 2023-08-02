@@ -8,9 +8,6 @@ from rest_framework.serializers import (
 )
 
 from articles.models import Article, Tag
-from likes import services as likes_services
-from likes.models import VoteTypes
-from users import services as users_services
 
 User = get_user_model()
 
@@ -24,6 +21,7 @@ class UserSimpleSerializer(DjoserUserSerializer):
             'id',
             'first_name',
             'last_name',
+            'role',
         ]
 
 
@@ -43,10 +41,10 @@ class UserSerializer(UserSimpleSerializer):
         ]
 
     def get_rating(self, user) -> int:
-        return users_services.get_rating(user)
+        return user.rating
 
     def get_publications_amount(self, user) -> int:
-        return users_services.get_publications_amount(user)
+        return user.publications_amount
 
 
 class UserCreateSerializer(DjoserUserSerializer):
@@ -86,7 +84,6 @@ class TagRootsSerializer(ModelSerializer):
     """Сериализатор для корневых тегов, модель Tag."""
 
     class Meta(TagSimpleSerializer.Meta):
-        model = Tag
         fields = TagSimpleSerializer.Meta.fields + [
             'children',
         ]
@@ -99,6 +96,16 @@ class TagSerializer(TagRootsSerializer):
         fields = TagRootsSerializer.Meta.fields + [
             'parent',
         ]
+
+
+class TagSubtreeSerializer(TagSimpleSerializer):
+    class Meta(TagSimpleSerializer.Meta):
+        pass
+
+    def get_fields(self) -> dict:
+        fields = super(TagSubtreeSerializer, self).get_fields()
+        fields['children'] = TagSubtreeSerializer(many=True, required=False)
+        return fields
 
 
 class ArticleSerializer(ModelSerializer):
@@ -138,20 +145,10 @@ class ArticleSerializer(ModelSerializer):
         read_only_fields = ('created_at', 'updated_at')
 
     def get_is_fan(self, obj) -> bool:
-        user = self.context.get('request').user
-        return likes_services.is_object_voted_by_user(
-            obj,
-            user,
-            vote_type=VoteTypes.LIKE,
-        )
+        return obj.is_fan
 
     def get_is_hater(self, obj) -> bool:
-        user = self.context.get('request').user
-        return likes_services.is_object_voted_by_user(
-            obj,
-            user,
-            vote_type=VoteTypes.DISLIKE,
-        )
+        return obj.is_hater
 
     def get_total_likes(self, obj) -> int:
         return obj.likes_count

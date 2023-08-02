@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Exists, OuterRef, Value
-from django.shortcuts import get_object_or_404
+from django.db.models import Exists, OuterRef, Q, Sum, Value
+from django.db.models.functions import Coalesce
+from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import TokenSerializer
@@ -18,8 +19,15 @@ from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer, TagRootsSerializer, TagSerializer
+from api.serializers import (
+    ArticleSerializer,
+    TagRootsSerializer,
+    TagSerializer,
+    TagSubtreeSerializer,
+)
+from api.utils import annotate_user_queryset
 from articles.models import Article, FavoriteArticle, Tag
+from likes.models import Vote, VoteTypes
 
 User = get_user_model()
 
@@ -45,28 +53,32 @@ class TokenDestroyView(DjoserTokenDestroyView):
 
 
 class UserViewSet(DjoserUserViewSet):
+    def get_queryset(self) -> QuerySet:
+        queryset = super().get_queryset()
+        return annotate_user_queryset(queryset)
+
+    def get_instance(self):
+        return self.get_queryset().get(pk=self.request.user.pk)
+
     @action(
         methods=['PATCH', 'DELETE'],
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
     def subscription(self, request):
-        user = User.objects.get(pk=request.user.id)
-        if (user.subscribed and request.method == 'PATCH'
-                or not user.subscribed and request.method == 'DELETE'):
+        if (
+            request.user.subscribed
+            and request.method == 'PATCH'
+            or not request.user.subscribed
+            and request.method == 'DELETE'
+        ):
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        if request.method == 'PATCH':
-            user.subscribed = True
-            user.save()
-            return Response(
-                status=status.HTTP_201_CREATED,
-            )
-        else:
-            user.subscribed = False
-            user.save()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+
+        request.user.subscribed = request.method == 'PATCH'
+        request.user.save(update_fields=('subscribed',))
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class ArticleViewSet(LikedMixin, ModelViewSet):
@@ -77,21 +89,44 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
     filterset_class = ArticleFilter
 
     def get_queryset(self):
-        qs = Article.objects.filter(is_published=True).select_related('author')
+        qs = (
+            Article.objects.filter(is_published=True)
+            .select_related('author')
+            .prefetch_related('tags', 'votes')
+            .annotate(rating=Coalesce(Sum('votes__vote'), 0))
+            .annotate(
+                likes_count=Coalesce(Sum('votes__vote', filter=Q(votes__vote__gt=0)), 0),
+            )
+            .annotate(
+                dislikes_count=Coalesce(
+                    Sum('votes__vote', filter=Q(votes__vote__lt=0)),
+                    0,
+                ),
+            )
+        )
 
         user = self.request.user
         if user.is_authenticated:
-            is_favorited_expression = Exists(
-                FavoriteArticle.objects.filter(
-                    article=OuterRef('pk'),
-                    user=user,
-                ),
+            user_votes = Vote.objects.filter(user=user, object_id=OuterRef('pk'))
+            qs = (
+                qs.annotate(
+                    is_favorited=Exists(
+                        FavoriteArticle.objects.filter(
+                            article=OuterRef('pk'),
+                            user=user,
+                        ),
+                    ),
+                )
+                .annotate(is_fan=Exists(user_votes.filter(vote=VoteTypes.LIKE)))
+                .annotate(is_hater=Exists(user_votes.filter(vote=VoteTypes.DISLIKE)))
             )
         else:
-            is_favorited_expression = Value(False)
-        qs = qs.annotate(is_favorited=is_favorited_expression)
-
-        return qs
+            qs = (
+                qs.annotate(is_favorited=Value(False))
+                .annotate(is_fan=Value(False))
+                .annotate(is_hater=Value(False))
+            )
+        return qs.all()
 
     @action(
         methods=['post'],
@@ -104,7 +139,6 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
             user=request.user,
         )[1]:
             return Response(status=status.HTTP_201_CREATED)
-        get_object_or_404(Article, id=pk)
         return Response(
             {'errors': _('Article is favorited already.')},
             status.HTTP_400_BAD_REQUEST,
@@ -117,7 +151,6 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
             user=request.user,
         ).delete()[0]:
             return Response(status=status.HTTP_204_NO_CONTENT)
-        get_object_or_404(Article, id=pk)
         return Response(
             {'errors': _('Article is not favorited yet.')},
             status.HTTP_400_BAD_REQUEST,
@@ -127,16 +160,17 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
 class TagViewSet(ReadOnlyModelViewSet):
     """Вьюсет модели Tag."""
 
-    queryset = Tag.objects.all()
+    queryset = Tag.objects.prefetch_related('parent', 'children').all()
     serializer_class = TagSerializer
 
-    def get_serializer(self, *args, **kwargs):
-        if self.action == 'roots':
-            return TagRootsSerializer(*args, **kwargs)
-        return super().get_serializer(*args, **kwargs)
-
     @action(detail=False)
-    def roots(self, request):
+    def roots(self, request) -> Response:
         all_roots = self.get_queryset().filter(parent__isnull=True)
-        serializer = self.get_serializer(all_roots, many=True)
+        serializer = TagRootsSerializer(all_roots, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True)
+    def subtree(self, request, pk) -> Response:
+        tag = Tag.objects.filter(pk=pk)
+        serializer = TagSubtreeSerializer(tag, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)

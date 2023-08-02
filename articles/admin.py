@@ -1,16 +1,18 @@
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.forms import ModelForm
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from mdeditor.widgets import MDEditorWidget
 from mptt.admin import DraggableMPTTAdmin, TreeRelatedFieldListFilter
 
 from articles.models import Article, FavoriteArticle, Tag
 
 
 class ArticleForm(ModelForm):
-    annotation = forms.CharField(widget=forms.Textarea)
+    annotation = forms.CharField(widget=MDEditorWidget)
 
     def check_for_sub_tags(self, tags):
         """Проверяет, что среди переданных тегов нет связанных предков и потомков."""
@@ -18,9 +20,9 @@ class ArticleForm(ModelForm):
         while len(tags) > 0:
             tag = tags.pop()
             ancestors = tag.get_ancestors(include_self=False)
-            intersec_tags = set(tags).intersection(ancestors)
-            if len(intersec_tags) > 0:
-                related_tags = ', '.join(r_tag.name for r_tag in intersec_tags)
+            tags_intersection = set(tags).intersection(ancestors)
+            if len(tags_intersection) > 0:
+                related_tags = ', '.join(r_tag.name for r_tag in tags_intersection)
                 related_tags += f', {tag.name}'
                 return False, related_tags
 
@@ -32,8 +34,8 @@ class ArticleForm(ModelForm):
         ok, related_tags = self.check_for_sub_tags(tags)
         if not ok:
             raise ValidationError(
-                _("You can't assign related tags <%(reltags)s> to content!")
-                % {'reltags': related_tags},
+                _("You can't assign related tags <%(related_tags)s> to content!")
+                % {'related_tags': related_tags},
             )
         return self.cleaned_data
 
@@ -48,7 +50,8 @@ class ArticleAdmin(admin.ModelAdmin):
                 'fields': [
                     'title',
                     'annotation',
-                    ('text', 'image'),
+                    'text',
+                    'image',
                     ('author', 'is_published'),
                     ('source_name', 'source_link'),
                     'tags',
@@ -72,6 +75,7 @@ class ArticleAdmin(admin.ModelAdmin):
         'created_at',
         'updated_at',
     )
+    list_select_related = ('author',)
     list_filter = ('author', 'is_published', ('tags', TreeRelatedFieldListFilter))
     search_fields = ('author__email', 'title')
     filter_horizontal = ('tags',)
@@ -80,6 +84,9 @@ class ArticleAdmin(admin.ModelAdmin):
         'updated_at',
         'views_count',
     )
+    formfield_overrides = {
+        models.TextField: {'widget': MDEditorWidget},
+    }
 
 
 @admin.register(Tag)

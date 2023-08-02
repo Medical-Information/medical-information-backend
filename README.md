@@ -14,9 +14,13 @@
 ```
 git clone git@github.com:Medical-Information/medical-information-backend.git
 ```
+### Перейти в директорию medical-information-backend
+```
+cd medical-information-backend
+```
 ### Создать виртуальное окружение
 ```
-python3.11 -n venv venv
+python3.11 -m venv venv
 ```
 ### Активировать виртуальное окружение
 ```
@@ -32,12 +36,12 @@ pip install -r ./stethoscope/requirements/dev.txt
 ```
 ### В директории stethoscope скопировать файл `.env.example` в `.env` и задать значения переменным
 
+
 | Переменная | Значение по умолчанию | Описание |
 | --- | --- | --- |
 | DEBUG | False | Режим отладки |
 | SECRET_KEY | None | `from django.core.management.utils import get_random_secret_key; get_random_secret_key()` |
 | ALLOWED_HOSTS | * | Список разрешенных хостов, указанных через пробел |
-| USE_SQLITE | True | Использовать SQLite вместо PostgreSQL |
 | POSTGRES_DB | postgres | Имя базы данных |
 | POSTGRES_USER | postgres | Имя пользователя (владельца) базы данных |
 | POSTGRES_PASSWORD | postgres | Пароль пользователя (владельца) базы данных |
@@ -52,9 +56,22 @@ pip install -r ./stethoscope/requirements/dev.txt
 | EMAIL_USE_TLS | True or False | True если формат шифрования TLS, тогда EMAIL_USE_SSL=False |
 | CURSOR_PAGINATION_PAGE_SIZE | 6 | Размер страницы пагинации по умолчанию |
 | CURSOR_PAGINATION_MAX_PAGE_SIZE | 50 | Максимальный размер страницы пагинации |
+| CELERY_BROKER | redis://localhost:6379/0 | URL брокера |
+| URL_ARTICLES | http://localhost:8000/api/v1/articles/ | URL для получения статей |
 
 
-
+### Перейти в директорию infra/dev/
+```
+cd infra/dev/
+```
+### Запустить контейнер с базой данных PostgreSQL
+```
+docker compose up -d
+```
+### Вернуться в директорию проекта
+```
+cd ../..
+```
 ### Применить миграции
 ```
 python manage.py migrate
