@@ -163,21 +163,14 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.prefetch_related('parent', 'children').all()
     serializer_class = TagSerializer
 
-    def get_serializer(self, *args, **kwargs):
-        if self.action == 'roots':
-            return TagRootsSerializer(*args, **kwargs)
-        elif self.action == 'subtree':
-            return TagSubtreeSerializer(*args, **kwargs)
-        return super().get_serializer(*args, **kwargs)
-
     @action(detail=False)
-    def roots(self, request):
+    def roots(self, request) -> Response:
         all_roots = self.get_queryset().filter(parent__isnull=True)
-        serializer = self.get_serializer(all_roots, many=True)
+        serializer = TagRootsSerializer(all_roots, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True)
-    def subtree(self, request, pk):
+    def subtree(self, request, pk) -> Response:
         tag = Tag.objects.filter(pk=pk)
-        seralizer = self.get_serializer(tag, many=True)
-        return Response(data=seralizer.data, status=status.HTTP_200_OK)
+        serializer = TagSubtreeSerializer(tag, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

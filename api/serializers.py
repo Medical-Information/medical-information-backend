@@ -83,7 +83,6 @@ class TagRootsSerializer(ModelSerializer):
     """Сериализатор для корневых тегов, модель Tag."""
 
     class Meta(TagSimpleSerializer.Meta):
-        model = Tag
         fields = TagSimpleSerializer.Meta.fields + [
             'children',
         ]
@@ -98,12 +97,11 @@ class TagSerializer(TagRootsSerializer):
         ]
 
 
-class TagSubtreeSerializer(ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ('pk', 'name')
+class TagSubtreeSerializer(TagSimpleSerializer):
+    class Meta(TagSimpleSerializer.Meta):
+        pass
 
-    def get_fields(self):
+    def get_fields(self) -> dict:
         fields = super(TagSubtreeSerializer, self).get_fields()
         fields['children'] = TagSubtreeSerializer(many=True, required=False)
         return fields
