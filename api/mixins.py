@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.serializers import UserSerializer
-from api.utils import annotate_user_queryset
 from likes import services
 from likes.models import VoteTypes
 
@@ -48,6 +47,5 @@ class LikedMixin:
         if votes_group not in votes:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         users = services.get_voters_by_object(obj, votes[votes_group])
-        users = annotate_user_queryset(users)
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
