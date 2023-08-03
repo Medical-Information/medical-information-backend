@@ -11,15 +11,16 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
-from api.permissions import IsAdmin, ReadOnly
+from api.permissions import ArticleOwnerPermission
 from api.serializers import (
+    ArticleCreateSerializer,
     ArticleSerializer,
     TagRootsSerializer,
     TagSerializer,
@@ -84,7 +85,7 @@ class UserViewSet(DjoserUserViewSet):
 class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
-    permission_classes = (IsAdmin | ReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ArticleFilter
 
@@ -127,6 +128,11 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
                 .annotate(is_hater=Value(False))
             )
         return qs.all()
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return ArticleCreateSerializer
+        return ArticleSerializer
 
     @action(
         methods=['post'],
@@ -171,6 +177,6 @@ class TagViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def subtree(self, request, pk) -> Response:
-        tag = Tag.objects.filter(pk=pk)
+        tag = self.get_queryset().filter(pk=pk)
         serializer = TagSubtreeSerializer(tag, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)

@@ -3,6 +3,8 @@ from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import (
     BooleanField,
+    CurrentUserDefault,
+    HiddenField,
     ModelSerializer,
     SerializerMethodField,
 )
@@ -136,3 +138,29 @@ class ArticleSerializer(ModelSerializer):
 
     def get_rating(self, obj) -> int:
         return obj.rating
+
+
+class ArticleCreateSerializer(ModelSerializer):
+    image = Base64ImageField()
+    author = HiddenField(default=CurrentUserDefault())
+
+    class Meta:
+        model = Article
+        fields = (
+            'author',
+            'title',
+            'annotation',
+            'text',
+            'source_name',
+            'source_link',
+            'image',
+        )
+
+    def to_representation(self, instance):
+        """Предполагается, после создания статья имеет начальные занчения атрибутов."""
+        instance.is_fan = False
+        instance.is_hater = False
+        instance.likes_count = 0
+        instance.dislikes_count = 0
+        instance.rating = 0
+        return ArticleSerializer().to_representation(instance)
