@@ -4,17 +4,18 @@ from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.serializers import TokenSerializer
+from djoser import serializers as djoser_serializers
 from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiExample, extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from api import schema
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
@@ -22,9 +23,12 @@ from api.permissions import ArticleOwnerPermission
 from api.serializers import (
     ArticleCreateSerializer,
     ArticleSerializer,
+    DummySerializer,
+    NotAuthenticatedSerializer,
     TagRootsSerializer,
     TagSerializer,
     TagSubtreeSerializer,
+    ValidationSerializer,
 )
 from articles.models import Article, FavoriteArticle, Tag
 from likes.models import Vote, VoteTypes
@@ -35,8 +39,19 @@ User = get_user_model()
 
 @extend_schema_view(
     post=extend_schema(
-        description='create token',
-        responses={status.HTTP_200_OK: TokenSerializer},
+        summary='Аутентификация пользователя.',
+        description='При успешной аутентификации возвращается токен.',
+        responses={
+            status.HTTP_200_OK: djoser_serializers.TokenSerializer,
+            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
+        },
+        examples=[
+            OpenApiExample(
+                'Example',
+                request_only=True,
+                value={'email': 'user@example.com', 'password': 'password'},
+            ),
+        ],
     ),
 )
 class TokenCreateView(DjoserTokenCreateView):
@@ -45,15 +60,26 @@ class TokenCreateView(DjoserTokenCreateView):
 
 @extend_schema_view(
     post=extend_schema(
-        description='destroy token',
-        responses={status.HTTP_204_NO_CONTENT: None},
+        summary='Отзыв аутентификации пользователя.',
+        description='При успешном отзыве аутентификации удаляется токен.',
+        responses={
+            status.HTTP_204_NO_CONTENT: None,
+            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+        },
     ),
 )
 class TokenDestroyView(DjoserTokenDestroyView):
-    pass
+    serializer_class = DummySerializer
 
 
+@extend_schema_view(**schema.USER_VIEW_SET_SCHEMA)
 class UserViewSet(DjoserUserViewSet):
+    # отключаем смену логина (email)
+    reset_username = None
+    reset_username_confirm = None
+    # отключаем установку логина (email)
+    set_username = None
+
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
         return annotate_user_queryset(queryset)

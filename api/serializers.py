@@ -3,15 +3,22 @@ from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import (
     BooleanField,
+    CharField,
     CurrentUserDefault,
     HiddenField,
+    ListField,
     ModelSerializer,
+    Serializer,
     SerializerMethodField,
 )
 
 from articles.models import Article, Tag
 
 User = get_user_model()
+
+
+class UserCreateSerializer(DjoserUserSerializer):
+    pass
 
 
 class UserSimpleSerializer(DjoserUserSerializer):
@@ -142,6 +149,26 @@ class ArticleSerializer(ModelSerializer):
 
     def get_rating(self, obj) -> int:
         return obj.rating
+
+
+class ValidationSerializer(Serializer):
+    """HTTP_400."""
+
+    property_1 = CharField()
+    property_2 = CharField()
+    non_field_errors = ListField()
+
+
+class NotAuthenticatedSerializer(Serializer):
+    """HTTP_401."""
+
+    detail = CharField()
+
+
+class DummySerializer(Serializer):
+    """Заглушка для drf-spectacular, чтобы не ругался ViewSet без сериализаторов."""
+
+    pass
 
 
 class ArticleCreateSerializer(ModelSerializer):

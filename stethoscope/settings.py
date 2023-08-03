@@ -154,6 +154,7 @@ DJOSER = {
         'password_changed_confirmation': 'core.email_djoser.PasswordConfirmationEmail',
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'ACTIVATION_URL': 'activate/?uid={uid}&token={token}',
     'SEND_ACTIVATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
