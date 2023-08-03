@@ -7,7 +7,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
-from articles.models import Article, Tag
+from articles.models import Article, Comment, Tag
 from likes import services as likes_services
 from likes.models import VoteTypes
 
@@ -100,6 +100,21 @@ class TagSerializer(TagRootsSerializer):
         ]
 
 
+class CommentSerializer(ModelSerializer):
+    user = UserSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = (
+            'id',
+            'text',
+            'user',
+            'created_at',
+            'updated_at',
+        )
+        read_only_fields = ('id', 'user', 'created_at', 'updated_at')
+
+
 class ArticleSerializer(ModelSerializer):
     is_fan = SerializerMethodField()
     is_hater = SerializerMethodField()
@@ -110,6 +125,7 @@ class ArticleSerializer(ModelSerializer):
     is_favorited = BooleanField(read_only=True)
     author = UserSimpleSerializer(read_only=True)
     tags = TagSimpleSerializer(many=True, read_only=True)
+    comments = CommentSerializer(read_only=True, many=True)
 
     class Meta:
         model = Article
@@ -133,6 +149,7 @@ class ArticleSerializer(ModelSerializer):
             'views_count',
             'author',
             'tags',
+            'comments'
         )
         read_only_fields = ('created_at', 'updated_at')
 

@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from mdeditor.widgets import MDEditorWidget
 from mptt.admin import DraggableMPTTAdmin, TreeRelatedFieldListFilter
 
-from articles.models import Article, FavoriteArticle, Tag
+from articles.models import Article, Comment, FavoriteArticle, Tag
 
 
 class ArticleForm(ModelForm):
@@ -119,3 +119,14 @@ class FavoriteRecipeAdmin(admin.ModelAdmin):
     list_filter = ('article', 'user')
     search_fields = ('user__email', 'article__title')
     autocomplete_fields = ('article', 'user')
+
+
+@admin.register(Comment)
+class VoteAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'article',
+        'text',
+    )
+    list_filter = ('article', 'user')
+    search_fields = ('text',)

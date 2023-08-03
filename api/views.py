@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Exists, OuterRef, Sum, Value
+from django.shortcuts import get_object_or_404
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
@@ -18,8 +19,13 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
-from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer, TagRootsSerializer, TagSerializer
+from api.permissions import IsAdmin, IsAuthor, ReadOnly
+from api.serializers import (
+    ArticleSerializer,
+    CommentSerializer,
+    TagRootsSerializer,
+    TagSerializer
+)
 from articles.models import Article, FavoriteArticle, Tag
 
 User = get_user_model()
@@ -147,3 +153,17 @@ class TagViewSet(ReadOnlyModelViewSet):
         all_roots = self.get_queryset().filter(parent__isnull=True)
         serializer = self.get_serializer(all_roots, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class CommentViewSet(ModelViewSet):  # feature. LikedMixin
+    serializer_class = CommentSerializer
+    permission_classes = [IsAdmin | IsAuthor | ReadOnly]
+
+    def get_queryset(self):
+        article = get_object_or_404(Article, id=self.kwargs.get('acticle_id'))
+        new_queryset = article.comments.all()
+        return new_queryset
+
+    def perform_create(self, serializer):
+        article = get_object_or_404(Article, id=self.kwargs.get('acticle_id'))
+        serializer.save(user=self.request.user, article=article)
