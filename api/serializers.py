@@ -61,6 +61,8 @@ class TagSimpleSerializer(ModelSerializer):
 class TagRootsSerializer(ModelSerializer):
     """Сериализатор для корневых тегов, модель Tag."""
 
+    children = TagSimpleSerializer(many=True, required=False)
+
     class Meta(TagSimpleSerializer.Meta):
         fields = TagSimpleSerializer.Meta.fields + [
             'children',
