@@ -19,6 +19,7 @@ from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
+from api.schema import USER_VIEW_SET_SCHEMA
 from api.serializers import (
     ArticleSerializer,
     DummySerializer,
@@ -26,8 +27,6 @@ from api.serializers import (
     TagRootsSerializer,
     TagSerializer,
     TagSubtreeSerializer,
-    UserCreateSerializer,
-    UserSerializer,
     ValidationSerializer,
 )
 from articles.models import Article, FavoriteArticle, Tag
@@ -72,65 +71,7 @@ class TokenDestroyView(DjoserTokenDestroyView):
     serializer_class = DummySerializer
 
 
-@extend_schema_view(
-    list=extend_schema(
-        summary='Получение списка пользователей.',
-        description=(
-            'Всех пользователей получает только персонал портала. '
-            'Обычный пользователь получает только себя.'
-        ),
-        responses={
-            status.HTTP_200_OK: UserSerializer,
-            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-        },
-    ),
-    create=extend_schema(
-        summary='Регистрация пользователя.',
-        responses={
-            status.HTTP_201_CREATED: UserCreateSerializer,
-            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
-        },
-    ),
-    activation=extend_schema(
-        summary='Активация пользователя.',
-        responses={
-            status.HTTP_204_NO_CONTENT: None,
-            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
-        },
-    ),
-    resend_activation=extend_schema(
-        summary='Реактивация пользователя.',
-        description=(
-            'Сбрасывается признак активации пользователя и '
-            'запускается процесс активации пользователя.'
-        ),
-        responses={
-            status.HTTP_204_NO_CONTENT: None,
-            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
-        },
-    ),
-    reset_password=extend_schema(
-        summary='Смена пароля пользователя.',
-        description=('Отправляется письмо со ссылкой для смены пароля.'),
-        responses={
-            status.HTTP_204_NO_CONTENT: None,
-        },
-    ),
-    reset_password_confirm=extend_schema(
-        summary='Подтверждение смены пароля пользователя.',
-        responses={
-            status.HTTP_204_NO_CONTENT: None,
-        },
-    ),
-    set_password=extend_schema(
-        summary='Смена пароля пользователем.',
-        description=('Смена пароля пользователем при имеющейся авторизации.'),
-        responses={
-            status.HTTP_204_NO_CONTENT: None,
-            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-        },
-    ),
-)
+@extend_schema_view(**USER_VIEW_SET_SCHEMA)
 class UserViewSet(DjoserUserViewSet):
     # отключаем смену логина (email)
     reset_username = None
