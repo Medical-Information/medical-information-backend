@@ -1,10 +1,10 @@
-from django.core.exceptions import ValidationError
+﻿from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
 class MaximumLengthValidator:
     def __init__(self, max_length=20):
-        """Inits length."""
+        """Init length."""
         self.max_length = max_length
 
     def validate(self, password, user=None):
