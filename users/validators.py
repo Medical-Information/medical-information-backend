@@ -3,9 +3,13 @@ from django.utils.translation import gettext_lazy as _
 
 
 class MaximumLengthValidator:
+    """
+    Валидатор 
+    максимальной длины пароля.
+    """
     def __init__(self, max_length=20):
         self.max_length = max_length
-        
+
     def validate(self, password, user=None):
         if len(password) > self.max_length:
             raise ValidationError(
@@ -18,4 +22,3 @@ class MaximumLengthValidator:
         return _(
             'Пароль не должен быть длиннее %(max_length)d символов.',
         ) % {'max_length': self.max_length}
-        
