@@ -1,6 +1,4 @@
-﻿from typing import List
-
-from django.contrib.auth.models import AbstractUser
+﻿from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -32,7 +30,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     """
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS: List[str] = []
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     first_name = models.CharField(
         _('first name'),
