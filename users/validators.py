@@ -3,11 +3,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class MaximumLengthValidator:
-    """
-    Валидатор 
-    максимальной длины пароля.
-    """
     def __init__(self, max_length=20):
+        """Inits length."""
         self.max_length = max_length
 
     def validate(self, password, user=None):
