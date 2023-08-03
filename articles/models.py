@@ -37,8 +37,6 @@ class Article(UUIDMixin, TimeStampedMixin):
         User,
         on_delete=models.CASCADE,
         related_name='articles',
-        null=True,
-        blank=True,
     )
     tags = TreeManyToManyField(
         'Tag',
