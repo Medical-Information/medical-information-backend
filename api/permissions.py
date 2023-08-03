@@ -25,3 +25,10 @@ class ReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return self.has_permission(request, view)
+
+
+class ArticleOwnerPermission(BasePermission):
+    """Разрешает доступ к статье администратору или её автору."""
+
+    def has_object_permission(self, request, view, obj):
+        return request.method in SAFE_METHODS or request.user == obj.author
