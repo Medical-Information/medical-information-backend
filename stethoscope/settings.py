@@ -98,6 +98,12 @@ AUTH_PASSWORD_VALIDATORS = [
             'min_length': 6,
         },
     },
+    {
+        'NAME': 'users.validators.PasswordMaximumLengthValidator',
+        'OPTIONS': {
+            'max_length': 20,
+        },
+    },
 ]
 
 AUTH_USER_MODEL = 'users.User'
