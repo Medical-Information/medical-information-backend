@@ -160,7 +160,7 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
 class TagViewSet(ReadOnlyModelViewSet):
     """Вьюсет модели Tag."""
 
-    queryset = Tag.objects.all().select_related('parent').prefetch_related('children')
+    queryset = Tag.objects.select_related('parent').prefetch_related('children')
     serializer_class = TagSerializer
 
     @action(detail=False)
