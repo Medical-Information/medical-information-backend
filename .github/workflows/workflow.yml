@@ -35,8 +35,9 @@ jobs:
     services:
 
       postgres:
-        image: postgres
+        image: postgres:14
         env:
+          POSTGRES_DB: stethoscope_db
           POSTGRES_USER: stethoscope_user
           POSTGRES_PASSWORD: stethoscope_password
         options: >-
