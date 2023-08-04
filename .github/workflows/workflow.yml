@@ -37,9 +37,9 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: stethoscope_db
+          POSTGRES_USER: stethoscope_user
+          POSTGRES_PASSWORD: stethoscope_password
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
