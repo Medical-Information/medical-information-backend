@@ -48,6 +48,7 @@ class UserSerializer(UserSimpleSerializer):
             'publications_amount',
             'subscribed',
         ]
+        read_only_fields = ('subscribed', 'email', 'role')
 
     def get_rating(self, user) -> int:
         return user.rating
