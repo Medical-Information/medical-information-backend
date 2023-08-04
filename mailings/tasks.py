@@ -16,7 +16,7 @@ load_dotenv()
 
 @shared_task
 def send_weekly_email():
-    top_articles = TopArticles.objects.values_list(
+    top_articles = TopArticles.objects.select_related('articles').values_list(
         'articles__title',
         'articles__pk',
     )
