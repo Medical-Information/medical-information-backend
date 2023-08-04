@@ -76,7 +76,7 @@ class ArticleAdmin(admin.ModelAdmin):
         'updated_at',
     )
     list_select_related = ('author',)
-    list_filter = ('author', 'is_published', ('tags', TreeRelatedFieldListFilter))
+    list_filter = ('is_published', ('tags', TreeRelatedFieldListFilter))
     search_fields = ('author__email', 'title')
     filter_horizontal = ('tags',)
     readonly_fields = (
