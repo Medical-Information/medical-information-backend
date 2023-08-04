@@ -2,7 +2,9 @@ FROM python:3.11-slim
 
 ENV APP_HOME=/app
 
-RUN apt-get update && apt-get install gettext -y
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install gettext libpq-dev gcc -y
 
 RUN pip install --upgrade pip
 
