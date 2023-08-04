@@ -2,7 +2,7 @@
 from django.utils.translation import gettext_lazy as _
 
 
-class MaximumLengthValidator:
+class PasswordMaximumLengthValidator:
     def __init__(self, max_length=20):
         """Init length."""
         self.max_length = max_length

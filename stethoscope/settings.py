@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -267,3 +268,7 @@ MDEDITOR_CONFIGS = {
         'language': 'en',  # zh / en / es
     },
 }
+
+# non-activated user account management settings
+TIME_TO_ACTIVATE_USER_ACCOUNT = timedelta(minutes=10)
+USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD = timedelta(hours=1)
