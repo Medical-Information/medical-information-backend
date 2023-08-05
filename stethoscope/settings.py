@@ -143,7 +143,7 @@ SPECTACULAR_SETTINGS = {
 
 SITE_NAME = os.environ.get('SITE_NAME')
 DOMAIN = os.environ.get('DOMAIN')
-PASSWORD_RESET_TIMEOUT = os.environ.get('PASSWORD_RESET_TIMEOUT', 259200)
+PASSWORD_RESET_TIMEOUT = int(os.environ.get('PASSWORD_RESET_TIMEOUT', 259200))
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password-confirmation/?uid={uid}&token={token}',

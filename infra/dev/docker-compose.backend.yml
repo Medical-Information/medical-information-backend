@@ -31,6 +31,18 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
 
+  backend:
+    build:
+      context: ../../
+    env_file:
+      - ./.env
+    volumes:
+      - backend_value:/app/data
+    ports:
+      - "8000:8000"
+      - "5555:5555"
+
 volumes:
   postgres_value:
   redis_value:
+  backend_value:
