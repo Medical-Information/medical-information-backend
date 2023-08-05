@@ -31,6 +31,23 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
+
+    services:
+
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: stethoscope_db
+          POSTGRES_USER: stethoscope_user
+          POSTGRES_PASSWORD: stethoscope_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -96,6 +113,7 @@ jobs:
           script: |
             cd ./stethoscope_infra
             echo DEBUG=${{ vars.DEBUG }} > .env
+            echo LOGGING_ENABLED=${{ vars.LOGGING_ENABLED }} > .env
             echo CORS_ALLOW_ALL_ORIGINS=${{ vars.CORS_ALLOW_ALL_ORIGINS }} >> .env
             echo POSTGRES_DB=${{ vars.POSTGRES_DB }} >> .env
             echo POSTGRES_USER=${{ vars.POSTGRES_USER }} >> .env
@@ -114,6 +132,12 @@ jobs:
             echo EMAIL_USE_TLS=${{ vars.EMAIL_USE_TLS }} >> .env
             echo CURSOR_PAGINATION_PAGE_SIZE=${{ vars.CURSOR_PAGINATION_PAGE_SIZE }} >> .env
             echo CURSOR_PAGINATION_MAX_PAGE_SIZE=${{ vars.CURSOR_PAGINATION_MAX_PAGE_SIZE }} >> .env
+            echo "WEEKLY_SUBJECT=${{ vars.WEEKLY_SUBJECT }}" >> .env
+            echo CELERY_BROKER=${{ vars.CELERY_BROKER }} >> .env
+            echo URL_ARTICLES=${{ vars.URL_ARTICLES }} >> .env
+            echo SITE_NAME=${{ vars.SITE_NAME }} >> .env
+            echo DOMAIN=${{ vars.DOMAIN }} >> .env
+            echo PASSWORD_RESET_TIMEOUT=${{ vars.PASSWORD_RESET_TIMEOUT }} >> .env
             sudo docker compose down
             sudo docker image rm ${{ vars.DOCKER_USERNAME }}/stethoscope-backend
             sudo docker compose pull

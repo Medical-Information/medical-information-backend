@@ -8,7 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from dotenv import load_dotenv
 
-from mailings.models import TopArticles
+from mailings.models import TopArticle
 from users.models import User
 
 load_dotenv()
@@ -16,9 +16,9 @@ load_dotenv()
 
 @shared_task
 def send_weekly_email():
-    top_articles = TopArticles.objects.values_list(
-        'articles__title',
-        'articles__pk',
+    top_articles = TopArticle.objects.select_related('article').values_list(
+        'article__title',
+        'article__pk',
     )
     links_articles = []
     for title_article, id__article in top_articles:

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -93,18 +94,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': (
-            'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'
-        ),
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+        },
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'users.validators.PasswordMaximumLengthValidator',
+        'OPTIONS': {
+            'max_length': 20,
+        },
     },
 ]
 
@@ -144,7 +143,7 @@ SPECTACULAR_SETTINGS = {
 
 SITE_NAME = os.environ.get('SITE_NAME')
 DOMAIN = os.environ.get('DOMAIN')
-PASSWORD_RESET_TIMEOUT = os.environ.get('PASSWORD_RESET_TIMEOUT', 259200)
+PASSWORD_RESET_TIMEOUT = int(os.environ.get('PASSWORD_RESET_TIMEOUT', 259200))
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'reset-password-confirmation/?uid={uid}&token={token}',
@@ -156,6 +155,7 @@ DJOSER = {
         'password_changed_confirmation': 'core.email_djoser.PasswordConfirmationEmail',
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'ACTIVATION_URL': 'activate/?uid={uid}&token={token}',
     'SEND_ACTIVATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
@@ -268,3 +268,7 @@ MDEDITOR_CONFIGS = {
         'language': 'en',  # zh / en / es
     },
 }
+
+# non-activated user account management settings
+TIME_TO_ACTIVATE_USER_ACCOUNT = timedelta(minutes=10)
+USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD = timedelta(hours=1)

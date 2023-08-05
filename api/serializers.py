@@ -3,13 +3,22 @@ from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework.serializers import (
     BooleanField,
+    CharField,
+    CurrentUserDefault,
+    HiddenField,
+    ListField,
     ModelSerializer,
+    Serializer,
     SerializerMethodField,
 )
 
 from articles.models import Article, Tag
 
 User = get_user_model()
+
+
+class UserCreateSerializer(DjoserUserSerializer):
+    pass
 
 
 class UserSimpleSerializer(DjoserUserSerializer):
@@ -39,6 +48,7 @@ class UserSerializer(UserSimpleSerializer):
             'publications_amount',
             'subscribed',
         ]
+        read_only_fields = ('subscribed', 'email', 'role')
 
     def get_rating(self, user) -> int:
         return user.rating
@@ -61,6 +71,8 @@ class TagSimpleSerializer(ModelSerializer):
 class TagRootsSerializer(ModelSerializer):
     """Сериализатор для корневых тегов, модель Tag."""
 
+    children = TagSimpleSerializer(many=True, required=False)
+
     class Meta(TagSimpleSerializer.Meta):
         fields = TagSimpleSerializer.Meta.fields + [
             'children',
@@ -69,6 +81,8 @@ class TagRootsSerializer(ModelSerializer):
 
 class TagSerializer(TagRootsSerializer):
     """Полный сериализатор тегов, модель Tag."""
+
+    parent = TagSimpleSerializer(required=False)
 
     class Meta(TagRootsSerializer.Meta):
         fields = TagRootsSerializer.Meta.fields + [
@@ -136,3 +150,49 @@ class ArticleSerializer(ModelSerializer):
 
     def get_rating(self, obj) -> int:
         return obj.rating
+
+
+class ValidationSerializer(Serializer):
+    """HTTP_400."""
+
+    property_1 = CharField()
+    property_2 = CharField()
+    non_field_errors = ListField()
+
+
+class NotAuthenticatedSerializer(Serializer):
+    """HTTP_401."""
+
+    detail = CharField()
+
+
+class DummySerializer(Serializer):
+    """Заглушка для drf-spectacular, чтобы не ругался ViewSet без сериализаторов."""
+
+    pass
+
+
+class ArticleCreateSerializer(ModelSerializer):
+    image = Base64ImageField()
+    author = HiddenField(default=CurrentUserDefault())
+
+    class Meta:
+        model = Article
+        fields = (
+            'author',
+            'title',
+            'annotation',
+            'text',
+            'source_name',
+            'source_link',
+            'image',
+        )
+
+    def to_representation(self, instance):
+        """Предполагается, после создания статья имеет начальные занчения атрибутов."""
+        instance.is_fan = False
+        instance.is_hater = False
+        instance.likes_count = 0
+        instance.dislikes_count = 0
+        instance.rating = 0
+        return ArticleSerializer().to_representation(instance)

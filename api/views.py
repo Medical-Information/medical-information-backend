@@ -4,23 +4,25 @@ from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.serializers import TokenSerializer
 from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from api import schema
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
-from api.permissions import IsAdmin, ReadOnly
+from api.permissions import ArticleOwnerPermission
 from api.serializers import (
+    ArticleCreateSerializer,
     ArticleSerializer,
+    DummySerializer,
     TagRootsSerializer,
     TagSerializer,
     TagSubtreeSerializer,
@@ -32,33 +34,34 @@ from likes.utils import annotate_user_queryset
 User = get_user_model()
 
 
-@extend_schema_view(
-    post=extend_schema(
-        description='create token',
-        responses={status.HTTP_200_OK: TokenSerializer},
-    ),
-)
+@extend_schema_view(**schema.TOKEN_CREATE_VIEW_SCHEMA)
 class TokenCreateView(DjoserTokenCreateView):
     pass
 
 
-@extend_schema_view(
-    post=extend_schema(
-        description='destroy token',
-        responses={status.HTTP_204_NO_CONTENT: None},
-    ),
-)
+@extend_schema_view(**schema.TOKEN_DESTROY_VIEW_SCHEMA)
 class TokenDestroyView(DjoserTokenDestroyView):
-    pass
+    serializer_class = DummySerializer
 
 
+@extend_schema_view(**schema.USER_VIEW_SET_SCHEMA)
 class UserViewSet(DjoserUserViewSet):
+    # отключаем смену логина (email)
+    reset_username = None
+    reset_username_confirm = None
+    # отключаем установку логина (email)
+    set_username = None
+
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
         return annotate_user_queryset(queryset)
 
     def get_instance(self):
         return self.get_queryset().get(pk=self.request.user.pk)
+
+    # переопределил, так как родительский метод зачем-то отправляет письмо на активацию
+    def perform_update(self, serializer):
+        serializer.save()
 
     @action(
         methods=['PATCH', 'DELETE'],
@@ -84,7 +87,7 @@ class UserViewSet(DjoserUserViewSet):
 class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
-    permission_classes = (IsAdmin | ReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ArticleFilter
 
@@ -128,6 +131,11 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
             )
         return qs.all()
 
+    def get_serializer_class(self):
+        if self.action in ('create', 'update', 'partial_update'):
+            return ArticleCreateSerializer
+        return ArticleSerializer
+
     @action(
         methods=['post'],
         detail=True,
@@ -160,7 +168,7 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
 class TagViewSet(ReadOnlyModelViewSet):
     """Вьюсет модели Tag."""
 
-    queryset = Tag.objects.prefetch_related('parent', 'children').all()
+    queryset = Tag.objects.select_related('parent').prefetch_related('children')
     serializer_class = TagSerializer
 
     @action(detail=False)
@@ -171,6 +179,6 @@ class TagViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def subtree(self, request, pk) -> Response:
-        tag = Tag.objects.filter(pk=pk)
+        tag = self.get_queryset().filter(pk=pk)
         serializer = TagSubtreeSerializer(tag, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)

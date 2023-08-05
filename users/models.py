@@ -44,7 +44,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     )
     date_joined = None
     username = None
-    email = models.EmailField(unique=True)
+    email = models.EmailField(max_length=50, unique=True)
     role = models.CharField(
         verbose_name=_('role'),
         choices=RolesTypes.choices,
