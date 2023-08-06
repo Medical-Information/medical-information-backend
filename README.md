@@ -84,6 +84,10 @@ python manage.py createsuperuser
 ```
 python manage.py runserver
 ```
+### Запустить тесты
+```
+pytest
+```
 ## Полезности
 ### Ссылки
 - Открыть панель администратора [localhost:8000/admin/](http://localhost:8000/admin/)
