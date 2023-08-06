@@ -22,7 +22,7 @@ class LikedMixin:
         if vote_type not in votes:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         services.add_vote(obj, request.user, votes[vote_type])
-        return Response()
+        return Response(status=status.HTTP_200_OK)
 
     @action(
         methods=['POST'],

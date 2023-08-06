@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 pytest_plugins = [
     'tests.fixtures.fixture_user',
     'tests.fixtures.fixture_temporary_resources',
+    'tests.fixtures.fixture_article',
 ]
 
 
