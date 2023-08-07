@@ -36,9 +36,9 @@ ARTICLE_VIEW_SET_SCHEMA = {
             ),
         ],
     ),
-    'favorite': {
+    'post_favorite': {
         extend_schema(
-            summary='Добавить в избранное.',
+            summary='Добавить статью в избранное.',
             request=None,
             parameters=[
                 OpenApiParameter(
@@ -49,14 +49,14 @@ ARTICLE_VIEW_SET_SCHEMA = {
                 ),
             ],
             responses={
-                status.HTTP_200_OK: ArticleSerializer,
+                status.HTTP_201_CREATED: ArticleSerializer,
                 status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
             },
         ),
     },
-    'unfavorite': {
+    'delete_favorite': {
         extend_schema(
-            summary='Удалить из избранного.',
+            summary='Удалить статью из избранного.',
             request=None,
             parameters=[
                 OpenApiParameter(
