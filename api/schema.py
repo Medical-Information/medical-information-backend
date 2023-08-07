@@ -36,7 +36,7 @@ ARTICLE_VIEW_SET_SCHEMA = {
             ),
         ],
     ),
-    'post_favorite': {
+    'favorite': {
         extend_schema(
             summary='Добавить в избранное.',
             request=None,
@@ -49,12 +49,12 @@ ARTICLE_VIEW_SET_SCHEMA = {
                 ),
             ],
             responses={
-                status.HTTP_204_NO_CONTENT: None,
+                status.HTTP_200_OK: ArticleSerializer,
                 status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
             },
         ),
     },
-    'delete_favorite': {
+    'unfavorite': {
         extend_schema(
             summary='Удалить из избранного.',
             request=None,
@@ -67,7 +67,7 @@ ARTICLE_VIEW_SET_SCHEMA = {
                 ),
             ],
             responses={
-                status.HTTP_204_NO_CONTENT: None,
+                status.HTTP_200_OK: ArticleSerializer,
                 status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
             },
         ),

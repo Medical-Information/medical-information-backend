@@ -142,31 +142,34 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
         methods=['post'],
         detail=True,
         permission_classes=(IsAuthenticated,),
-        url_path='favorite',
     )
-    def post_favorite(self, request, pk):
+    def favorite(self, request, pk):
         if FavoriteArticle.objects.get_or_create(
             article_id=pk,
             user=request.user,
         )[1]:
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            serializer = self.get_serializer(self.get_object())
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
             {'non_field_errors': _('Article is favorited already.')},
             status.HTTP_400_BAD_REQUEST,
         )
 
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
     @action(
-        methods=['delete'],
+        methods=['post'],
         detail=True,
         permission_classes=(IsAuthenticated,),
-        url_path='favorite',
     )
-    def delete_favorite(self, request, pk):
+    def unfavorite(self, request, pk):
         if FavoriteArticle.objects.filter(
             article_id=pk,
             user=request.user,
         ).delete()[0]:
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            serializer = self.get_serializer(self.get_object())
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
             {'non_field_errors': _('Article is not favorited yet.')},
             status.HTTP_400_BAD_REQUEST,
