@@ -199,7 +199,7 @@ class CommentViewSet(ModelViewSet):  # feature. LikedMixin
 
     def get_queryset(self):
         article = get_object_or_404(Article, id=self.kwargs.get('acticle_id'))
-        new_queryset = article.comments.all()
+        new_queryset = article.comments.all().select_related('author')
         return new_queryset
 
     def perform_create(self, serializer):

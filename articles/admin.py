@@ -128,5 +128,6 @@ class CommentAdmin(admin.ModelAdmin):
         'article',
         'text',
     )
+    list_select_related = ('author',)
     list_filter = ('article', 'author')
     search_fields = ('text',)
