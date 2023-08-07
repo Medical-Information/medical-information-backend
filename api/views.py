@@ -9,7 +9,7 @@ from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema_view
-from rest_framework import status
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -90,8 +90,15 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
     permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_class = ArticleFilter
+    search_fields = (
+        'title',
+        'text',
+        'source_name',
+        'author__first_name',
+        'author__last_name',
+    )
 
     def get_queryset(self):
         qs = (
