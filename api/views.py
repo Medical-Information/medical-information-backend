@@ -149,7 +149,7 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             user=request.user,
         )[1]:
             serializer = self.get_serializer(self.get_object())
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
             {'non_field_errors': _('Article is favorited already.')},
             status.HTTP_400_BAD_REQUEST,
