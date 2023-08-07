@@ -10,9 +10,10 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api import schema
 from api.filters import ArticleFilter
@@ -84,7 +85,8 @@ class UserViewSet(DjoserUserViewSet):
         )
 
 
-class ArticleViewSet(LikedMixin, ModelViewSet):
+@extend_schema_view(**schema.ARTICLE_VIEW_SET_SCHEMA)
+class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
     permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
@@ -132,7 +134,7 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         return qs.all()
 
     def get_serializer_class(self):
-        if self.action in ('create', 'update', 'partial_update'):
+        if self.action == 'create':
             return ArticleCreateSerializer
         return ArticleSerializer
 
@@ -140,19 +142,25 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         methods=['post'],
         detail=True,
         permission_classes=(IsAuthenticated,),
+        url_path='favorite',
     )
-    def favorite(self, request, pk):
+    def post_favorite(self, request, pk):
         if FavoriteArticle.objects.get_or_create(
             article_id=pk,
             user=request.user,
         )[1]:
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
-            {'errors': _('Article is favorited already.')},
+            {'non_field_errors': _('Article is favorited already.')},
             status.HTTP_400_BAD_REQUEST,
         )
 
-    @favorite.mapping.delete
+    @action(
+        methods=['delete'],
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+        url_path='favorite',
+    )
     def delete_favorite(self, request, pk):
         if FavoriteArticle.objects.filter(
             article_id=pk,
@@ -160,14 +168,13 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         ).delete()[0]:
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
-            {'errors': _('Article is not favorited yet.')},
+            {'non_field_errors': _('Article is not favorited yet.')},
             status.HTTP_400_BAD_REQUEST,
         )
 
 
+@extend_schema_view(**schema.TAG_VIEW_SET_SCHEMA)
 class TagViewSet(ReadOnlyModelViewSet):
-    """Вьюсет модели Tag."""
-
     queryset = Tag.objects.select_related('parent').prefetch_related('children')
     serializer_class = TagSerializer
 
