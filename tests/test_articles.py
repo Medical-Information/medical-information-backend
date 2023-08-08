@@ -254,7 +254,7 @@ def test_duplicated_unvote(alt_authenticated_client, alt_user, article):
 
 def test_unpublished_article_favorite(user, authenticated_client, article):
     """Tests unpublished article favoriting."""
-    favorite_url = reverse('api:articles-post-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
 
     fav_response_unpublished = authenticated_client.post(favorite_url)
 
@@ -266,7 +266,7 @@ def test_unpublished_article_favorite(user, authenticated_client, article):
 
 def test_unpublished_article_unfavorite(user, authenticated_client, article):
     """Tests unpublished article unfavoriting."""
-    favorite_url = reverse('api:articles-delete-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
 
     unfav_response_unpublished = authenticated_client.delete(favorite_url)
 
@@ -280,11 +280,12 @@ def test_published_article_favorite(user, authenticated_client, article):
     """Tests published article favoriting."""
     article.is_published = True
     article.save()
-    favorite_url = reverse('api:articles-post-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
 
     fav_response_published = authenticated_client.post(favorite_url)
 
     assert fav_response_published.status_code == 201
+    assert fav_response_published.data['is_favorited'] is True
     assert user.favorite_articles.filter(article=article).exists() is True
     assert user.favorite_articles.count() == 1
     assert FavoriteArticle.objects.count() == 1
@@ -303,11 +304,12 @@ def test_published_article_unfavorite(user, authenticated_client, article):
     article.save()
     fav_article = FavoriteArticle.objects.create(user=user, article=article)
     user.favorite_articles.add(fav_article)
-    favorite_url = reverse('api:articles-delete-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
 
     unfav_response_published = authenticated_client.delete(favorite_url)
 
     assert unfav_response_published.status_code == 200
+    assert unfav_response_published.data['is_favorited'] is False
     assert user.favorite_articles.filter(article=article).exists() is False
     assert user.favorite_articles.count() == 0
     assert FavoriteArticle.objects.count() == 0
@@ -323,7 +325,7 @@ def test_published_article_false_unfavorite(user, authenticated_client, article)
     """Tests published article unfavoriting."""
     article.is_published = True
     article.save()
-    favorite_url = reverse('api:articles-delete-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
 
     unfav_response_published = authenticated_client.delete(favorite_url)
 

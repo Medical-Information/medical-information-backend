@@ -181,7 +181,7 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
         )
         if favorited.exists():
             favorited.delete()
-            serializer = self.get_serializer(article)
+            serializer = self.get_serializer(self.get_object())
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
             {'non_field_errors': _('Article is not favorited yet.')},
