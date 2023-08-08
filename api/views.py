@@ -160,7 +160,8 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             return self._delete_favorite(request, pk)
 
     def _create_favorite(self, request, pk):
-        article = self.get_object()
+        # retrieve article to prevent favoriting unpublished one
+        article = get_object_or_404(self.get_queryset(), pk=pk)
         fav_article, is_created = FavoriteArticle.objects.get_or_create(
             article=article,
             user=request.user,
@@ -174,7 +175,8 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
         )
 
     def _delete_favorite(self, request, pk):
-        article = self.get_object()
+        # retrieve article to prevent unfavoriting unpublished one
+        article = get_object_or_404(self.get_queryset(), pk=pk)
         favorited = FavoriteArticle.objects.filter(
             article=article,
             user=request.user,
