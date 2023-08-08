@@ -36,8 +36,9 @@ ARTICLE_VIEW_SET_SCHEMA = {
             ),
         ],
     ),
-    'post_favorite': {
+    'favorite': {
         extend_schema(
+            methods=['post'],
             summary='Добавить статью в избранное.',
             request=None,
             parameters=[
@@ -53,9 +54,8 @@ ARTICLE_VIEW_SET_SCHEMA = {
                 status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
             },
         ),
-    },
-    'delete_favorite': {
         extend_schema(
+            methods=['delete'],
             summary='Удалить статью из избранного.',
             request=None,
             parameters=[
