@@ -50,12 +50,23 @@ class TokenDestroyView(DjoserTokenDestroyView):
 @extend_schema_view(**schema.USER_VIEW_SET_SCHEMA)
 class UserViewSet(DjoserUserViewSet):
     # отключаем смену логина (email)
-    reset_username = None
-    reset_username_confirm = None
+    @extend_schema(exclude=True)
+    def reset_username(self, request, *args, **kwargs):
+        pass
+
+    @extend_schema(exclude=True)
+    def reset_username_confirm(self, request, *args, **kwargs):
+        pass
+
     # отключаем установку логина (email)
-    set_username = None
+    @extend_schema(exclude=True)
+    def set_username(self, request, *args, **kwargs):
+        pass
+
     # отключаем повторную отправку активации
-    resend_activation = None
+    @extend_schema(exclude=True)
+    def resend_activation(self, request, *args, **kwargs):
+        pass
 
     # отключаем ручки retrieve/update/partial_update/destroy
     @extend_schema(exclude=True)
