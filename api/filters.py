@@ -4,22 +4,28 @@ from articles.models import Article, Tag
 
 
 class ArticleFilter(django_filters.FilterSet):
-    is_favorited = django_filters.BooleanFilter()
-    text = django_filters.CharFilter(lookup_expr='icontains')
+    is_favorited = django_filters.BooleanFilter(label='Статья в избранном')
+    text = django_filters.CharFilter(
+        lookup_expr='icontains',
+        label='Поиск по тексту статьи',
+    )
     tags = django_filters.filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(),
         method='filter_tags',
+        label='Статьи по указанным тегам',
     )
     tags_exclude = django_filters.filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(),
         method='filter_tags_exclude',
+        label='Статьи без указанных тегов',
     )
 
     class Meta:
         model = Article
         fields = ('text',)
 
-    def get_tags_with_children(self, tags):
+    @staticmethod
+    def _get_tags_with_children(tags):
         """Формирует набор тегов (выбранные и их потомки) для фильтров по тегам."""
         unique_tags = set()
         for tag in tags:
@@ -31,10 +37,14 @@ class ArticleFilter(django_filters.FilterSet):
         """Фильтрует articles, выбирая статьи с указанными тегами."""
         if not value:
             return queryset
-        return queryset.filter(tags__in=self.get_tags_with_children(value)).distinct()
+        return queryset.filter(
+            tags__in=ArticleFilter._get_tags_with_children(value),
+        ).distinct()
 
     def filter_tags_exclude(self, queryset, name, value):  # noqa: WPS122
         """Фильтрует articles, исключая статьи с указанными тегами."""
         if not value:
             return queryset
-        return queryset.exclude(tags__in=self.get_tags_with_children(value)).distinct()
+        return queryset.exclude(
+            tags__in=ArticleFilter._get_tags_with_children(value),
+        ).distinct()

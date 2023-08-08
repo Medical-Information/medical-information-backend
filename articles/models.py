@@ -122,3 +122,27 @@ class FavoriteArticle(UUIDMixin):
 
     def __str__(self) -> str:
         return f'Избранное (пользователь: {self.user}, статья {self.article})'
+
+
+class Comment(UUIDMixin, TimeStampedMixin):
+    text = models.TextField(_('text'))
+    author = models.ForeignKey(
+        User,
+        verbose_name=_('author'),
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
+    article = models.ForeignKey(
+        Article,
+        verbose_name=_('article'),
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('comment')
+        verbose_name_plural = _('comments')
+
+    def __str__(self):
+        return self.text[:25]

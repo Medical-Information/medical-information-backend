@@ -9,8 +9,9 @@ from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema_view
-from rest_framework import status
+from rest_framework import filters, status
 from rest_framework.decorators import action
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
@@ -19,10 +20,11 @@ from api import schema
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
-from api.permissions import ArticleOwnerPermission
+from api.permissions import ArticleOwnerPermission, IsAdmin, IsAuthor, ReadOnly
 from api.serializers import (
     ArticleCreateSerializer,
     ArticleSerializer,
+    CommentSerializer,
     DummySerializer,
     TagRootsSerializer,
     TagSerializer,
@@ -85,12 +87,20 @@ class UserViewSet(DjoserUserViewSet):
         )
 
 
-class ArticleViewSet(LikedMixin, ModelViewSet):
+@extend_schema_view(**schema.ARTICLE_VIEW_SET_SCHEMA)
+class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
     permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_class = ArticleFilter
+    search_fields = (
+        'title',
+        'text',
+        'source_name',
+        'author__first_name',
+        'author__last_name',
+    )
 
     def get_queryset(self):
         qs = (
@@ -133,7 +143,7 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         return qs.all()
 
     def get_serializer_class(self):
-        if self.action in ('create', 'update', 'partial_update'):
+        if self.action == 'create':
             return ArticleCreateSerializer
         return ArticleSerializer
 
@@ -141,21 +151,28 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         methods=['post'],
         detail=True,
         permission_classes=(IsAuthenticated,),
+        url_path='favorite',
     )
-    def favorite(self, request, pk):
+    def post_favorite(self, request, pk):
         article = get_object_or_404(self.get_queryset(), pk=pk)
         fav_article, is_created = FavoriteArticle.objects.get_or_create(
             article=article,
             user=request.user,
         )
         if is_created:
-            return Response(status=status.HTTP_201_CREATED)
+            serializer = self.get_serializer(self.get_object())
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
-            {'errors': _('Article is favorited already.')},
+            {'non_field_errors': _('Article is favorited already.')},
             status.HTTP_400_BAD_REQUEST,
         )
 
-    @favorite.mapping.delete
+    @action(
+        methods=['delete'],
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+        url_path='favorite',
+    )
     def delete_favorite(self, request, pk):
         article = get_object_or_404(self.get_queryset(), pk=pk)
         favorited = FavoriteArticle.objects.filter(
@@ -164,16 +181,16 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         )
         if favorited.exists():
             favorited.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            serializer = self.get_serializer(article)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
-            {'errors': _('Article is not favorited yet.')},
+            {'non_field_errors': _('Article is not favorited yet.')},
             status.HTTP_400_BAD_REQUEST,
         )
 
 
+@extend_schema_view(**schema.TAG_VIEW_SET_SCHEMA)
 class TagViewSet(ReadOnlyModelViewSet):
-    """Вьюсет модели Tag."""
-
     queryset = Tag.objects.select_related('parent').prefetch_related('children')
     serializer_class = TagSerializer
 
@@ -188,3 +205,17 @@ class TagViewSet(ReadOnlyModelViewSet):
         tag = self.get_queryset().filter(pk=pk)
         serializer = TagSubtreeSerializer(tag, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class CommentViewSet(ModelViewSet):  # feature. LikedMixin
+    serializer_class = CommentSerializer
+    permission_classes = (IsAdmin | IsAuthor | ReadOnly,)
+
+    def get_queryset(self):
+        article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
+        new_queryset = article.comments.all().select_related('author')
+        return new_queryset
+
+    def perform_create(self, serializer):
+        article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
+        serializer.save(author=self.request.user, article=article)
