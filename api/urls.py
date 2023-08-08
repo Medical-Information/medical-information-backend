@@ -8,6 +8,7 @@ from rest_framework import routers
 
 from api.views import (
     ArticleViewSet,
+    CommentViewSet,
     TagViewSet,
     TokenCreateView,
     TokenDestroyView,
@@ -21,6 +22,12 @@ router_v1 = routers.DefaultRouter()
 router_v1.register(r'users', UserViewSet, basename='users')
 router_v1.register(r'articles', ArticleViewSet, basename='articles')
 router_v1.register(r'tags', TagViewSet, basename='tags')
+router_v1.register(
+    r'articles\/(?P<acticle_id>'
+    r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'
+    r'\/comments',
+    CommentViewSet, basename='comments',
+)
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),

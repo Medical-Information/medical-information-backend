@@ -12,7 +12,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
-from articles.models import Article, Tag
+from articles.models import Article, Comment, Tag
 
 User = get_user_model()
 
@@ -100,6 +100,21 @@ class TagSubtreeSerializer(TagSimpleSerializer):
         return fields
 
 
+class CommentSerializer(ModelSerializer):
+    author = UserSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = (
+            'id',
+            'text',
+            'author',
+            'created_at',
+            'updated_at',
+        )
+        read_only_fields = ('id', 'author', 'created_at', 'updated_at')
+
+
 class ArticleSerializer(ModelSerializer):
     is_fan = SerializerMethodField()
     is_hater = SerializerMethodField()
@@ -110,6 +125,7 @@ class ArticleSerializer(ModelSerializer):
     is_favorited = BooleanField(read_only=True)
     author = UserSimpleSerializer(read_only=True)
     tags = TagSimpleSerializer(many=True, read_only=True)
+    comments = CommentSerializer(read_only=True, many=True)
 
     class Meta:
         model = Article
@@ -133,6 +149,7 @@ class ArticleSerializer(ModelSerializer):
             'views_count',
             'author',
             'tags',
+            'comments',
         )
         read_only_fields = ('created_at', 'updated_at')
 

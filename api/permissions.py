@@ -17,6 +17,20 @@ class IsAdmin(BasePermission):
         return self.has_permission(request, view)
 
 
+class IsAuthor(BasePermission):
+    """Разрешает доступ только для автора."""
+
+    message = ''
+
+    def has_permission(self, request, view):
+        self.message = 'Необходима авторизация.'
+        return request.method in SAFE_METHODS or request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        self.message = 'Необходимо авторство.'
+        return request.user == obj.author
+
+
 class ReadOnly(BasePermission):
     """Разрешает доступ на чтение."""
 
