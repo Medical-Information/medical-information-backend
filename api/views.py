@@ -148,12 +148,18 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
         return ArticleSerializer
 
     @action(
-        methods=['post'],
+        methods=['post', 'delete'],
         detail=True,
         permission_classes=(IsAuthenticated,),
-        url_path='favorite',
     )
-    def post_favorite(self, request, pk):
+    def favorite(self, request, pk):
+        if request.method == 'POST':
+            return self._create_favorite(request, pk)
+
+        if request.method == 'DELETE':
+            return self._delete_favorite(request, pk)
+
+    def _create_favorite(self, request, pk):
         article = get_object_or_404(self.get_queryset(), pk=pk)
         fav_article, is_created = FavoriteArticle.objects.get_or_create(
             article=article,
@@ -167,13 +173,7 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             status.HTTP_400_BAD_REQUEST,
         )
 
-    @action(
-        methods=['delete'],
-        detail=True,
-        permission_classes=(IsAuthenticated,),
-        url_path='favorite',
-    )
-    def delete_favorite(self, request, pk):
+    def _delete_favorite(self, request, pk):
         article = get_object_or_404(self.get_queryset(), pk=pk)
         favorited = FavoriteArticle.objects.filter(
             article=article,
