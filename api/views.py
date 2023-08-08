@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Exists, OuterRef, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import TokenCreateView as DjoserTokenCreateView
@@ -142,10 +143,12 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk):
-        if FavoriteArticle.objects.get_or_create(
-            article_id=pk,
+        article = get_object_or_404(self.get_queryset(), pk=pk)
+        fav_article, is_created = FavoriteArticle.objects.get_or_create(
+            article=article,
             user=request.user,
-        )[1]:
+        )
+        if is_created:
             return Response(status=status.HTTP_201_CREATED)
         return Response(
             {'errors': _('Article is favorited already.')},
@@ -154,10 +157,13 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
 
     @favorite.mapping.delete
     def delete_favorite(self, request, pk):
-        if FavoriteArticle.objects.filter(
-            article_id=pk,
+        article = get_object_or_404(self.get_queryset(), pk=pk)
+        favorited = FavoriteArticle.objects.filter(
+            article=article,
             user=request.user,
-        ).delete()[0]:
+        )
+        if favorited.exists():
+            favorited.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(
             {'errors': _('Article is not favorited yet.')},

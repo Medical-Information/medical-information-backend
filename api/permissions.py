@@ -32,3 +32,11 @@ class ArticleOwnerPermission(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.method in SAFE_METHODS or request.user == obj.author
+
+
+class LikesIsNotObject0wner(BasePermission):
+    """Запрещает ставить лайки/дизлайки своим собственным объектам."""
+
+    def has_permission(self, request, view):
+        obj = view.get_object()
+        return not (request.user == obj.author)
