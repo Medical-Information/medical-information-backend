@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Exists, OuterRef, Q, Sum, Value
-from django.shortcuts import get_object_or_404
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import TokenCreateView as DjoserTokenCreateView
@@ -20,7 +20,7 @@ from api import schema
 from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
-from api.permissions import IsAdmin, IsAuthor, ReadOnly, ArticleOwnerPermission
+from api.permissions import ArticleOwnerPermission, IsAdmin, IsAuthor, ReadOnly
 from api.serializers import (
     ArticleCreateSerializer,
     ArticleSerializer,
@@ -148,12 +148,18 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
         return ArticleSerializer
 
     @action(
-        methods=['post'],
+        methods=['post', 'delete'],
         detail=True,
         permission_classes=(IsAuthenticated,),
-        url_path='favorite',
     )
-    def post_favorite(self, request, pk):
+    def favorite(self, request, pk):
+        if request.method == 'POST':
+            return self._create_favorite(request, pk)
+
+        if request.method == 'DELETE':
+            return self._delete_favorite(request, pk)
+
+    def _create_favorite(self, request, pk):
         if FavoriteArticle.objects.get_or_create(
             article_id=pk,
             user=request.user,
@@ -165,13 +171,7 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             status.HTTP_400_BAD_REQUEST,
         )
 
-    @action(
-        methods=['delete'],
-        detail=True,
-        permission_classes=(IsAuthenticated,),
-        url_path='favorite',
-    )
-    def delete_favorite(self, request, pk):
+    def _delete_favorite(self, request, pk):
         if FavoriteArticle.objects.filter(
             article_id=pk,
             user=request.user,
