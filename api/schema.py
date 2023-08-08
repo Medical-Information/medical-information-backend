@@ -4,11 +4,115 @@ from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schem
 from rest_framework import status
 
 from api.serializers import (
+    ArticleCreateSerializer,
+    ArticleSerializer,
     NotAuthenticatedSerializer,
     UserCreateSerializer,
     UserSerializer,
     ValidationSerializer,
 )
+
+ARTICLE_VIEW_SET_SCHEMA = {
+    'list': extend_schema(
+        summary='Получить список статей.',
+    ),
+    'create': extend_schema(
+        summary='Создать статью.',
+        request=ArticleCreateSerializer,
+        responses={
+            status.HTTP_201_CREATED: ArticleSerializer,
+            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
+            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+        },
+    ),
+    'retrieve': extend_schema(
+        summary='Получить информацию о статье.',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор статьи (UUID).',
+            ),
+        ],
+    ),
+    'post_favorite': {
+        extend_schema(
+            summary='Добавить статью в избранное.',
+            request=None,
+            parameters=[
+                OpenApiParameter(
+                    name='id',
+                    type=OpenApiTypes.UUID,
+                    location=OpenApiParameter.PATH,
+                    description='Идентификатор статьи (UUID).',
+                ),
+            ],
+            responses={
+                status.HTTP_201_CREATED: ArticleSerializer,
+                status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+            },
+        ),
+    },
+    'delete_favorite': {
+        extend_schema(
+            summary='Удалить статью из избранного.',
+            request=None,
+            parameters=[
+                OpenApiParameter(
+                    name='id',
+                    type=OpenApiTypes.UUID,
+                    location=OpenApiParameter.PATH,
+                    description='Идентификатор статьи (UUID).',
+                ),
+            ],
+            responses={
+                status.HTTP_200_OK: ArticleSerializer,
+                status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+            },
+        ),
+    },
+    'unvote': extend_schema(
+        summary='Убрать оценку у статьи.',
+        request=None,
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор статьи (UUID).',
+            ),
+        ],
+        responses={
+            status.HTTP_204_NO_CONTENT: None,
+            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
+            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+        },
+    ),
+    'add_vote': extend_schema(
+        summary='Поставить оценку статье.',
+        request=None,
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор статьи (UUID).',
+            ),
+            OpenApiParameter(
+                name='vote_type',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+                description='Тип оценки (like/dislike).',
+            ),
+        ],
+        responses={
+            status.HTTP_204_NO_CONTENT: None,
+            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
+            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+        },
+    ),
+}
 
 TOKEN_CREATE_VIEW_SCHEMA = {
     'post': extend_schema(
@@ -227,4 +331,36 @@ USER_VIEW_SET_SCHEMA = {
             },
         ),
     },
+}
+
+
+TAG_VIEW_SET_SCHEMA = {
+    'list': extend_schema(
+        summary='Получить список всех тегов.',
+    ),
+    'retrieve': extend_schema(
+        summary='Получить информацию о теге.',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор тега (UUID).',
+            ),
+        ],
+    ),
+    'subtree': extend_schema(
+        summary='Получить все дочерние теги по указанному.',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор тега (UUID).',
+            ),
+        ],
+    ),
+    'roots': extend_schema(
+        summary='Получить корневые теги.',
+    ),
 }
