@@ -1,8 +1,9 @@
 import pytest
 from django.urls import reverse
 
+pytestmark = pytest.mark.django_db
 
-@pytest.mark.django_db()
+
 def test_user_creation_by_api(faker, client):
     user_url = reverse('api:users-list')
     password = faker.password()
@@ -31,7 +32,6 @@ def test_user_creation_by_api(faker, client):
     assert too_long_password_response.status_code == 400
 
 
-@pytest.mark.django_db()
 def test_login(client, user_credentials):
     login_url = reverse('api:login')
     response = client.post(login_url, user_credentials)

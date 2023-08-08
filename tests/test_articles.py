@@ -121,7 +121,7 @@ def test_like_published_article(alt_authenticated_client, alt_user, article):
 
     response = alt_authenticated_client.post(url)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user, vote=VoteTypes.LIKE).exists() is True
 
 
@@ -141,7 +141,7 @@ def test_dislike_published_article(alt_authenticated_client, alt_user, article):
 
     response = alt_authenticated_client.post(url)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user, vote=VoteTypes.DISLIKE).exists() is True
 
 
@@ -154,7 +154,7 @@ def test_change_like_to_dislike_article(alt_authenticated_client, alt_user, arti
     alt_authenticated_client.post(url_like)
     response = alt_authenticated_client.post(url_dislike)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user, vote=VoteTypes.LIKE).exists() is False
     assert article.votes.filter(user=alt_user, vote=VoteTypes.DISLIKE).exists() is True
     assert article.votes.count() == 1
@@ -169,7 +169,7 @@ def test_change_dislike_to_like_article(alt_authenticated_client, alt_user, arti
     alt_authenticated_client.post(url_dislike)
     response = alt_authenticated_client.post(url_like)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user, vote=VoteTypes.DISLIKE).exists() is False
     assert article.votes.filter(user=alt_user, vote=VoteTypes.LIKE).exists() is True
     assert article.votes.count() == 1
@@ -184,7 +184,7 @@ def test_unvote_article(alt_authenticated_client, alt_user, article):
 
     response = alt_authenticated_client.post(url)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user, vote=vote).exists() is False
     assert article.votes.count() == 0
 
@@ -196,7 +196,7 @@ def test_false_unvote_article(alt_authenticated_client, alt_user, article):
 
     response = alt_authenticated_client.post(url)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user).exists() is False
     assert article.votes.count() == 0
 
@@ -219,7 +219,7 @@ def test_duplicated_like(alt_authenticated_client, alt_user, article):
     alt_authenticated_client.post(url)
     response = alt_authenticated_client.post(url)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user, vote=VoteTypes.LIKE).exists() is True
     assert article.votes.count() == 1
 
@@ -232,7 +232,7 @@ def test_duplicated_dislike(alt_authenticated_client, alt_user, article):
     alt_authenticated_client.post(url)
     response = alt_authenticated_client.post(url)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user, vote=VoteTypes.DISLIKE).exists() is True
     assert article.votes.count() == 1
 
@@ -247,14 +247,14 @@ def test_duplicated_unvote(alt_authenticated_client, alt_user, article):
     alt_authenticated_client.post(url)
     response = alt_authenticated_client.post(url)
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert article.votes.filter(user=alt_user).exists() is False
     assert article.votes.count() == 0
 
 
 def test_unpublished_article_favorite(user, authenticated_client, article):
     """Tests unpublished article favoriting."""
-    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-post-favorite', args=(article.pk,))
 
     fav_response_unpublished = authenticated_client.post(favorite_url)
 
@@ -266,7 +266,7 @@ def test_unpublished_article_favorite(user, authenticated_client, article):
 
 def test_unpublished_article_unfavorite(user, authenticated_client, article):
     """Tests unpublished article unfavoriting."""
-    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-delete-favorite', args=(article.pk,))
 
     unfav_response_unpublished = authenticated_client.delete(favorite_url)
 
@@ -280,7 +280,7 @@ def test_published_article_favorite(user, authenticated_client, article):
     """Tests published article favoriting."""
     article.is_published = True
     article.save()
-    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-post-favorite', args=(article.pk,))
 
     fav_response_published = authenticated_client.post(favorite_url)
 
@@ -303,11 +303,11 @@ def test_published_article_unfavorite(user, authenticated_client, article):
     article.save()
     fav_article = FavoriteArticle.objects.create(user=user, article=article)
     user.favorite_articles.add(fav_article)
-    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-delete-favorite', args=(article.pk,))
 
     unfav_response_published = authenticated_client.delete(favorite_url)
 
-    assert unfav_response_published.status_code == 204
+    assert unfav_response_published.status_code == 200
     assert user.favorite_articles.filter(article=article).exists() is False
     assert user.favorite_articles.count() == 0
     assert FavoriteArticle.objects.count() == 0
@@ -323,7 +323,7 @@ def test_published_article_false_unfavorite(user, authenticated_client, article)
     """Tests published article unfavoriting."""
     article.is_published = True
     article.save()
-    favorite_url = reverse('api:articles-favorite', args=(article.pk,))
+    favorite_url = reverse('api:articles-delete-favorite', args=(article.pk,))
 
     unfav_response_published = authenticated_client.delete(favorite_url)
 
