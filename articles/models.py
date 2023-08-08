@@ -11,6 +11,16 @@ from likes.models import Vote
 User = get_user_model()
 
 
+class Viewer(UUIDMixin):
+    ipaddress = models.GenericIPAddressField('IP address', blank=True, null=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+
 class Article(UUIDMixin, TimeStampedMixin):
     image = models.ImageField(upload_to='images/')
     title = models.CharField(_('title'), max_length=255)
@@ -32,7 +42,6 @@ class Article(UUIDMixin, TimeStampedMixin):
         blank=True,
     )
     is_published = models.BooleanField(_('is published'), default=False)
-    views_count = models.IntegerField(_('views'), default=0, editable=False)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -45,6 +54,7 @@ class Article(UUIDMixin, TimeStampedMixin):
         blank=True,
     )
     votes = GenericRelation(Vote, related_query_name='articles')
+    viewers = models.ManyToManyField(Viewer, related_name='articles')
 
     class Meta:
         ordering = ['-created_at']
@@ -53,10 +63,6 @@ class Article(UUIDMixin, TimeStampedMixin):
 
     def __str__(self):
         return self.title
-
-    def increment_views_count(self):
-        self.views_count += 1
-        self.save()
 
 
 class Tag(UUIDMixin, MPTTModel):

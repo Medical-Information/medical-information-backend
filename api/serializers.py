@@ -121,6 +121,7 @@ class ArticleSerializer(ModelSerializer):
     total_likes = SerializerMethodField()
     total_dislikes = SerializerMethodField()
     rating = SerializerMethodField()
+    views_count = SerializerMethodField()
     image = Base64ImageField()
     is_favorited = BooleanField(read_only=True)
     author = UserSimpleSerializer(read_only=True)
@@ -167,6 +168,9 @@ class ArticleSerializer(ModelSerializer):
 
     def get_rating(self, obj) -> int:
         return obj.rating
+
+    def get_views_count(self, obj) -> int:
+        return obj.views_count
 
 
 class ValidationSerializer(Serializer):
