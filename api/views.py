@@ -160,10 +160,13 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             return self._delete_favorite(request, pk)
 
     def _create_favorite(self, request, pk):
-        if FavoriteArticle.objects.get_or_create(
-            article_id=pk,
+        # retrieve article to prevent favoriting unpublished one
+        article = get_object_or_404(self.get_queryset(), pk=pk)
+        fav_article, is_created = FavoriteArticle.objects.get_or_create(
+            article=article,
             user=request.user,
-        )[1]:
+        )
+        if is_created:
             serializer = self.get_serializer(self.get_object())
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
@@ -172,10 +175,14 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
         )
 
     def _delete_favorite(self, request, pk):
-        if FavoriteArticle.objects.filter(
-            article_id=pk,
+        # retrieve article to prevent unfavoriting unpublished one
+        article = get_object_or_404(self.get_queryset(), pk=pk)
+        favorited = FavoriteArticle.objects.filter(
+            article=article,
             user=request.user,
-        ).delete()[0]:
+        )
+        if favorited.exists():
+            favorited.delete()
             serializer = self.get_serializer(self.get_object())
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(

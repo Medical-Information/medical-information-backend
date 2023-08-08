@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.permissions import LikesIsNotObject0wner
 from likes import services
 from likes.models import VoteTypes
 
@@ -12,7 +13,7 @@ class LikedMixin:
         methods=['POST'],
         detail=True,
         url_path='vote/(?P<vote_type>\\w+)',
-        permission_classes=(IsAuthenticated,),
+        permission_classes=(IsAuthenticated & LikesIsNotObject0wner,),
     )
     def add_vote(self, request, pk=None, vote_type=None):
         """Добавляет лайк или дизлайк в зависимости от vote_type."""
@@ -26,7 +27,7 @@ class LikedMixin:
     @action(
         methods=['POST'],
         detail=True,
-        permission_classes=(IsAuthenticated,),
+        permission_classes=(IsAuthenticated & LikesIsNotObject0wner,),
     )
     def unvote(self, request, pk=None):
         """Удаляет голос (лайк/дизлайк)."""
