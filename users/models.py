@@ -51,6 +51,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
         default=RolesTypes.USER,
         max_length=50,
     )
+    avatar = models.ImageField(upload_to='images/', blank=True)
     is_active = models.BooleanField(default=False)
     subscribed = models.BooleanField(default=False)
 

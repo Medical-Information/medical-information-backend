@@ -44,6 +44,7 @@ class UserSerializer(UserSimpleSerializer):
         model = User
         fields = UserSimpleSerializer.Meta.fields + [
             'email',
+            'avatar',
             'rating',
             'publications_amount',
             'subscribed',
