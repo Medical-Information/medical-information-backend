@@ -5,6 +5,15 @@ User = get_user_model()
 
 
 @pytest.fixture()
+def user_credentials_api(faker):
+    return {
+        'first_name': faker.first_name(),
+        'last_name': faker.last_name(),
+        'email': faker.email(),
+    }
+
+
+@pytest.fixture()
 def user_credentials():
     return {
         'email': 'test_email',
@@ -24,6 +33,7 @@ def alt_user_credentials():
 def user(db, user_credentials):
     user = User.objects.create_user(**user_credentials)
     user.is_active = True
+    user.is_staff = True
     user.save()
     return user
 
