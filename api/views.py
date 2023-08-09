@@ -199,8 +199,19 @@ class ArticleViewSet(
         if request.method == 'DELETE':
             return self._delete_favorite(request, pk)
 
+    @action(detail=False)
+    def the_most_popular(self, request):
+        instance = self.get_queryset().order_by('-views_count', '-created_at').first()
+        if instance:
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {'detail': _('The most popular article not found.')},
+            status.HTTP_404_NOT_FOUND,
+        )
+
     def _create_favorite(self, request, pk):
-        # retrieve article to prevent favoriting unpublished one
+        # retrieve article to prevent favouring unpublished one
         article = get_object_or_404(self.get_queryset(), pk=pk)
         fav_article, is_created = FavoriteArticle.objects.get_or_create(
             article=article,
@@ -215,7 +226,7 @@ class ArticleViewSet(
         )
 
     def _delete_favorite(self, request, pk):
-        # retrieve article to prevent unfavoriting unpublished one
+        # retrieve article to prevent unfavouring unpublished one
         article = get_object_or_404(self.get_queryset(), pk=pk)
         favorited = FavoriteArticle.objects.filter(
             article=article,

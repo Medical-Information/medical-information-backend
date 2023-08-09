@@ -181,10 +181,20 @@ class ValidationSerializer(Serializer):
     non_field_errors = ListField()
 
 
-class NotAuthenticatedSerializer(Serializer):
+class DetailSerializer(Serializer):
+    detail = CharField()
+
+
+class NotAuthenticatedSerializer(DetailSerializer):
     """HTTP_401."""
 
-    detail = CharField()
+    pass
+
+
+class NotFoundSerializer(DetailSerializer):
+    """HTTP_404."""
+
+    pass
 
 
 class DummySerializer(Serializer):
