@@ -1,22 +1,36 @@
 import pytest
 from django.contrib.auth import get_user_model
-from django.test import Client
-from model_bakery import baker
 
 User = get_user_model()
 
 
 @pytest.fixture()
-def client():
-    return Client()
+def user_credentials():
+    return {
+        'email': 'test_email',
+        'password': 'test_password',
+    }
 
 
 @pytest.fixture()
-def user():
-    return baker.make(User)
+def alt_user_credentials():
+    return {
+        'email': 'alt_test_email',
+        'password': 'alt_test_password',
+    }
 
 
-@pytest.fixture()
-def authenticated_client(client, user):
-    client.force_login(user)
-    return client
+@pytest.fixture(autouse=True)
+def user(db, user_credentials):
+    user = User.objects.create_user(**user_credentials)
+    user.is_active = True
+    user.save()
+    return user
+
+
+@pytest.fixture(autouse=True)
+def alt_user(db, alt_user_credentials):
+    alt_user = User.objects.create_user(**alt_user_credentials)
+    alt_user.is_active = True
+    alt_user.save()
+    return alt_user

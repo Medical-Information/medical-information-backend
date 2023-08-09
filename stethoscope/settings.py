@@ -177,7 +177,7 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', default='False').lower() == 'tru
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -186,7 +186,7 @@ USE_TZ = True
 LOCALE_PATHS = ['locale']
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'

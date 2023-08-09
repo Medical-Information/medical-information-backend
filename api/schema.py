@@ -164,68 +164,6 @@ USER_VIEW_SET_SCHEMA = {
             status.HTTP_400_BAD_REQUEST: ValidationSerializer,
         },
     ),
-    'retrieve': extend_schema(
-        summary='Получить информацию о пользователе.',
-        parameters=[
-            OpenApiParameter(
-                name='id',
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-                description='Идентификатор пользователя (UUID).',
-            ),
-        ],
-        responses={
-            status.HTTP_200_OK: UserSerializer,
-            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-        },
-    ),
-    'update': extend_schema(
-        summary='Изменить информацию о пользователе.',
-        parameters=[
-            OpenApiParameter(
-                name='id',
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-                description='Идентификатор пользователя (UUID).',
-            ),
-        ],
-        responses={
-            status.HTTP_200_OK: UserSerializer,
-            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
-            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-        },
-    ),
-    'partial_update': extend_schema(
-        summary='Частично изменить информацию о пользователе.',
-        parameters=[
-            OpenApiParameter(
-                name='id',
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-                description='Идентификатор пользователя (UUID).',
-            ),
-        ],
-        responses={
-            status.HTTP_200_OK: UserSerializer,
-            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
-            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-        },
-    ),
-    'destroy': extend_schema(
-        summary='Удалить пользователя.',
-        parameters=[
-            OpenApiParameter(
-                name='id',
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-                description='Идентификатор пользователя (UUID).',
-            ),
-        ],
-        responses={
-            status.HTTP_204_NO_CONTENT: None,
-            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-        },
-    ),
     'activation': extend_schema(
         summary='Активировать пользователя.',
         description=(
@@ -248,16 +186,6 @@ USER_VIEW_SET_SCHEMA = {
             },
         ),
         extend_schema(
-            methods=['put'],
-            summary='Изменить информацию о пользователе.',
-            description='Используется текущий (авторизованный) пользователь.',
-            responses={
-                status.HTTP_200_OK: UserSerializer,
-                status.HTTP_400_BAD_REQUEST: ValidationSerializer,
-                status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-            },
-        ),
-        extend_schema(
             methods=['patch'],
             summary='Частично изменить информацию о пользователе.',
             description='Используется текущий (авторизованный) пользователь.',
@@ -267,27 +195,7 @@ USER_VIEW_SET_SCHEMA = {
                 status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
             },
         ),
-        extend_schema(
-            methods=['delete'],
-            summary='Удалить пользователя.',
-            description='Используется текущий (авторизованный) пользователь.',
-            responses={
-                status.HTTP_204_NO_CONTENT: None,
-                status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
-            },
-        ),
     },
-    'resend_activation': extend_schema(
-        summary='Повторить активацию пользователя.',
-        description=(
-            'Сбрасывается признак активации пользователя и '
-            'процесс активации запускается заново.'
-        ),
-        responses={
-            status.HTTP_204_NO_CONTENT: None,
-            status.HTTP_400_BAD_REQUEST: ValidationSerializer,
-        },
-    ),
     'reset_password': extend_schema(
         summary='Сменить пароль пользователя (восстановление доступа).',
         description='Отправляется письмо со ссылкой для смены пароля.',

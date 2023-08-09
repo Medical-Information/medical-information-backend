@@ -9,9 +9,9 @@ User = get_user_model()
 
 
 @pytest.mark.django_db()
-def test_non_activated_user_deletion():
-    email = 'user@example.com'
-    password = 'qwerty12345'
+def test_non_activated_user_deletion(faker):
+    email = faker.email()
+    password = faker.password()
     user = User.objects.create_user(email, password)
     time_interval = settings.USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD / 2
     assert time_interval > settings.TIME_TO_ACTIVATE_USER_ACCOUNT, 'Wrong test settings'

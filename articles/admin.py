@@ -1,14 +1,19 @@
+from typing import Any
+
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Count
+from django.db.models.query import QuerySet
 from django.forms import ModelForm
+from django.http.request import HttpRequest
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from mdeditor.widgets import MDEditorWidget
 from mptt.admin import DraggableMPTTAdmin, TreeRelatedFieldListFilter
 
-from articles.models import Article, Comment, FavoriteArticle, Tag
+from articles.models import Article, Comment, FavoriteArticle, Tag, Viewer
 
 
 class ArticleForm(ModelForm):
@@ -88,6 +93,15 @@ class ArticleAdmin(admin.ModelAdmin):
         models.TextField: {'widget': MDEditorWidget},
     }
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(views_count=Count('viewers'))
+        return queryset
+
+    @admin.display(ordering='views_count', description=_('views_count'))
+    def views_count(self, obj):
+        return obj.views_count
+
 
 @admin.register(Tag)
 class TagAdmin(DraggableMPTTAdmin):
@@ -114,11 +128,18 @@ class TagAdmin(DraggableMPTTAdmin):
 
 
 @admin.register(FavoriteArticle)
-class FavoriteRecipeAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'article', 'user')
+class FavoriteArticleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'article', 'user')
     list_filter = ('article', 'user')
     search_fields = ('user__email', 'article__title')
     autocomplete_fields = ('article', 'user')
+
+
+@admin.register(Viewer)
+class ViewerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'created_at', 'ipaddress', 'user')
+    search_fields = ('ipaddress', 'user__email')
+    autocomplete_fields = ('user',)
 
 
 @admin.register(Comment)

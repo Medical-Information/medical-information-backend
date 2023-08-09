@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Exists, OuterRef, Q, Sum, Value
+from django.db.models import Count, Exists, OuterRef, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
-from drf_spectacular.utils import extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
@@ -18,7 +18,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api import schema
 from api.filters import ArticleFilter
-from api.mixins import LikedMixin
+from api.mixins import CountViewerMixin, LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import ArticleOwnerPermission, IsAdmin, IsAuthor, ReadOnly
 from api.serializers import (
@@ -50,10 +50,40 @@ class TokenDestroyView(DjoserTokenDestroyView):
 @extend_schema_view(**schema.USER_VIEW_SET_SCHEMA)
 class UserViewSet(DjoserUserViewSet):
     # отключаем смену логина (email)
-    reset_username = None
-    reset_username_confirm = None
+    @extend_schema(exclude=True)
+    def reset_username(self, request, *args, **kwargs):
+        pass
+
+    @extend_schema(exclude=True)
+    def reset_username_confirm(self, request, *args, **kwargs):
+        pass
+
     # отключаем установку логина (email)
-    set_username = None
+    @extend_schema(exclude=True)
+    def set_username(self, request, *args, **kwargs):
+        pass
+
+    # отключаем повторную отправку активации
+    @extend_schema(exclude=True)
+    def resend_activation(self, request, *args, **kwargs):
+        pass
+
+    # отключаем ручки retrieve/update/partial_update/destroy
+    @extend_schema(exclude=True)
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def destroy(self, request, *args, **kwargs):
+        pass
 
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
@@ -65,6 +95,10 @@ class UserViewSet(DjoserUserViewSet):
     # переопределил, так как родительский метод зачем-то отправляет письмо на активацию
     def perform_update(self, serializer):
         serializer.save()
+
+    @action(['get', 'patch'], detail=False)
+    def me(self, request, *args, **kwargs):
+        return super().me(request, *args, **kwargs)
 
     @action(
         methods=['PATCH', 'DELETE'],
@@ -88,7 +122,12 @@ class UserViewSet(DjoserUserViewSet):
 
 
 @extend_schema_view(**schema.ARTICLE_VIEW_SET_SCHEMA)
-class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
+class ArticleViewSet(
+    CountViewerMixin,
+    LikedMixin,
+    ReadOnlyModelViewSet,
+    CreateModelMixin,
+):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
     permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
@@ -107,6 +146,7 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             Article.objects.filter(is_published=True)
             .select_related('author')
             .prefetch_related('tags', 'votes')
+            .annotate(views_count=Coalesce(Count('viewers'), 0))
             .annotate(rating=Coalesce(Sum('votes__vote'), 0))
             .annotate(
                 likes_count=Coalesce(Sum('votes__vote', filter=Q(votes__vote__gt=0)), 0),
@@ -160,10 +200,13 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             return self._delete_favorite(request, pk)
 
     def _create_favorite(self, request, pk):
-        if FavoriteArticle.objects.get_or_create(
-            article_id=pk,
+        # retrieve article to prevent favoriting unpublished one
+        article = get_object_or_404(self.get_queryset(), pk=pk)
+        fav_article, is_created = FavoriteArticle.objects.get_or_create(
+            article=article,
             user=request.user,
-        )[1]:
+        )
+        if is_created:
             serializer = self.get_serializer(self.get_object())
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
@@ -172,10 +215,14 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
         )
 
     def _delete_favorite(self, request, pk):
-        if FavoriteArticle.objects.filter(
-            article_id=pk,
+        # retrieve article to prevent unfavoriting unpublished one
+        article = get_object_or_404(self.get_queryset(), pk=pk)
+        favorited = FavoriteArticle.objects.filter(
+            article=article,
             user=request.user,
-        ).delete()[0]:
+        )
+        if favorited.exists():
+            favorited.delete()
             serializer = self.get_serializer(self.get_object())
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
