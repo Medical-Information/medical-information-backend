@@ -7,6 +7,7 @@ from api.serializers import (
     ArticleCreateSerializer,
     ArticleSerializer,
     NotAuthenticatedSerializer,
+    NotFoundSerializer,
     UserCreateSerializer,
     UserSerializer,
     ValidationSerializer,
@@ -110,6 +111,14 @@ ARTICLE_VIEW_SET_SCHEMA = {
             status.HTTP_204_NO_CONTENT: None,
             status.HTTP_400_BAD_REQUEST: ValidationSerializer,
             status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+        },
+    ),
+    'the_most_popular': extend_schema(
+        summary='Получить самую популярную статью.',
+        request=None,
+        responses={
+            status.HTTP_200_OK: ArticleSerializer,
+            status.HTTP_404_NOT_FOUND: NotFoundSerializer,
         },
     ),
 }
