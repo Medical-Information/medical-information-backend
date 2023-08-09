@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Exists, OuterRef, Q, Sum, Value
+from django.db.models import Count, Exists, OuterRef, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
@@ -18,7 +18,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api import schema
 from api.filters import ArticleFilter
-from api.mixins import LikedMixin
+from api.mixins import CountViewerMixin, LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import ArticleOwnerPermission, IsAdmin, IsAuthor, ReadOnly
 from api.serializers import (
@@ -122,7 +122,12 @@ class UserViewSet(DjoserUserViewSet):
 
 
 @extend_schema_view(**schema.ARTICLE_VIEW_SET_SCHEMA)
-class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
+class ArticleViewSet(
+    CountViewerMixin,
+    LikedMixin,
+    ReadOnlyModelViewSet,
+    CreateModelMixin,
+):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
     permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
@@ -141,6 +146,7 @@ class ArticleViewSet(LikedMixin, ReadOnlyModelViewSet, CreateModelMixin):
             Article.objects.filter(is_published=True)
             .select_related('author')
             .prefetch_related('tags', 'votes')
+            .annotate(views_count=Coalesce(Count('viewers'), 0))
             .annotate(rating=Coalesce(Sum('votes__vote'), 0))
             .annotate(
                 likes_count=Coalesce(Sum('votes__vote', filter=Q(votes__vote__gt=0)), 0),

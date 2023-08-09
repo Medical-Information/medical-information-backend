@@ -18,7 +18,7 @@ class Vote(models.Model):
     object_id = models.UUIDField()
     objects = VoteManager()
     vote = models.IntegerField(
-        verbose_name=_('Vote'),
+        verbose_name=_('vote'),
         choices=VoteTypes.choices,
     )
     user = models.ForeignKey(
@@ -29,3 +29,8 @@ class Vote(models.Model):
     )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        ordering = ['-object_id']
+        verbose_name = _('vote')
+        verbose_name_plural = _('votes')
