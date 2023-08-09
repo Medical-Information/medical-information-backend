@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-22 19:34+0000\n"
+"POT-Creation-Date: 2023-08-09 15:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,101 +18,126 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/views.py:83
+#: api/views.py:213
 msgid "Article is favorited already."
 msgstr ""
 
-#: api/views.py:96
+#: api/views.py:229
 msgid "Article is not favorited yet."
 msgstr ""
 
-#: articles/admin.py:36
+#: articles/admin.py:42
 #, python-format
-msgid "You can't assign related tags <%(reltags)s> to content!"
+msgid "You can't assign related tags <%(related_tags)s> to content!"
 msgstr ""
 
-#: articles/admin.py:60
+#: articles/admin.py:67
 msgid "Statistics"
 msgstr ""
 
-#: articles/apps.py:8 articles/models.py:54
+#: articles/admin.py:104
+msgid "views_count"
+msgstr ""
+
+#: articles/apps.py:8 articles/models.py:71
 msgid "articles"
 msgstr ""
 
+#: articles/models.py:15 core/models.py:8
+msgid "created_at"
+msgstr ""
+
 #: articles/models.py:16
-msgid "title"
+msgid "IP address"
 msgstr ""
 
-#: articles/models.py:18
-msgid "annotation"
-msgstr ""
-
-#: articles/models.py:21
-msgid "text"
-msgstr ""
-
-#: articles/models.py:23
-msgid "source name"
-msgstr ""
-
-#: articles/models.py:29
-msgid "source link"
-msgstr ""
-
-#: articles/models.py:34
-msgid "is published"
-msgstr ""
-
-#: articles/models.py:35
-msgid "views"
-msgstr ""
-
-#: articles/models.py:46
-msgid "tags"
-msgstr ""
-
-#: articles/models.py:53 articles/models.py:123
-msgid "article"
-msgstr ""
-
-#: articles/models.py:80
-msgid "Tag name"
-msgstr ""
-
-#: articles/models.py:87
-msgid "Parent category"
-msgstr ""
-
-#: articles/models.py:95
-msgid "Tags"
-msgstr ""
-
-#: articles/models.py:96
-msgid "Tag"
-msgstr ""
-
-#: articles/models.py:115 likes/models.py:26 users/models.py:54
+#: articles/models.py:23 articles/models.py:57 articles/models.py:116
+#: likes/models.py:26 users/models.py:16 users/models.py:61
 msgid "user"
 msgstr ""
 
-#: articles/models.py:116
+#: articles/models.py:28
+msgid "viewer"
+msgstr ""
+
+#: articles/models.py:29
+msgid "viewers"
+msgstr ""
+
+#: articles/models.py:34
+msgid "title"
+msgstr ""
+
+#: articles/models.py:36
+msgid "annotation"
+msgstr ""
+
+#: articles/models.py:39 articles/models.py:143
+msgid "text"
+msgstr ""
+
+#: articles/models.py:41
+msgid "source name"
+msgstr ""
+
+#: articles/models.py:47
+msgid "source link"
+msgstr ""
+
+#: articles/models.py:52
+msgid "is published"
+msgstr ""
+
+#: articles/models.py:62
+msgid "tags"
+msgstr ""
+
+#: articles/models.py:70 articles/models.py:124 articles/models.py:152
+msgid "article"
+msgstr ""
+
+#: articles/models.py:81
+msgid "Tag name"
+msgstr ""
+
+#: articles/models.py:88
+msgid "Parent category"
+msgstr ""
+
+#: articles/models.py:96
+msgid "Tags"
+msgstr ""
+
+#: articles/models.py:97
+msgid "Tag"
+msgstr ""
+
+#: articles/models.py:117
 msgid "select user"
 msgstr ""
 
-#: articles/models.py:124
+#: articles/models.py:125
 msgid "select article"
 msgstr ""
 
-#: articles/models.py:134
+#: articles/models.py:135
 msgid "favorite article"
 msgstr ""
 
-#: articles/models.py:135
+#: articles/models.py:136
 msgid "favorite articles"
 msgstr ""
 
-#: core/models.py:8
-msgid "created_at"
+#: articles/models.py:146
+msgid "author"
+msgstr ""
+
+#: articles/models.py:159
+msgid "comment"
+msgstr ""
+
+#: articles/models.py:160
+msgid "comments"
 msgstr ""
 
 #: core/models.py:9
@@ -123,6 +148,10 @@ msgstr ""
 msgid "id"
 msgstr ""
 
+#: likes/apps.py:8
+msgid "likes"
+msgstr ""
+
 #: likes/models.py:13
 msgid "Like"
 msgstr ""
@@ -131,28 +160,136 @@ msgstr ""
 msgid "Dislike"
 msgstr ""
 
-#: likes/models.py:21
-msgid "Vote"
+#: likes/models.py:21 likes/models.py:35
+msgid "vote"
 msgstr ""
 
-#: mailings/models.py:10
-msgid "Article"
+#: likes/models.py:36
+msgid "votes"
 msgstr ""
 
-#: users/admin.py:31
+#: mailings/apps.py:8
+msgid "mailings"
+msgstr ""
+
+#: mailings/models.py:10 mailings/models.py:16
+msgid "TopArticle"
+msgstr ""
+
+#: mailings/models.py:17
+msgid "TopArticles"
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:8
+#: mailings/templates/email_djoser/activation.html:19
+#, python-format
+msgid "You're receiving this email because you need to finish activation process on %(site_name)s."
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:10
+#: mailings/templates/email_djoser/activation.html:21
+msgid "Please go to the following page to activate account:"
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:13
+#: mailings/templates/email_djoser/activation.html:24
+#: mailings/templates/email_djoser/confirmation.html:10
+#: mailings/templates/email_djoser/confirmation.html:18
+#: mailings/templates/email_djoser/password_changed_confirmation.html:10
+#: mailings/templates/email_djoser/password_changed_confirmation.html:18
+#: mailings/templates/email_djoser/password_reset.html:14
+#: mailings/templates/email_djoser/password_reset.html:26
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:15
+#: mailings/templates/email_djoser/activation.html:26
+#: mailings/templates/email_djoser/confirmation.html:12
+#: mailings/templates/email_djoser/confirmation.html:20
+#: mailings/templates/email_djoser/password_changed_confirmation.html:12
+#: mailings/templates/email_djoser/password_changed_confirmation.html:20
+#: mailings/templates/email_djoser/password_reset.html:16
+#: mailings/templates/email_djoser/password_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: mailings/templates/email_djoser/confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your account has been successfully created and activated!"
+msgstr ""
+
+#: mailings/templates/email_djoser/confirmation.html:8
+#: mailings/templates/email_djoser/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your password has been successfully changed!"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_changed_confirmation.html:8
+#: mailings/templates/email_djoser/password_changed_confirmation.html:16
+msgid "Your password has been changed!"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:8
+#: mailings/templates/email_djoser/password_reset.html:20
+#, python-format
+msgid "You're receiving this email because you requested a password reset for your user account at %(site_name)s."
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:10
+#: mailings/templates/email_djoser/password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:12
+#: mailings/templates/email_djoser/password_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: users/admin.py:36
 msgid "Personal Info"
 msgstr ""
 
-#: users/admin.py:33
+#: users/admin.py:38
 msgid "Permissions"
 msgstr ""
 
-#: users/admin.py:43
+#: users/admin.py:48
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:13
+#: users/apps.py:8 users/models.py:62
+msgid "users"
+msgstr ""
+
+#: users/models.py:11
 msgid "Only letters, spaces, and hyphens are allowed."
+msgstr ""
+
+#: users/models.py:17
+msgid "doctor"
+msgstr ""
+
+#: users/models.py:18
+msgid "moderator"
+msgstr ""
+
+#: users/models.py:19
+msgid "admin"
 msgstr ""
 
 #: users/models.py:36
@@ -163,6 +300,11 @@ msgstr ""
 msgid "last name"
 msgstr ""
 
-#: users/models.py:55
-msgid "users"
+#: users/models.py:49
+msgid "role"
+msgstr ""
+
+#: users/validators.py:13 users/validators.py:20
+#, python-format
+msgid "The password must not be longer than %(max_length)d characters."
 msgstr ""

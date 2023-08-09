@@ -12,13 +12,21 @@ User = get_user_model()
 
 
 class Viewer(UUIDMixin):
-    ipaddress = models.GenericIPAddressField('IP address', blank=True, null=True)
+    created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
+    ipaddress = models.GenericIPAddressField(_('IP address'), blank=True, null=True)
     user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
+        related_name='viewers',
+        verbose_name=_('user'),
     )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('viewer')
+        verbose_name_plural = _('viewers')
 
 
 class Article(UUIDMixin, TimeStampedMixin):
@@ -46,6 +54,7 @@ class Article(UUIDMixin, TimeStampedMixin):
         User,
         on_delete=models.CASCADE,
         related_name='articles',
+        verbose_name=_('user'),
     )
     tags = TreeManyToManyField(
         'Tag',

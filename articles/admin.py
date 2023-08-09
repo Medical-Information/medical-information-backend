@@ -98,6 +98,7 @@ class ArticleAdmin(admin.ModelAdmin):
         queryset = queryset.annotate(views_count=Count('viewers'))
         return queryset
 
+    @admin.display(ordering='views_count', description=_('views_count'))
     def views_count(self, obj):
         return obj.views_count
 
@@ -128,7 +129,7 @@ class TagAdmin(DraggableMPTTAdmin):
 
 @admin.register(FavoriteArticle)
 class FavoriteArticleAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'article', 'user')
+    list_display = ('id', 'article', 'user')
     list_filter = ('article', 'user')
     search_fields = ('user__email', 'article__title')
     autocomplete_fields = ('article', 'user')
@@ -136,8 +137,8 @@ class FavoriteArticleAdmin(admin.ModelAdmin):
 
 @admin.register(Viewer)
 class ViewerAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'ipaddress', 'user')
-    search_fields = ('user__email', 'article__title')
+    list_display = ('id', 'created_at', 'ipaddress', 'user')
+    search_fields = ('ipaddress', 'user__email')
     autocomplete_fields = ('user',)
 
 
