@@ -210,10 +210,11 @@ class ArticleCreateSerializer(ModelSerializer):
         )
 
     def to_representation(self, instance):
-        """Предполагается, после создания статья имеет начальные занчения атрибутов."""
+        """Предполагается, после создания статья имеет начальные значения атрибутов."""
         instance.is_fan = False
         instance.is_hater = False
         instance.likes_count = 0
         instance.dislikes_count = 0
         instance.rating = 0
+        instance.views_count = 0
         return ArticleSerializer().to_representation(instance)

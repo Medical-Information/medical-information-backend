@@ -146,7 +146,7 @@ class ArticleViewSet(
             Article.objects.filter(is_published=True)
             .select_related('author')
             .prefetch_related('tags', 'votes')
-            .annotate(views_count=Count('viewers'))
+            .annotate(views_count=Coalesce(Count('viewers'), 0))
             .annotate(rating=Coalesce(Sum('votes__vote'), 0))
             .annotate(
                 likes_count=Coalesce(Sum('votes__vote', filter=Q(votes__vote__gt=0)), 0),
