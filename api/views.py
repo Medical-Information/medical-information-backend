@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
-from drf_spectacular.utils import extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
@@ -50,10 +50,40 @@ class TokenDestroyView(DjoserTokenDestroyView):
 @extend_schema_view(**schema.USER_VIEW_SET_SCHEMA)
 class UserViewSet(DjoserUserViewSet):
     # отключаем смену логина (email)
-    reset_username = None
-    reset_username_confirm = None
+    @extend_schema(exclude=True)
+    def reset_username(self, request, *args, **kwargs):
+        pass
+
+    @extend_schema(exclude=True)
+    def reset_username_confirm(self, request, *args, **kwargs):
+        pass
+
     # отключаем установку логина (email)
-    set_username = None
+    @extend_schema(exclude=True)
+    def set_username(self, request, *args, **kwargs):
+        pass
+
+    # отключаем повторную отправку активации
+    @extend_schema(exclude=True)
+    def resend_activation(self, request, *args, **kwargs):
+        pass
+
+    # отключаем ручки retrieve/update/partial_update/destroy
+    @extend_schema(exclude=True)
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def destroy(self, request, *args, **kwargs):
+        pass
 
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
@@ -65,6 +95,10 @@ class UserViewSet(DjoserUserViewSet):
     # переопределил, так как родительский метод зачем-то отправляет письмо на активацию
     def perform_update(self, serializer):
         serializer.save()
+
+    @action(['get', 'patch'], detail=False)
+    def me(self, request, *args, **kwargs):
+        return super().me(request, *args, **kwargs)
 
     @action(
         methods=['PATCH', 'DELETE'],

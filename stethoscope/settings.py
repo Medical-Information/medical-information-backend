@@ -177,7 +177,7 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', default='False').lower() == 'tru
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
