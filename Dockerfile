@@ -1,6 +1,8 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 ENV APP_HOME=/app
+
+RUN apt-get update && apt-get install gettext -y
 
 RUN pip install --upgrade pip
 

@@ -14,26 +14,25 @@ validate_name = RegexValidator(
 )
 
 
+class RolesTypes(models.TextChoices):
+    USER = 'user', _('user')
+    DOCTOR = 'doctor', _('doctor')
+    MODER = 'moderator', _('moderator')
+    ADMIN = 'admin', _('admin')
+
+
 class User(TimeStampedMixin, UUIDMixin, AbstractUser):
-    """ "
-    Класс User представляет пользовательскую модель с дополнительным
+    """
+    Класс 'пользователь'.
+
+    Представляет пользовательскую модель с дополнительным
     функционалом, таким как автоматическая генерация временных меток,
     добавление уникального идентификатора (UUID) и базовая реализация
     пользовательских атрибутов и методов.
     """
 
-    class Meta:
-        ordering = ['id']
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS: List[str] = []
-
-    USER = 'user'
-    MODER = 'moderator'
-    ADMIN = 'admin'
-    roles = [(USER, 'user'), (MODER, 'moderator'), (ADMIN, 'admin')]
 
     first_name = models.CharField(
         _('first name'),
@@ -48,9 +47,21 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     date_joined = None
     username = None
     email = models.EmailField(unique=True)
-    role = models.CharField(choices=roles, default='user', max_length=50)
+    role = models.CharField(
+        verbose_name=_('role'),
+        choices=RolesTypes.choices,
+        default=RolesTypes.USER,
+        max_length=50,
+    )
+    is_active = models.BooleanField(default=False)
+    subscribed = models.BooleanField(default=False)
 
     objects = UserManager()
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
 
     def __str__(self):
         return self.email

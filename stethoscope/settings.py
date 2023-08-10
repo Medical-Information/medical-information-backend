@@ -18,10 +18,6 @@ CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', default='').split()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 INSTALLED_APPS = [
-    'users.apps.UsersConfig',
-    'api.apps.ApiConfig',
-    'articles.apps.ArticlesConfig',
-    'likes.apps.LikesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,22 +25,34 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
-    'djoser',
-    'mptt',
     'drf_spectacular',
     'rest_framework',
+    'corsheaders',
     'rest_framework.authtoken',
+    'djoser',
+    'mptt',
+    'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
+    'articles.apps.ArticlesConfig',
+    'likes.apps.LikesConfig',
+    'mailings.apps.MailingsConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = (
+    os.getenv('CORS_ORIGIN_ALLOW_ALL', default='False').lower() == 'true'
+)
+CORS_URLS_REGEX = r'^/api/.*$'
 
 ROOT_URLCONF = 'stethoscope.urls'
 
@@ -112,6 +120,9 @@ REST_FRAMEWORK = {
 }
 
 CURSOR_PAGINATION_PAGE_SIZE = int(os.getenv('CURSOR_PAGINATION_PAGE_SIZE', default=6))
+CURSOR_PAGINATION_MAX_PAGE_SIZE = int(
+    os.getenv('CURSOR_PAGINATION_MAX_PAGE_SIZE', default=50),
+)
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -133,9 +144,23 @@ SPECTACULAR_SETTINGS = {
     'LICENSE': {'name': 'BSD License'},
 }
 
+SITE_NAME = os.environ.get('SITE_NAME')
+DOMAIN = os.environ.get('DOMAIN')
+PASSWORD_RESET_TIMEOUT_DAYS = os.environ.get('PASSWORD_RESET_TIMEOUT_DAYS', 1)
+
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL':
+        'password/reset/confirm/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'EMAIL': {
+        'activation': 'core.email_djoser.ActivationEmail',
+        'confirmation': 'core.email_djoser.ConfirmationEmail',
+        'password_reset': 'core.email_djoser.PasswordResetEmail',
+        'password_changed_confirmation':
+            'core.email_djoser.PasswordConfirmationEmail',
+    },
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         'user': 'api.serializers.UserSerializer',
@@ -190,3 +215,6 @@ if LOGGING_ENABLED:
             },
         },
     }
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')

@@ -16,15 +16,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: api/views.py:83
 msgid "Article is favorited already."
-msgstr "Статья уже в избранном."
+msgstr ""
 
 #: api/views.py:96
 msgid "Article is not favorited yet."
-msgstr "Статья еще не в избранном."
+msgstr ""
 
 #: articles/admin.py:36
 #, python-format
@@ -33,91 +33,91 @@ msgstr ""
 
 #: articles/admin.py:60
 msgid "Statistics"
-msgstr "Статистика"
+msgstr ""
 
 #: articles/apps.py:8 articles/models.py:54
 msgid "articles"
-msgstr "статьи"
+msgstr ""
 
 #: articles/models.py:16
 msgid "title"
-msgstr "заголовок"
+msgstr ""
 
 #: articles/models.py:18
 msgid "annotation"
-msgstr "аннотация"
+msgstr ""
 
 #: articles/models.py:21
 msgid "text"
-msgstr "текст"
+msgstr ""
 
 #: articles/models.py:23
 msgid "source name"
-msgstr "источник"
+msgstr ""
 
 #: articles/models.py:29
 msgid "source link"
-msgstr "ссылка на источник"
+msgstr ""
 
 #: articles/models.py:34
 msgid "is published"
-msgstr "опубликовано"
+msgstr ""
 
 #: articles/models.py:35
 msgid "views"
-msgstr "Количество просмотров"
+msgstr ""
 
 #: articles/models.py:46
 msgid "tags"
-msgstr "теги"
+msgstr ""
 
 #: articles/models.py:53 articles/models.py:123
 msgid "article"
-msgstr "статья"
+msgstr ""
 
 #: articles/models.py:80
 msgid "Tag name"
-msgstr "Наименование"
+msgstr ""
 
 #: articles/models.py:87
 msgid "Parent category"
-msgstr "Родительский тег"
+msgstr ""
 
 #: articles/models.py:95
 msgid "Tags"
-msgstr "Теги"
+msgstr ""
 
 #: articles/models.py:96
 msgid "Tag"
-msgstr "Тег"
+msgstr ""
 
 #: articles/models.py:115 likes/models.py:26 users/models.py:54
 msgid "user"
-msgstr "пользователь"
+msgstr ""
 
 #: articles/models.py:116
 msgid "select user"
-msgstr "выбрать пользователя"
+msgstr ""
 
 #: articles/models.py:124
 msgid "select article"
-msgstr "выбрать статью"
+msgstr ""
 
 #: articles/models.py:134
 msgid "favorite article"
-msgstr "избранное"
+msgstr ""
 
 #: articles/models.py:135
 msgid "favorite articles"
-msgstr "избранное"
+msgstr ""
 
 #: core/models.py:8
 msgid "created_at"
-msgstr "создано"
+msgstr ""
 
 #: core/models.py:9
 msgid "updated_at"
-msgstr "изменено"
+msgstr ""
 
 #: core/models.py:17
 msgid "id"
@@ -133,15 +133,15 @@ msgstr ""
 
 #: likes/models.py:21
 msgid "Vote"
-msgstr "Голос"
+msgstr ""
 
 #: mailings/models.py:10
 msgid "Article"
-msgstr "Статья"
+msgstr ""
 
 #: users/admin.py:31
 msgid "Personal Info"
-msgstr "Персональная информация"
+msgstr ""
 
 #: users/admin.py:33
 msgid "Permissions"
@@ -149,7 +149,7 @@ msgstr ""
 
 #: users/admin.py:43
 msgid "Important dates"
-msgstr "Важные даты"
+msgstr ""
 
 #: users/models.py:13
 msgid "Only letters, spaces, and hyphens are allowed."
@@ -157,12 +157,12 @@ msgstr ""
 
 #: users/models.py:36
 msgid "first name"
-msgstr "Имя"
+msgstr ""
 
 #: users/models.py:41
 msgid "last name"
-msgstr "Фамилия"
+msgstr ""
 
 #: users/models.py:55
 msgid "users"
-msgstr "пользователи"
+msgstr ""

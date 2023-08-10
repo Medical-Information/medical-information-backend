@@ -13,11 +13,13 @@ class UserAdmin(BaseUserAdmin):
         'first_name',
         'last_name',
         'role',
+        'subscribed',
         'is_active',
         'is_staff',
     )
     list_filter = (
         'role',
+        'subscribed',
         'is_active',
         'is_staff',
     )
@@ -28,7 +30,7 @@ class UserAdmin(BaseUserAdmin):
     )
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('role',)}),
+        (_('Personal Info'), {'fields': ('first_name', 'last_name', 'role')}),
         (
             _('Permissions'),
             {

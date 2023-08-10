@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import TokenSerializer
 from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
+from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
@@ -17,7 +18,7 @@ from api.filters import ArticleFilter
 from api.mixins import LikedMixin
 from api.paginations import CursorPagination
 from api.permissions import IsAdmin, ReadOnly
-from api.serializers import ArticleSerializer, TagSerializer
+from api.serializers import ArticleSerializer, TagRootsSerializer, TagSerializer
 from articles.models import Article, FavoriteArticle, Tag
 
 User = get_user_model()
@@ -43,6 +44,31 @@ class TokenDestroyView(DjoserTokenDestroyView):
     pass
 
 
+class UserViewSet(DjoserUserViewSet):
+    @action(
+        methods=['PATCH', 'DELETE'],
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscription(self, request):
+        user = User.objects.get(pk=request.user.id)
+        if (user.subscribed and request.method == 'PATCH'
+                or not user.subscribed and request.method == 'DELETE'):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if request.method == 'PATCH':
+            user.subscribed = True
+            user.save()
+            return Response(
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            user.subscribed = False
+            user.save()
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+
 class ArticleViewSet(LikedMixin, ModelViewSet):
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
@@ -51,7 +77,7 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
     filterset_class = ArticleFilter
 
     def get_queryset(self):
-        qs = Article.objects.all()
+        qs = Article.objects.filter(is_published=True).select_related('author')
 
         user = self.request.user
         if user.is_authenticated:
@@ -73,45 +99,44 @@ class ArticleViewSet(LikedMixin, ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk):
-        article = get_object_or_404(Article, id=pk)
-        if FavoriteArticle.objects.filter(
-            article=article,
+        if FavoriteArticle.objects.get_or_create(
+            article_id=pk,
             user=request.user,
-        ).exists():
-            return Response(
-                {'errors': _('Article is favorited already.')},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        instance = FavoriteArticle(article=article, user=request.user)
-        instance.save()
-        return Response(status=status.HTTP_201_CREATED)
+        )[1]:
+            return Response(status=status.HTTP_201_CREATED)
+        get_object_or_404(Article, id=pk)
+        return Response(
+            {'errors': _('Article is favorited already.')},
+            status.HTTP_400_BAD_REQUEST,
+        )
 
     @favorite.mapping.delete
     def delete_favorite(self, request, pk):
-        article = get_object_or_404(Article, id=pk)
-        if not FavoriteArticle.objects.filter(
-            article=article,
+        if FavoriteArticle.objects.filter(
+            article_id=pk,
             user=request.user,
-        ).exists():
-            return Response(
-                {'errors': _('Article is not favorited yet.')},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        FavoriteArticle.objects.filter(
-            article=article,
-            user=request.user,
-        ).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        ).delete()[0]:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        get_object_or_404(Article, id=pk)
+        return Response(
+            {'errors': _('Article is not favorited yet.')},
+            status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class TagViewSet(ReadOnlyModelViewSet):
-    """Tag ViewSet."""
+    """Вьюсет модели Tag."""
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        if self.action == 'roots':
+            return TagRootsSerializer(*args, **kwargs)
+        return super().get_serializer(*args, **kwargs)
+
     @action(detail=False)
     def roots(self, request):
         all_roots = self.get_queryset().filter(parent__isnull=True)
-        serializer = TagSerializer(all_roots, many=True)
+        serializer = self.get_serializer(all_roots, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)

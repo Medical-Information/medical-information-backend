@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from likes.models import LikeDislike
+from likes.models import Vote
 
 
-@admin.register(LikeDislike)
-class LikeDislikeAdmin(admin.ModelAdmin):
+@admin.register(Vote)
+class VoteAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'vote',
