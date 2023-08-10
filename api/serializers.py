@@ -42,8 +42,10 @@ class UserSerializer(UserSimpleSerializer):
 
     class Meta(UserSimpleSerializer.Meta):
         model = User
+        avatar = Base64ImageField()
         fields = UserSimpleSerializer.Meta.fields + [
             'email',
+            'avatar',
             'rating',
             'publications_amount',
             'subscribed',
