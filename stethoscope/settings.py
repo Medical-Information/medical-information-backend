@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'articles.apps.ArticlesConfig',
     'likes.apps.LikesConfig',
     'mailings.apps.MailingsConfig',
+    'django_opensearch_dsl',
 ]
 
 MIDDLEWARE = [
@@ -272,3 +273,16 @@ MDEDITOR_CONFIGS = {
 # non-activated user account management settings
 TIME_TO_ACTIVATE_USER_ACCOUNT = timedelta(minutes=10)
 USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD = timedelta(hours=1)
+
+OPENSEARCH_DSL = {
+    'default': {
+        'hosts': [{'scheme': 'https', 'host': 'localhost', 'port': 9200}],
+        'http_auth': ('admin', 'admin'),
+        'use_ssl': True,
+        'verify_certs': False,
+        'ssl_assert_hostname': False,
+        'ssl_show_warn': False,
+        'timeout': 120,
+    },
+}
+SEARCH_MUST_MARCH = 0.5

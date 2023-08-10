@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Exists, OuterRef, Q, Sum, Value
 from django.db.models.functions import Coalesce
@@ -9,7 +10,7 @@ from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -30,11 +31,13 @@ from api.serializers import (
     TagSerializer,
     TagSubtreeSerializer,
 )
+from articles.documents import ArticleDocument
 from articles.models import Article, FavoriteArticle, Tag
 from likes.models import Vote, VoteTypes
 from likes.utils import annotate_user_queryset
 
 User = get_user_model()
+BASE_ARTICLES_QS = Article.objects.all()
 
 
 @extend_schema_view(**schema.TOKEN_CREATE_VIEW_SCHEMA)
@@ -131,19 +134,12 @@ class ArticleViewSet(
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
     permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = ArticleFilter
-    search_fields = (
-        'title',
-        'text',
-        'source_name',
-        'author__first_name',
-        'author__last_name',
-    )
 
-    def get_queryset(self):
+    def get_queryset(self, base_qs=BASE_ARTICLES_QS):  # base_qs=Aticle.objects.all()
         qs = (
-            Article.objects.filter(is_published=True)
+            base_qs.filter(is_published=True)
             .select_related('author')
             .prefetch_related('tags', 'votes')
             .annotate(views_count=Coalesce(Count('viewers'), 0))
@@ -209,6 +205,42 @@ class ArticleViewSet(
             {'detail': _('The most popular article not found.')},
             status.HTTP_404_NOT_FOUND,
         )
+
+    @action(
+        methods=['get'],
+        detail=False,
+    )
+    def search(self, request) -> Response:
+        query = self.request.query_params.get('query')
+        if not query:
+            return Response(
+                {'Fail': _('You need to pass a parameter "query" with a search query!')},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        min_should_match = int(len(query.split()) * settings.SEARCH_MUST_MARCH)
+        res = (
+            ArticleDocument.search()
+            .query(
+                'multi_match',
+                query=query,
+                fields=['title^2', 'text'],
+                fuzziness='AUTO',
+                fuzzy_transpositions=True,
+                operator='or',
+                analyzer='standard',
+                auto_generate_synonyms_phrase_query=True,
+                max_expansions=50,
+                minimum_should_match=min_should_match,
+                tie_breaker=0.1,
+                type='best_fields',
+                slop=0,
+                zero_terms_query='none',
+            )
+            .to_queryset()
+        )
+        qs = self.get_queryset(base_qs=res)
+        serializer = self.get_serializer(qs, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def _create_favorite(self, request, pk):
         # retrieve article to prevent favouring unpublished one
