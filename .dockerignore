@@ -1,0 +1,10 @@
+.git/
+.github/
+.vscode/
+.mypy_cache/
+.pytest_cache/
+venv/
+db.sqlite3
+infra/
+staticfiles/
+media/

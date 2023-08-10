@@ -1,0 +1,168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-07-22 19:34+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: api/views.py:83
+msgid "Article is favorited already."
+msgstr "Статья уже в избранном."
+
+#: api/views.py:96
+msgid "Article is not favorited yet."
+msgstr "Статья еще не в избранном."
+
+#: articles/admin.py:36
+#, python-format
+msgid "You can't assign related tags <%(reltags)s> to content!"
+msgstr ""
+
+#: articles/admin.py:60
+msgid "Statistics"
+msgstr "Статистика"
+
+#: articles/apps.py:8 articles/models.py:54
+msgid "articles"
+msgstr "статьи"
+
+#: articles/models.py:16
+msgid "title"
+msgstr "заголовок"
+
+#: articles/models.py:18
+msgid "annotation"
+msgstr "аннотация"
+
+#: articles/models.py:21
+msgid "text"
+msgstr "текст"
+
+#: articles/models.py:23
+msgid "source name"
+msgstr "источник"
+
+#: articles/models.py:29
+msgid "source link"
+msgstr "ссылка на источник"
+
+#: articles/models.py:34
+msgid "is published"
+msgstr "опубликовано"
+
+#: articles/models.py:35
+msgid "views"
+msgstr "Количество просмотров"
+
+#: articles/models.py:46
+msgid "tags"
+msgstr "теги"
+
+#: articles/models.py:53 articles/models.py:123
+msgid "article"
+msgstr "статья"
+
+#: articles/models.py:80
+msgid "Tag name"
+msgstr "Наименование"
+
+#: articles/models.py:87
+msgid "Parent category"
+msgstr "Родительский тег"
+
+#: articles/models.py:95
+msgid "Tags"
+msgstr "Теги"
+
+#: articles/models.py:96
+msgid "Tag"
+msgstr "Тег"
+
+#: articles/models.py:115 likes/models.py:26 users/models.py:54
+msgid "user"
+msgstr "пользователь"
+
+#: articles/models.py:116
+msgid "select user"
+msgstr "выбрать пользователя"
+
+#: articles/models.py:124
+msgid "select article"
+msgstr "выбрать статью"
+
+#: articles/models.py:134
+msgid "favorite article"
+msgstr "избранное"
+
+#: articles/models.py:135
+msgid "favorite articles"
+msgstr "избранное"
+
+#: core/models.py:8
+msgid "created_at"
+msgstr "создано"
+
+#: core/models.py:9
+msgid "updated_at"
+msgstr "изменено"
+
+#: core/models.py:17
+msgid "id"
+msgstr ""
+
+#: likes/models.py:13
+msgid "Like"
+msgstr ""
+
+#: likes/models.py:14
+msgid "Dislike"
+msgstr ""
+
+#: likes/models.py:21
+msgid "Vote"
+msgstr "Голос"
+
+#: mailings/models.py:10
+msgid "Article"
+msgstr "Статья"
+
+#: users/admin.py:31
+msgid "Personal Info"
+msgstr "Персональная информация"
+
+#: users/admin.py:33
+msgid "Permissions"
+msgstr ""
+
+#: users/admin.py:43
+msgid "Important dates"
+msgstr "Важные даты"
+
+#: users/models.py:13
+msgid "Only letters, spaces, and hyphens are allowed."
+msgstr ""
+
+#: users/models.py:36
+msgid "first name"
+msgstr "Имя"
+
+#: users/models.py:41
+msgid "last name"
+msgstr "Фамилия"
+
+#: users/models.py:55
+msgid "users"
+msgstr "пользователи"
