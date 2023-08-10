@@ -33,7 +33,6 @@ def alt_user_credentials():
 def user(db, user_credentials):
     user = User.objects.create_user(**user_credentials)
     user.is_active = True
-    user.is_staff = True
     user.save()
     return user
 

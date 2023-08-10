@@ -54,9 +54,11 @@ def test_login(client, user_credentials):
     assert response.data['auth_token'] is not None
 
 
-def test_users_list_admin(authenticated_client):
+def test_users_list_admin(authenticated_client, user):
     """No pagination."""
     url = reverse('api:users-list')
+    user.is_staff = True
+    user.save()
 
     response = authenticated_client.get(url)
 
