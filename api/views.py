@@ -217,28 +217,30 @@ class ArticleViewSet(
                 {'Fail': _('You need to pass a parameter "query" with a search query!')},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
+
         min_should_match = int(len(query.split()) * settings.SEARCH_MUST_MARCH)
-        res = (
+        search_result = (
             ArticleDocument.search()
             .query(
-                'multi_match',
-                query=query,
-                fields=['title^2', 'text'],
-                fuzziness='AUTO',
-                fuzzy_transpositions=True,
-                operator='or',
-                analyzer='standard',
-                auto_generate_synonyms_phrase_query=True,
-                max_expansions=50,
-                minimum_should_match=min_should_match,
-                tie_breaker=0.1,
-                type='best_fields',
-                slop=0,
-                zero_terms_query='none',
+                'match',
+                text={
+                    'query': query,
+                    'fuzziness': 'AUTO',
+                    'fuzzy_transpositions': True,
+                    'operator': 'or',
+                    'minimum_should_match': min_should_match,
+                    'analyzer': 'standard',
+                    'zero_terms_query': 'none',
+                    'lenient': False,
+                    'prefix_length': 0,
+                    'max_expansions': 50,
+                    'boost': 1,
+                },
             )
             .to_queryset()
         )
-        qs = self.get_queryset(base_qs=res)
+
+        qs = self.get_queryset(base_qs=search_result)
         serializer = self.get_serializer(qs, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
