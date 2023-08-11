@@ -297,3 +297,17 @@ TAG_VIEW_SET_SCHEMA = {
         summary='Получить корневые теги.',
     ),
 }
+
+
+COMMENT_VIEW_SET_SCHEMA = {
+    'retrieve': extend_schema(
+        description='Получить комментарии к статье.',
+        request=CommentSerializer,
+        responses={200: CommentSerializer(many=True)}
+    ),
+    'create': extend_schema(
+        description='Создать новый комментарий к статье.',
+        request=CommentSerializer,
+        responses={201: CommentSerializer()}
+    ),
+}
