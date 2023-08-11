@@ -294,15 +294,18 @@ class TagViewSet(ReadOnlyModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema_view(**schema.COMMENT_VIEW_SET_SCHEMA)
 class CommentViewSet(ModelViewSet):  # feature. LikedMixin
     serializer_class = CommentSerializer
     permission_classes = (IsAdmin | IsAuthor | ReadOnly,)
 
+    @action(detail=False)
     def get_queryset(self):
         article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
         new_queryset = article.comments.all().select_related('author')
         return new_queryset
 
+    @action(detail=False)
     def perform_create(self, serializer):
         article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
         serializer.save(author=self.request.user, article=article)
