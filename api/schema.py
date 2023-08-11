@@ -6,6 +6,7 @@ from rest_framework import status
 from api.serializers import (
     ArticleCreateSerializer,
     ArticleSerializer,
+    CommentSerializer,
     NotAuthenticatedSerializer,
     NotFoundSerializer,
     UserCreateSerializer,
@@ -303,11 +304,11 @@ COMMENT_VIEW_SET_SCHEMA = {
     'retrieve': extend_schema(
         description='Получить комментарии к статье.',
         request=CommentSerializer,
-        responses={200: CommentSerializer(many=True)}
+        responses={status.HTTP_200_OK: CommentSerializer(many=True)},
     ),
     'create': extend_schema(
         description='Создать новый комментарий к статье.',
         request=CommentSerializer,
-        responses={201: CommentSerializer()}
+        responses={status.HTTP_201_CREATED: CommentSerializer()},
     ),
 }
