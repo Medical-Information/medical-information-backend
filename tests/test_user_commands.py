@@ -20,7 +20,7 @@ def test_non_activated_user_deletion(faker):
     user.save()
 
     deleted_user_count = delete_non_activated_users()
-    assert deleted_user_count == 1, 'Deleted user is not exactly one'
+    assert deleted_user_count == 1, 'Deleted user is not exectly one'
 
     deleted_user_exists = User.objects.filter(email=email).exists()
     assert deleted_user_exists is False, 'User was not deleted'
