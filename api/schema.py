@@ -6,6 +6,7 @@ from rest_framework import status
 from api.serializers import (
     ArticleCreateSerializer,
     ArticleSerializer,
+    CommentSerializer,
     NotAuthenticatedSerializer,
     NotFoundSerializer,
     UserCreateSerializer,
@@ -279,5 +280,33 @@ TAG_VIEW_SET_SCHEMA = {
     ),
     'roots': extend_schema(
         summary='Получить корневые теги.',
+    ),
+}
+
+
+COMMENT_VIEW_SET_SCHEMA = {
+    'list': extend_schema(
+        description='Получить комментарии к статье.',
+        request=CommentSerializer,
+        responses={status.HTTP_200_OK: CommentSerializer(many=True)},
+    ),
+    'create': extend_schema(
+        description='Создать новый комментарий к статье.',
+        request=CommentSerializer,
+        responses={
+            status.HTTP_201_CREATED: CommentSerializer(),
+            status.HTTP_401_UNAUTHORIZED: NotAuthenticatedSerializer,
+        },
+    ),
+    'retrieve': extend_schema(
+        summary='Получить информацию о комментарии.',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+                description='Идентификатор комментария (UUID).',
+            ),
+        ],
     ),
 }

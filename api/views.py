@@ -260,6 +260,7 @@ class TagViewSet(ReadOnlyModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema_view(**schema.COMMENT_VIEW_SET_SCHEMA)
 class CommentViewSet(ModelViewSet):  # feature. LikedMixin
     serializer_class = CommentSerializer
     permission_classes = (IsAdmin | IsAuthor | ReadOnly,)
