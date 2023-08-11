@@ -276,7 +276,13 @@ USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD = timedelta(hours=1)
 
 OPENSEARCH_DSL = {
     'default': {
-        'hosts': [{'scheme': 'https', 'host': 'localhost', 'port': 9200}],
+        'hosts': [
+            {
+                'scheme': 'https',
+                'host': os.getenv('OPENSEARCH_HOST', default='localhost'),
+                'port': 9200,
+            },
+        ],
         'http_auth': (
             os.getenv('OPENSEARCH_USER', default='admin'),
             os.getenv('OPENSEARCH_PASSWORD', default='admin'),
