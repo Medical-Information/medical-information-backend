@@ -57,6 +57,8 @@ jobs:
           cluster.initial_cluster_manager_nodes: opensearch-node
           bootstrap.memory_lock: true
           OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+          OPENSEARCH_USER: admin
+          OPENSEARCH_PASSWORD: admin
         ports:
           - 9200:9200
 
