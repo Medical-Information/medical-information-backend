@@ -105,6 +105,12 @@ AUTH_PASSWORD_VALIDATORS = [
             'max_length': 20,
         },
     },
+    {
+        'NAME': 'users.validators.PasswordCharactersNotAllowedValidator',
+        'OPTIONS': {
+            'excluded_characters': ' ',  # space by default
+        },
+    },
 ]
 
 AUTH_USER_MODEL = 'users.User'
