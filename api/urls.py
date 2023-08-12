@@ -23,7 +23,9 @@ router_v1.register(r'users', UserViewSet, basename='users')
 router_v1.register(r'articles', ArticleViewSet, basename='articles')
 router_v1.register(r'tags', TagViewSet, basename='tags')
 router_v1.register(
-    'articles/<uuid:article_id>/comments',
+    'articles/'
+    '(?P<article_id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/'
+    'comments',
     CommentViewSet,
     basename='comments',
 )
