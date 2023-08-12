@@ -41,4 +41,7 @@ class PasswordCharactersNotAllowedValidator:
             )
 
     def get_help_text(self):
-        return _('The password can not contain space character.')
+        return _(
+            'The password can not contain prohibited characters '
+            f'({self.excluded_characters}).',
+        )
