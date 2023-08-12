@@ -22,7 +22,7 @@ def test_password_validation_space_character_exc_raised(password):
     validator = PasswordCharactersNotAllowedValidator()
 
     with pytest.raises(ValidationError):
-        assert validator.validate(password)
+        validator.validate(password)
 
 
 @pytest.mark.parametrize(
@@ -65,4 +65,4 @@ def test_password_validation_various_characters_exc_raised(
     validator = PasswordCharactersNotAllowedValidator(characters_to_exclude)
 
     with pytest.raises(ValidationError):
-        assert validator.validate(password)
+        validator.validate(password)

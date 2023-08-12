@@ -332,6 +332,7 @@ def test_password_change_space_character(authenticated_client, user):
 
     response = authenticated_client.post(url, password_data, format='json')
 
+    user.refresh_from_db()
     assert response.status_code == 400
     assert user.password is not None
     assert user.check_password(password_data['current_password']) is True
