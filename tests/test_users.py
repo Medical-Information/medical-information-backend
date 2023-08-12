@@ -319,3 +319,20 @@ def test_unexisted_unsubscription(authenticated_client, user):
     user.refresh_from_db()
     assert response.status_code == 400
     assert user.subscribed is False
+
+
+def test_password_change_space_character(authenticated_client, user):
+    url = reverse('api:users-set-password')
+    password_data = {
+        'new_password': '123 456',
+        'current_password': '123456%',
+    }
+    user.set_password(password_data['current_password'])
+    user.save()
+
+    response = authenticated_client.post(url, password_data, format='json')
+
+    assert response.status_code == 400
+    assert user.password is not None
+    assert user.check_password(password_data['current_password']) is True
+    assert user.check_password(password_data['new_password']) is False
