@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-09 16:56+0300\n"
+"POT-Creation-Date: 2023-08-13 02:29+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,56 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/views.py:210
+#: api/constants.py:5
+msgid "Unable to log in with provided credentials!"
+msgstr ""
+
+#: api/constants.py:6
+msgid "User account is disabled."
+msgstr ""
+
+#: api/constants.py:7
+msgid "Invalid token for given user."
+msgstr ""
+
+#: api/constants.py:8
+msgid "Invalid user id or user doesn't exist."
+msgstr ""
+
+#: api/constants.py:9
+msgid "Stale token for given user."
+msgstr ""
+
+#: api/constants.py:10
+msgid "The two password fields didn't match."
+msgstr ""
+
+#: api/constants.py:11
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr ""
+
+#: api/constants.py:12
+msgid "Invalid password."
+msgstr ""
+
+#: api/constants.py:13
+msgid "User with given email does not exist!"
+msgstr ""
+
+#: api/constants.py:14
+msgid "Unable to create account."
+msgstr ""
+
+#: api/views.py:209
 msgid "The most popular article not found."
 msgstr ""
 
-#: api/views.py:225
+#: api/views.py:224
 msgid "Article is favorited already."
 msgstr ""
 
-#: api/views.py:241
+#: api/views.py:240
 msgid "Article is not favorited yet."
 msgstr ""
 
@@ -56,7 +97,7 @@ msgid "IP address"
 msgstr ""
 
 #: articles/models.py:23 articles/models.py:57 articles/models.py:116
-#: likes/models.py:26 users/models.py:16 users/models.py:61
+#: likes/models.py:26 users/models.py:16 users/models.py:68
 msgid "user"
 msgstr ""
 
@@ -276,7 +317,7 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/apps.py:8 users/models.py:62
+#: users/apps.py:8 users/models.py:69
 msgid "users"
 msgstr ""
 
@@ -304,11 +345,19 @@ msgstr ""
 msgid "last name"
 msgstr ""
 
-#: users/models.py:49
+#: users/models.py:51
+msgid "A user with that username already exists!"
+msgstr ""
+
+#: users/models.py:55
 msgid "role"
 msgstr ""
 
-#: users/validators.py:13 users/validators.py:20
+#: users/validators.py:15 users/validators.py:22
 #, python-format
 msgid "The password must not be longer than %(max_length)d characters."
+msgstr ""
+
+#: users/validators.py:36 users/validators.py:45
+msgid "The password can not contain prohibited characters "
 msgstr ""

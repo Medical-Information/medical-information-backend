@@ -170,6 +170,10 @@ DJOSER = {
         'current_user': 'api.serializers.UserSerializer',
     },
     'HIDE_USERS': True,
+    'CONSTANTS': {
+        'messages': 'api.constants.DjoserMessages',
+    },
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

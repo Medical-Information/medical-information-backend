@@ -31,6 +31,21 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
 
+  mailhog:
+    image: mailhog/mailhog
+    env_file:
+      - ./.env
+    environment:
+      MH_SMTP_BIND_ADDR: "0.0.0.0:1025"
+      MH_API_BIND_ADDR: "0.0.0.0:8025"
+      MH_UI_BIND_ADDR: "0.0.0.0:8025"
+      MH_STORAGE: "maildir"
+    volumes:
+      - ./maildir:/maildir
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
 volumes:
   postgres_value:
   redis_value:

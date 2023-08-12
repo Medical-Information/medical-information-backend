@@ -272,3 +272,7 @@ class CommentViewSet(ModelViewSet):  # feature. LikedMixin
     def perform_create(self, serializer):
         article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
         serializer.save(author=self.request.user, article=article)
+
+    @extend_schema(exclude=True)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
