@@ -9,7 +9,7 @@ from articles.models import Article
 
 
 @pytest.fixture()
-def article_image(faker):
+def b64_encoded_image(faker):
     image = faker.image(image_format='jpeg')
     image_b64 = base64.b64encode(image)
     return b'data:image;base64,' + image_b64

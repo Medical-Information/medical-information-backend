@@ -5,6 +5,15 @@ User = get_user_model()
 
 
 @pytest.fixture()
+def user_credentials_api(faker):
+    return {
+        'first_name': faker.first_name(),
+        'last_name': faker.last_name(),
+        'email': faker.email(),
+    }
+
+
+@pytest.fixture()
 def user_credentials():
     return {
         'email': 'test_email',

@@ -11,12 +11,12 @@ User = get_user_model()
 pytestmark = pytest.mark.django_db
 
 
-def test_article_post(authenticated_client, article_content, article_image):
+def test_article_post(authenticated_client, article_content, b64_encoded_image):
     """Article creation though API with POST method."""
     url = reverse('api:articles-list')
     article_data = {}
     article_data.update(article_content)
-    article_data['image'] = article_image
+    article_data['image'] = b64_encoded_image
 
     response = authenticated_client.post(url, article_data, format='json')
 

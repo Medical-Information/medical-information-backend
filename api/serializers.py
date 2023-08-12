@@ -39,11 +39,13 @@ class UserSerializer(UserSimpleSerializer):
 
     rating = SerializerMethodField()
     publications_amount = SerializerMethodField()
+    avatar = Base64ImageField()
 
     class Meta(UserSimpleSerializer.Meta):
         model = User
         fields = UserSimpleSerializer.Meta.fields + [
             'email',
+            'avatar',
             'rating',
             'publications_amount',
             'subscribed',
