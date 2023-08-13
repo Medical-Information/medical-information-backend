@@ -211,7 +211,7 @@ class ArticleViewSet(
         )
 
     def _create_favorite(self, request, pk):
-        # retrieve article to prevent favouring unpublished one
+        # проверяем, что статья опубликована
         article = get_object_or_404(self.get_queryset(), pk=pk)
         fav_article, is_created = FavoriteArticle.objects.get_or_create(
             article=article,
@@ -226,7 +226,7 @@ class ArticleViewSet(
         )
 
     def _delete_favorite(self, request, pk):
-        # retrieve article to prevent unfavouring unpublished one
+        # проверяем, что статья опубликована
         article = get_object_or_404(self.get_queryset(), pk=pk)
         favorited = FavoriteArticle.objects.filter(
             article=article,
@@ -272,3 +272,13 @@ class CommentViewSet(ModelViewSet):  # feature. LikedMixin
     def perform_create(self, serializer):
         article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
         serializer.save(author=self.request.user, article=article)
+
+    @extend_schema(exclude=True)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        self.perform_destroy(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)

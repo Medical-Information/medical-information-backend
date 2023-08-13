@@ -1,4 +1,6 @@
-﻿from django.core.exceptions import ValidationError
+﻿import re
+
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
@@ -19,3 +21,27 @@ class PasswordMaximumLengthValidator:
         return _(
             'The password must not be longer than %(max_length)d characters.',
         ) % {'max_length': self.max_length}
+
+
+class PasswordCharactersNotAllowedValidator:
+    def __init__(self, excluded_characters=' '):
+        """Init prohibited characters (space by default)."""
+        self.excluded_characters = excluded_characters
+        self.pattern = re.compile(f'[{self.excluded_characters}]')
+
+    def validate(self, password, user=None):
+        if re.search(self.pattern, password):
+            raise ValidationError(
+                _(
+                    'The password can not contain prohibited characters '
+                    f'({self.excluded_characters}).',
+                ),
+                code='password_excluded_characters',
+                params={'excluded_characters': self.excluded_characters},
+            )
+
+    def get_help_text(self):
+        return _(
+            'The password can not contain prohibited characters '
+            f'({self.excluded_characters}).',
+        )

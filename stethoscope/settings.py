@@ -105,6 +105,12 @@ AUTH_PASSWORD_VALIDATORS = [
             'max_length': 20,
         },
     },
+    {
+        'NAME': 'users.validators.PasswordCharactersNotAllowedValidator',
+        'OPTIONS': {
+            'excluded_characters': ' ',  # space by default
+        },
+    },
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -164,6 +170,10 @@ DJOSER = {
         'current_user': 'api.serializers.UserSerializer',
     },
     'HIDE_USERS': True,
+    'CONSTANTS': {
+        'messages': 'api.constants.DjoserMessages',
+    },
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
