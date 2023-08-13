@@ -151,7 +151,7 @@ def test_comment_deletion(article, authenticated_client, user, faker):
 
     assert response.status_code == 200
     assert response.data is not None
-    assert response.data['id'] is None
+    assert response.data['id'] == str(comment.pk)
     assert response.data['text'] == comment.text
     assert response.data['author']['id'] == str(user.pk)
     assert 'created_at' in response.data
