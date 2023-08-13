@@ -142,7 +142,7 @@ def test_most_viewed_article_authenticated(client, article):
 
 
 def test_most_viewed_same_viewer_count(client, article):
-    """Статья определена по времени созднаия."""
+    """Статья определена по времени создания."""
     article.is_published = True
     article.save()
     url = reverse('api:articles-the-most-popular')

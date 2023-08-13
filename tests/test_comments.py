@@ -160,7 +160,7 @@ def test_comment_deletion(article, authenticated_client, user, faker):
 
 
 def test_comment_deletion_not_owner(article, authenticated_client, alt_user, faker):
-    """Попытка удаления комменраия другого пользователя."""
+    """Попытка удаления комментария другого пользователя."""
     article.is_published = True
     article.save()
     text = faker.paragraph()
