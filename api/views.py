@@ -272,3 +272,9 @@ class CommentViewSet(ModelViewSet):  # feature. LikedMixin
     def perform_create(self, serializer):
         article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
         serializer.save(author=self.request.user, article=article)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        self.perform_destroy(instance)
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)

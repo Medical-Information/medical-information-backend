@@ -140,7 +140,7 @@ def test_comment_alteration_patch_method_not_owner(
 
 
 def test_comment_deletion(article, authenticated_client, user, faker):
-    """Attempt to change comments belonging to other user."""
+    """Attempt to delete own comment."""
     article.is_published = True
     article.save()
     text = faker.paragraph()
@@ -150,11 +150,17 @@ def test_comment_deletion(article, authenticated_client, user, faker):
     response = authenticated_client.delete(url)
 
     assert response.status_code == 204
+    assert response.data is not None
+    assert response.data['id'] is None
+    assert response.data['text'] == comment.text
+    assert response.data['author']['id'] == str(user.pk)
+    assert 'created_at' in response.data
+    assert 'updated_at' in response.data
     assert Comment.objects.filter(pk=comment.pk).exists() is False
 
 
 def test_comment_deletion_not_owner(article, authenticated_client, alt_user, faker):
-    """Attempt to change comments belonging to other user."""
+    """Attempt to delete comment belonging to other user."""
     article.is_published = True
     article.save()
     text = faker.paragraph()
@@ -246,7 +252,6 @@ def test_comment_anonymous_patch(article, faker, user, client):
 
 
 def test_comment_anonymous_delete(article, faker, alt_user, client):
-    """Attempt to change comments belonging to other user."""
     article.is_published = True
     article.save()
     text = faker.paragraph()
