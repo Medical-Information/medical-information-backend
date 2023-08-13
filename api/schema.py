@@ -364,5 +364,6 @@ COMMENT_VIEW_SET_SCHEMA = {
                 description='Идентификатор комментария (UUID).',
             ),
         ],
+        responses={status.HTTP_200_OK: CommentSerializer()},
     ),
 }

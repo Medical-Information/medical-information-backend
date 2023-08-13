@@ -58,7 +58,7 @@ def test_viewer_created_anonymous(client, article):
 
 
 def test_most_viewed_article_not_found(client):
-    """No viewers exist, no published articles."""
+    """Нет опубликованных статей."""
     url = reverse('api:articles-the-most-popular')
 
     response = client.get(url)
@@ -67,7 +67,7 @@ def test_most_viewed_article_not_found(client):
 
 
 def test_most_viewed_article_no_viewers(client, article):
-    """No viewers exist, defined by creation time."""
+    """Никто не просматривал статьи, определям популярную по времени создания."""
     article.is_published = True
     article.save()
     url = reverse('api:articles-the-most-popular')
@@ -142,7 +142,7 @@ def test_most_viewed_article_authenticated(client, article):
 
 
 def test_most_viewed_same_viewer_count(client, article):
-    """Most viewed article defined by creation time."""
+    """Статья определена по времени созднаия."""
     article.is_published = True
     article.save()
     url = reverse('api:articles-the-most-popular')
