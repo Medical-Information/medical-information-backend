@@ -273,6 +273,10 @@ class CommentViewSet(ModelViewSet):  # feature. LikedMixin
         article = get_object_or_404(Article, id=self.kwargs.get('article_id'))
         serializer.save(author=self.request.user, article=article)
 
+    @extend_schema(exclude=True)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
