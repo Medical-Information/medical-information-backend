@@ -280,5 +280,6 @@ class CommentViewSet(ModelViewSet):  # feature. LikedMixin
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
+        serialized_comment_data = serializer.data
         self.perform_destroy(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serialized_comment_data, status=status.HTTP_200_OK)
