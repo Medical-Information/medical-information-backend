@@ -14,13 +14,13 @@ def test_non_activated_user_deletion(faker):
     password = faker.password()
     user = User.objects.create_user(email, password)
     time_interval = settings.USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD / 2
-    assert time_interval > settings.TIME_TO_ACTIVATE_USER_ACCOUNT, 'Wrong test settings'
+    assert time_interval > settings.TIME_TO_ACTIVATE_USER_ACCOUNT
 
     user.created_at = timezone.now() - time_interval
     user.save()
 
     deleted_user_count = delete_non_activated_users()
-    assert deleted_user_count == 1, 'Deleted user is not exectly one'
+    assert deleted_user_count == 1
 
     deleted_user_exists = User.objects.filter(email=email).exists()
-    assert deleted_user_exists is False, 'User was not deleted'
+    assert deleted_user_exists is False

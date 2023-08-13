@@ -12,7 +12,6 @@ pytestmark = pytest.mark.django_db
 
 
 def test_article_post(authenticated_client, article_content, b64_encoded_image):
-    """Article creation though API with POST method."""
     url = reverse('api:articles-list')
     article_data = {}
     article_data.update(article_content)
@@ -253,7 +252,7 @@ def test_duplicated_unvote(alt_authenticated_client, alt_user, article):
 
 
 def test_unpublished_article_favorite(user, authenticated_client, article):
-    """Tests unpublished article favoriting."""
+    """Попытка добавить в избранное неопубликованную статью."""
     favorite_url = reverse('api:articles-favorite', args=(article.pk,))
 
     fav_response_unpublished = authenticated_client.post(favorite_url)
@@ -265,7 +264,10 @@ def test_unpublished_article_favorite(user, authenticated_client, article):
 
 
 def test_unpublished_article_unfavorite(user, authenticated_client, article):
-    """Tests unpublished article unfavoriting."""
+    """Попытка удалить из избранного неопубликованную статью.
+
+    Статья не была в избранном ранее.
+    """
     favorite_url = reverse('api:articles-favorite', args=(article.pk,))
 
     unfav_response_unpublished = authenticated_client.delete(favorite_url)
@@ -277,7 +279,7 @@ def test_unpublished_article_unfavorite(user, authenticated_client, article):
 
 
 def test_published_article_favorite(user, authenticated_client, article):
-    """Tests published article favoriting."""
+    """Добавление опубликованной статьи в избранное."""
     article.is_published = True
     article.save()
     favorite_url = reverse('api:articles-favorite', args=(article.pk,))
@@ -299,7 +301,7 @@ def test_published_article_favorite(user, authenticated_client, article):
 
 
 def test_published_article_unfavorite(user, authenticated_client, article):
-    """Tests published article unfavoriting."""
+    """Удаление опубликованной статьи из избранного."""
     article.is_published = True
     article.save()
     fav_article = FavoriteArticle.objects.create(user=user, article=article)
@@ -322,7 +324,10 @@ def test_published_article_unfavorite(user, authenticated_client, article):
 
 
 def test_published_article_false_unfavorite(user, authenticated_client, article):
-    """Tests published article unfavoriting."""
+    """Удаление опубликованной статьи из избранного.
+
+    Статья не была в избранном ранее.
+    """
     article.is_published = True
     article.save()
     favorite_url = reverse('api:articles-favorite', args=(article.pk,))
