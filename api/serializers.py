@@ -23,6 +23,8 @@ class UserCreateSerializer(DjoserUserSerializer):
 
 class UserSimpleSerializer(DjoserUserSerializer):
     """Сериализатор модели User для сериализатора модели Article."""
+    
+    avatar = Base64ImageField()
 
     class Meta:
         model = User
@@ -40,7 +42,6 @@ class UserSerializer(UserSimpleSerializer):
 
     rating = SerializerMethodField()
     publications_amount = SerializerMethodField()
-    avatar = Base64ImageField()
 
     class Meta(UserSimpleSerializer.Meta):
         model = User
