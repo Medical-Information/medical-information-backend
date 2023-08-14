@@ -31,6 +31,7 @@ class UserSimpleSerializer(DjoserUserSerializer):
             'first_name',
             'last_name',
             'role',
+            'avatar',            
         ]
 
 
@@ -45,7 +46,6 @@ class UserSerializer(UserSimpleSerializer):
         model = User
         fields = UserSimpleSerializer.Meta.fields + [
             'email',
-            'avatar',
             'rating',
             'publications_amount',
             'subscribed',
