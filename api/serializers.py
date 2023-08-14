@@ -31,7 +31,7 @@ class UserSimpleSerializer(DjoserUserSerializer):
             'first_name',
             'last_name',
             'role',
-            'avatar',            
+            'avatar',
         ]
 
 
