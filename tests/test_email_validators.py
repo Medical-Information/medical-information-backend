@@ -14,6 +14,8 @@ from users.validators import validate_restricted_email
         '@example.com',
         'user.user@example.',
         'user.user@.com',
+        'user_user.user-user@example.example_example.com',
+        '123456',
     ],
 )
 def test_validate_restricted_email(email):
