@@ -1,6 +1,8 @@
 ﻿import re
 
 from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
+from django.utils.regex_helper import _lazy_re_compile
 from django.utils.translation import gettext_lazy as _
 
 
@@ -45,3 +47,13 @@ class PasswordCharactersNotAllowedValidator:
             'The password can not contain prohibited characters '
             f'({self.excluded_characters}).',
         )
+
+
+class RestrictedEmailValidator(EmailValidator):
+    user_regex = _lazy_re_compile(
+        r'(^[-_0-9A-Z]+(\.[-_0-9A-Z]+)*\Z)',
+        re.IGNORECASE,
+    )
+
+
+validate_restricted_email = RestrictedEmailValidator()
