@@ -1,12 +1,11 @@
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
 class ImageBytesSizeValidator:
-    def __init__(self, image_size_bytes=settings.BASE64_IMAGE_MAX_SIZE_BYTES):
+    def __init__(self, max_image_size_bytes):
         """Initialize image max size in bytes."""
-        self.max_image_size = image_size_bytes
+        self.max_image_size = max_image_size_bytes
 
     def __call__(self, image):
         if image.size > self.max_image_size:
@@ -14,14 +13,10 @@ class ImageBytesSizeValidator:
 
 
 class ImageDimensionValidator:
-    def __init__(
-        self,
-        width=settings.BASE64_AVATAR_MAX_WIDTH,
-        height=settings.BASE64_AVATAR_MAX_HEIGHT,
-    ):
+    def __init__(self, max_width, max_height):
         """Initialize image max size in bytes."""
-        self.width = width
-        self.height = height
+        self.max_width = max_width
+        self.max_height = max_height
 
     def __call__(self, image_object):
         try:
@@ -31,7 +26,7 @@ class ImageDimensionValidator:
         except (ImportError, OSError):
             raise ValidationError(_('Please upload a valid image.'))
         else:
-            if image.width > self.width or image.height > self.height:
+            if image.width > self.max_width or image.height > self.max_height:
                 raise ValidationError(
                     _(
                         'Image dimensions exceeded '
@@ -41,10 +36,7 @@ class ImageDimensionValidator:
 
 
 class ImageContentTypeValidator:
-    def __init__(
-        self,
-        allowed_types: tuple[str] = settings.ALLOWED_B64ENCODED_IMAGE_FORMATS,
-    ):
+    def __init__(self, allowed_types: tuple[str, ...]):
         """Initialize image max size in bytes."""
         self.allowed_types = allowed_types
 

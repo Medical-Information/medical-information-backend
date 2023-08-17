@@ -23,7 +23,9 @@ class ImageDimensionsRestrictedSerializer(serializers.Serializer):
 
 
 class ImageTypeRestrictedSerializer(serializers.Serializer):
-    image = Base64ImageField(validators=(ImageContentTypeValidator(),))
+    image = Base64ImageField(
+        validators=(ImageContentTypeValidator(allowed_types=('jpg', 'jpeg', 'png')),),
+    )
 
 
 def test_image_size_exceeded(settings):

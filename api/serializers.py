@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -12,6 +13,11 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
+from api.validators import (
+    ImageBytesSizeValidator,
+    ImageContentTypeValidator,
+    ImageDimensionValidator,
+)
 from articles.models import Article, Comment, Tag
 
 User = get_user_model()
@@ -24,7 +30,16 @@ class UserCreateSerializer(DjoserUserSerializer):
 class UserSimpleSerializer(DjoserUserSerializer):
     """Сериализатор модели User для сериализатора модели Article."""
 
-    avatar = Base64ImageField()
+    avatar = Base64ImageField(
+        validators=(
+            ImageBytesSizeValidator(settings.BASE64_AVATAR_MAX_SIZE_BYTES),
+            ImageDimensionValidator(
+                settings.BASE64_AVATAR_MAX_WIDTH,
+                settings.BASE64_AVATAR_MAX_HEIGHT,
+            ),
+            ImageContentTypeValidator(settings.ALLOWED_B64ENCODED_IMAGE_FORMATS),
+        ),
+    )
 
     class Meta:
         model = User
@@ -207,7 +222,12 @@ class DummySerializer(Serializer):
 
 
 class ArticleCreateSerializer(ModelSerializer):
-    image = Base64ImageField()
+    image = Base64ImageField(
+        validators=(
+            ImageBytesSizeValidator(settings.BASE64_IMAGE_MAX_SIZE_BYTES),
+            ImageContentTypeValidator(settings.ALLOWED_B64ENCODED_IMAGE_FORMATS),
+        ),
+    )
     author = HiddenField(default=CurrentUserDefault())
 
     class Meta:
