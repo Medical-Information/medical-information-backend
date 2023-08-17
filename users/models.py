@@ -1,10 +1,11 @@
 ﻿from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinLengthValidator, RegexValidator
+from django.core.validators import MinLengthValidator, RegexValidator, validate_email
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
 from users.managers import UserManager
+from users.validators import validate_restricted_email
 
 validate_name = RegexValidator(
     r'^[a-zA-Zа-яА-Я\s\-]+$',
@@ -50,6 +51,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
         error_messages={
             'unique': _('A user with that username already exists!'),
         },
+        validators=[validate_email, validate_restricted_email],
     )
     role = models.CharField(
         verbose_name=_('role'),
