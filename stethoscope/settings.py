@@ -230,6 +230,8 @@ if LOGGING_ENABLED:
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
+WEEKLY_SUBJECT = os.environ.get('WEEKLY_SUBJECT', 'Еженедельная рассылка Стетоскоп')
+URL_ARTICLES = os.environ.get('URL_ARTICLES', 'http://localhost:8000/articles/')
 
 # https://github.com/pylixm/django-mdeditor#customize-the-toolbar
 MDEDITOR_CONFIGS = {
