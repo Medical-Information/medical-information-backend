@@ -17,8 +17,8 @@ pytestmark = pytest.mark.django_db
 @pytest.mark.parametrize(
     'image_file_name',
     [
-        ('image_snapshot_jpg_4233_bytes.txt',),
-        ('image_snapshot_jpg_5203_bytes.txt',),
+        'image_snapshot_jpg_4233_bytes.txt',
+        'image_snapshot_jpg_5203_bytes.txt',
     ],
 )
 def test_article_post_created(
@@ -46,8 +46,8 @@ def test_article_post_created(
 @pytest.mark.parametrize(
     'image_file_name',
     [
-        ('image_snapshot_gif.txt',),
-        ('image_snapshot_approx_1700_kbytes.txt',),
+        'image_snapshot_gif.txt',
+        'image_snapshot_approx_1700_kbytes.txt',
     ],
 )
 def test_article_post_bad_request(
@@ -75,8 +75,8 @@ def test_article_post_bad_request(
 @pytest.mark.parametrize(
     'image_file_name',
     [
-        ('image_snapshot_jpeg_100_100.txt',),
-        ('image_snapshot_jpg_225_225.txt',),
+        'image_snapshot_jpeg_100_100.txt',
+        'image_snapshot_jpg_225_225.txt',
     ],
 )
 def test_users_me_change_avatar_ok(
@@ -112,10 +112,10 @@ def test_users_me_change_avatar_ok(
 @pytest.mark.parametrize(
     'image_file_name',
     [
-        ('image_snapshot_gif.txt',),
-        ('image_snapshot_png_3000_2596.txt',),
-        ('image_snapshot_approx_1700_kbytes.txt',),
-        ('image_snapshot_331_501.txt',),
+        'image_snapshot_gif.txt',
+        'image_snapshot_png_3000_2596.txt',
+        'image_snapshot_approx_1700_kbytes.txt',
+        'image_snapshot_331_501.txt',
     ],
 )
 def test_users_me_change_avatar_bad_request(
