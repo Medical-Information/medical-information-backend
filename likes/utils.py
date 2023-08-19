@@ -7,8 +7,6 @@ User = get_user_model()
 
 
 def annotate_user_queryset(user_queryset: QuerySet[User]) -> QuerySet[User]:
-    return (
-        user_queryset.annotate(rating=Coalesce(Sum('articles__votes__vote'), 0))
-        .annotate(publications_amount=Count('articles', distinct=True))
-        .all()
-    )
+    return user_queryset.annotate(
+        rating=Coalesce(Sum('articles__votes__vote'), 0),
+    ).annotate(publications_amount=Count('articles', distinct=True))

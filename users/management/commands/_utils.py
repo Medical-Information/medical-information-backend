@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 def delete_non_activated_users():
-    """Delete users from DB that was not activated after registration."""
+    """Удаляет из базы данных пользователей, которые не прошли процедуру активации."""
     current_time = timezone.now()
     lower_bound = current_time - settings.TIME_TO_ACTIVATE_USER_ACCOUNT
     upper_bound = current_time - settings.USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD

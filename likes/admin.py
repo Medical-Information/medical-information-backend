@@ -17,8 +17,6 @@ class VoteAdmin(admin.ModelAdmin):
     )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
-        return (
-            Vote.objects.select_related('user', 'content_type')
-            .prefetch_related('content_object')
-            .all()
+        return Vote.objects.select_related('user', 'content_type').prefetch_related(
+            'content_object',
         )

@@ -180,7 +180,7 @@ class ArticleViewSet(
                 .annotate(is_fan=Value(False))
                 .annotate(is_hater=Value(False))
             )
-        return qs.all()
+        return qs
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -228,12 +228,10 @@ class ArticleViewSet(
     def _delete_favorite(self, request, pk):
         # проверяем, что статья опубликована
         article = get_object_or_404(self.get_queryset(), pk=pk)
-        favorited = FavoriteArticle.objects.filter(
+        if FavoriteArticle.objects.filter(
             article=article,
             user=request.user,
-        )
-        if favorited.exists():
-            favorited.delete()
+        ).delete()[0]:
             serializer = self.get_serializer(self.get_object())
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
