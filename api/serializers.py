@@ -108,16 +108,6 @@ class TagSerializer(TagRootsSerializer):
         ]
 
 
-class TagSubtreeSerializer(TagSimpleSerializer):
-    class Meta(TagSimpleSerializer.Meta):
-        pass
-
-    def get_fields(self) -> dict:
-        fields = super(TagSubtreeSerializer, self).get_fields()
-        fields['children'] = TagSubtreeSerializer(many=True, required=False)
-        return fields
-
-
 class CommentSerializer(ModelSerializer):
     author = UserSimpleSerializer(read_only=True)
 
