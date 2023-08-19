@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 class ImageBytesSizeValidator:
     def __init__(self, max_image_size_bytes):
-        """Initialize image max size in bytes."""
         self.max_image_size = max_image_size_bytes
 
     def __call__(self, image):
@@ -14,7 +13,6 @@ class ImageBytesSizeValidator:
 
 class ImageDimensionValidator:
     def __init__(self, max_width, max_height):
-        """Initialize image max size in bytes."""
         self.max_width = max_width
         self.max_height = max_height
 
@@ -37,7 +35,6 @@ class ImageDimensionValidator:
 
 class ImageContentTypeValidator:
     def __init__(self, allowed_types: tuple[str, ...]):
-        """Initialize image max size in bytes."""
         self.allowed_types = allowed_types
 
     def __call__(self, image_object):
