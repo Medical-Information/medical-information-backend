@@ -79,3 +79,5 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
     ordering = ('email',)
+
+    add_form_template = 'admin/auth/user/stricter_add_form.html'
