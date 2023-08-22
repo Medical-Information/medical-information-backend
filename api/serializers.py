@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from djoser.serializers import ActivationSerializer as DjoserActivationSerializer
 from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
     BooleanField,
     CharField,
@@ -21,6 +23,25 @@ from api.validators import (
 from articles.models import Article, Comment, Tag
 
 User = get_user_model()
+
+
+class ActivationSerializer(DjoserActivationSerializer):
+    def validate(self, attrs):
+        # костыли для защиты от "дурака"
+        if not isinstance(self.initial_data.get('uid'), str):
+            key_error = 'invalid_uid'
+            raise ValidationError(
+                {'uid': [self.error_messages[key_error]]},
+                code=key_error,
+            )
+        if not isinstance(self.initial_data.get('token'), str):
+            key_error = 'invalid_token'
+            raise ValidationError(
+                {'token': [self.error_messages[key_error]]},
+                code=key_error,
+            )
+
+        return super().validate(attrs)
 
 
 class UserCreateSerializer(DjoserUserSerializer):
