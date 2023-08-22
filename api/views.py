@@ -28,7 +28,6 @@ from api.serializers import (
     DummySerializer,
     TagRootsSerializer,
     TagSerializer,
-    TagSubtreeSerializer,
 )
 from articles.models import Article, FavoriteArticle, Tag
 from likes.models import Vote, VoteTypes
@@ -180,7 +179,7 @@ class ArticleViewSet(
                 .annotate(is_fan=Value(False))
                 .annotate(is_hater=Value(False))
             )
-        return qs.all()
+        return qs
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -228,12 +227,10 @@ class ArticleViewSet(
     def _delete_favorite(self, request, pk):
         # проверяем, что статья опубликована
         article = get_object_or_404(self.get_queryset(), pk=pk)
-        favorited = FavoriteArticle.objects.filter(
+        if FavoriteArticle.objects.filter(
             article=article,
             user=request.user,
-        )
-        if favorited.exists():
-            favorited.delete()
+        ).delete()[0]:
             serializer = self.get_serializer(self.get_object())
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(
@@ -247,6 +244,30 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.select_related('parent').prefetch_related('children')
     serializer_class = TagSerializer
 
+    @staticmethod
+    def finding_parent_for_child(parent, desired_child):
+        """Проверка, является ли desired_child одним из детей parent.
+
+        Если да, то присваивает desired_child parent.
+        """
+        for num_child in range(len(parent['children'])):
+            if parent['children'][num_child]['pk'] == desired_child['pk']:
+                parent['children'][num_child] = desired_child
+                break
+
+    @staticmethod
+    def building_tree(serializer_data):
+        """Воссоздание поддерева тегов, дети вкладываются в родителей."""
+        if len(serializer_data) == 1:
+            return serializer_data
+        while len(serializer_data) > 1:
+            child = serializer_data.pop()
+            for possible_parent in reversed(serializer_data):
+                if len(possible_parent['children']) == 0:
+                    continue
+                TagViewSet.finding_parent_for_child(possible_parent, child)
+        return serializer_data
+
     @action(detail=False)
     def roots(self, request) -> Response:
         all_roots = self.get_queryset().filter(parent__isnull=True)
@@ -255,9 +276,22 @@ class TagViewSet(ReadOnlyModelViewSet):
 
     @action(detail=True)
     def subtree(self, request, pk) -> Response:
-        tag = self.get_queryset().filter(pk=pk)
-        serializer = TagSubtreeSerializer(tag, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        query = """
+            WITH RECURSIVE tag_subtree(id, name, parent_id) AS (
+                SELECT id, name, parent_id FROM articles_tag WHERE id = %s
+              UNION ALL
+                SELECT t.id, t.name, t.parent_id
+                FROM articles_tag AS t, tag_subtree AS ts
+                WHERE t.parent_id = ts.id
+                )
+            SELECT * FROM tag_subtree
+        """
+        tags = self.get_queryset().raw(query, [pk])
+        serializer = TagRootsSerializer(tags, many=True)
+        return Response(
+            data=self.building_tree(serializer.data),
+            status=status.HTTP_200_OK,
+        )
 
 
 @extend_schema_view(**schema.COMMENT_VIEW_SET_SCHEMA)

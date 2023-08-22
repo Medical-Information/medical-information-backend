@@ -1,17 +1,12 @@
 from __future__ import absolute_import, unicode_literals
 
-import os
-
 from celery import shared_task
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from dotenv import load_dotenv
 
 from mailings.models import TopArticle
 from users.models import User
-
-load_dotenv()
 
 
 @shared_task
@@ -41,8 +36,8 @@ def send_weekly_email():
             flat=True,
         ),
     )
-    subject = os.environ.get('WEEKLY_SUBJECT')
-    from_email = os.environ.get('EMAIL_HOST_USER')
+    subject = settings.WEEKLY_SUBJECT
+    from_email = settings.EMAIL_HOST_USER
 
     email = EmailMultiAlternatives(
         subject=subject,

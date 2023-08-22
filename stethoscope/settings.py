@@ -166,6 +166,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
+        'activation': 'api.serializers.ActivationSerializer',
         'user': 'api.serializers.UserSerializer',
         'current_user': 'api.serializers.UserSerializer',
     },
@@ -230,6 +231,8 @@ if LOGGING_ENABLED:
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_BROKER', 'redis://localhost:6379/0')
+WEEKLY_SUBJECT = os.environ.get('WEEKLY_SUBJECT', 'Еженедельная рассылка Стетоскоп')
+URL_ARTICLES = os.environ.get('URL_ARTICLES', 'http://localhost:8000/articles/')
 
 # https://github.com/pylixm/django-mdeditor#customize-the-toolbar
 MDEDITOR_CONFIGS = {
@@ -282,3 +285,11 @@ MDEDITOR_CONFIGS = {
 # non-activated user account management settings
 TIME_TO_ACTIVATE_USER_ACCOUNT = timedelta(minutes=10)
 USER_NON_ACTIVATED_ACCOUNT_CLEANUP_PERIOD = timedelta(hours=1)
+
+
+# BASE64 ENCODED IMAGE SERIALIZATION SETTINGS
+ALLOWED_B64ENCODED_IMAGE_FORMATS = ('jpg', 'jpeg', 'png')
+BASE64_IMAGE_MAX_SIZE_BYTES = 1_500_000
+BASE64_AVATAR_MAX_SIZE_BYTES = 200_000
+BASE64_AVATAR_MAX_WIDTH = 500
+BASE64_AVATAR_MAX_HEIGHT = 500

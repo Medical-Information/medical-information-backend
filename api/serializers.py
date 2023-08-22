@@ -1,6 +1,9 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from djoser.serializers import ActivationSerializer as DjoserActivationSerializer
 from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
     BooleanField,
     CharField,
@@ -12,9 +15,33 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
+from api.validators import (
+    ImageBytesSizeValidator,
+    ImageContentTypeValidator,
+    ImageDimensionValidator,
+)
 from articles.models import Article, Comment, Tag
 
 User = get_user_model()
+
+
+class ActivationSerializer(DjoserActivationSerializer):
+    def validate(self, attrs):
+        # костыли для защиты от "дурака"
+        if not isinstance(self.initial_data.get('uid'), str):
+            key_error = 'invalid_uid'
+            raise ValidationError(
+                {'uid': [self.error_messages[key_error]]},
+                code=key_error,
+            )
+        if not isinstance(self.initial_data.get('token'), str):
+            key_error = 'invalid_token'
+            raise ValidationError(
+                {'token': [self.error_messages[key_error]]},
+                code=key_error,
+            )
+
+        return super().validate(attrs)
 
 
 class UserCreateSerializer(DjoserUserSerializer):
@@ -24,7 +51,16 @@ class UserCreateSerializer(DjoserUserSerializer):
 class UserSimpleSerializer(DjoserUserSerializer):
     """Сериализатор модели User для сериализатора модели Article."""
 
-    avatar = Base64ImageField()
+    avatar = Base64ImageField(
+        validators=(
+            ImageBytesSizeValidator(settings.BASE64_AVATAR_MAX_SIZE_BYTES),
+            ImageDimensionValidator(
+                settings.BASE64_AVATAR_MAX_WIDTH,
+                settings.BASE64_AVATAR_MAX_HEIGHT,
+            ),
+            ImageContentTypeValidator(settings.ALLOWED_B64ENCODED_IMAGE_FORMATS),
+        ),
+    )
 
     class Meta:
         model = User
@@ -91,16 +127,6 @@ class TagSerializer(TagRootsSerializer):
         fields = TagRootsSerializer.Meta.fields + [
             'parent',
         ]
-
-
-class TagSubtreeSerializer(TagSimpleSerializer):
-    class Meta(TagSimpleSerializer.Meta):
-        pass
-
-    def get_fields(self) -> dict:
-        fields = super(TagSubtreeSerializer, self).get_fields()
-        fields['children'] = TagSubtreeSerializer(many=True, required=False)
-        return fields
 
 
 class CommentSerializer(ModelSerializer):
@@ -207,7 +233,12 @@ class DummySerializer(Serializer):
 
 
 class ArticleCreateSerializer(ModelSerializer):
-    image = Base64ImageField()
+    image = Base64ImageField(
+        validators=(
+            ImageBytesSizeValidator(settings.BASE64_IMAGE_MAX_SIZE_BYTES),
+            ImageContentTypeValidator(settings.ALLOWED_B64ENCODED_IMAGE_FORMATS),
+        ),
+    )
     author = HiddenField(default=CurrentUserDefault())
 
     class Meta:

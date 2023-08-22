@@ -50,6 +50,22 @@ def test_user_creation_by_api_long_password(faker, client, user_credentials_api)
     assert too_long_password_response.status_code == 400
 
 
+def test_user_creation_by_api_email_regression(client):
+    url = reverse('api:users-list')
+    user_data = {
+        'first_name': 'ФфRr',
+        'last_name': 'RRФф',
+        'email': 'SS#%&@example.com',
+        'password': '123456',
+        're_password': '123456',
+    }
+
+    response = client.post(url, user_data, format='json')
+
+    assert response.status_code == 400
+    assert User.objects.filter(email=user_data['email']).exists() is False
+
+
 def test_login(client, user_credentials):
     login_url = reverse('api:login')
     response = client.post(login_url, user_credentials)
@@ -337,3 +353,32 @@ def test_password_change_space_character(authenticated_client, user):
     assert user.password is not None
     assert user.check_password(password_data['current_password']) is True
     assert user.check_password(password_data['new_password']) is False
+
+
+def test_activation_uid_wrong_type(client):
+    url = reverse('api:users-activation')
+    body = {
+        'uid': 12345678797787676,
+        'token': 'bs2cgp-7e5eda90a8ca207731185eafe4791a34',
+    }
+
+    response = client.post(url, body, format='json')
+
+    assert response.status_code == 400
+    assert 'uid' in response.data
+
+
+def test_activation_token_wrong_type(client):
+    url = reverse('api:users-activation')
+    body = {
+        'uid': 'ODQ1MzBiMzUtMmM3NS00NTgzLWJhMjEtMTU2YWFlYjBjMWU2',
+        'token': 12345678797787676,
+    }
+
+    response = client.post(url, body, format='json')
+
+    assert response.status_code == 400
+    assert 'token' in response.data
+
+
+#
