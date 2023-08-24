@@ -7,10 +7,6 @@ from articles.models import Article, Tag
 
 class ArticleFilter(django_filters.FilterSet):
     is_favorited = django_filters.BooleanFilter(label='Статья в избранном')
-    text = django_filters.CharFilter(
-        lookup_expr='icontains',
-        label='Поиск по тексту статьи',
-    )
     tags = django_filters.filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(),
         method='filter_tags',
@@ -24,7 +20,7 @@ class ArticleFilter(django_filters.FilterSet):
 
     class Meta:
         model = Article
-        fields = ('text',)
+        fields = ()
 
     @staticmethod
     def _get_tags_with_children(tags):
