@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-13 02:29+0300\n"
+"POT-Creation-Date: 2023-08-22 01:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: api/constants.py:5
 msgid "Unable to log in with provided credentials!"
@@ -59,15 +61,34 @@ msgstr "Пользователь не зарегистрирован"
 msgid "Unable to create account."
 msgstr ""
 
-#: api/views.py:209
+#: api/validators.py:11
+#, python-brace-format
+msgid "File size exceeded (currently {image.size})."
+msgstr ""
+
+#: api/validators.py:25 api/validators.py:46
+#: venv/lib/python3.11/site-packages/drf_extra_fields/fields.py:134
+msgid "Please upload a valid image."
+msgstr ""
+
+#: api/validators.py:30
+msgid "Image dimensions exceeded "
+msgstr ""
+
+#: api/validators.py:50
+#, python-brace-format
+msgid "Type disallowed (currently {image.format})."
+msgstr ""
+
+#: api/views.py:208
 msgid "The most popular article not found."
 msgstr "Самая популярная статья не найдена."
 
-#: api/views.py:224
+#: api/views.py:223
 msgid "Article is favorited already."
 msgstr "Статья уже в избранном."
 
-#: api/views.py:240
+#: api/views.py:237
 msgid "Article is not favorited yet."
 msgstr "Статья еще не в избранном."
 
@@ -97,7 +118,7 @@ msgid "IP address"
 msgstr "IP адрес"
 
 #: articles/models.py:23 articles/models.py:57 articles/models.py:116
-#: likes/models.py:26 users/models.py:16 users/models.py:68
+#: likes/models.py:26 users/models.py:17 users/models.py:70
 msgid "user"
 msgstr "Пользователь"
 
@@ -233,7 +254,9 @@ msgstr ""
 #: mailings/templates/email_djoser/activation.html:8
 #: mailings/templates/email_djoser/activation.html:19
 #, python-format
-msgid "You're receiving this email because you need to finish activation process on %(site_name)s."
+msgid ""
+"You're receiving this email because you need to finish activation process on "
+"%(site_name)s."
 msgstr ""
 
 #: mailings/templates/email_djoser/activation.html:10
@@ -266,7 +289,8 @@ msgstr ""
 
 #: mailings/templates/email_djoser/confirmation.html:4
 #, python-format
-msgid "%(site_name)s - Your account has been successfully created and activated!"
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
 msgstr ""
 
 #: mailings/templates/email_djoser/confirmation.html:8
@@ -292,7 +316,9 @@ msgstr ""
 #: mailings/templates/email_djoser/password_reset.html:8
 #: mailings/templates/email_djoser/password_reset.html:20
 #, python-format
-msgid "You're receiving this email because you requested a password reset for your user account at %(site_name)s."
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
 msgstr ""
 
 #: mailings/templates/email_djoser/password_reset.html:10
@@ -305,60 +331,74 @@ msgstr ""
 msgid "Your username, in case you've forgotten:"
 msgstr ""
 
-#: users/admin.py:36
+#: templates/admin/auth/user/stricter_add_form.html:6
+msgid ""
+"First, enter a user email address, password, first name, last name and role. "
+"Then, you’ll be able to edit more user options."
+msgstr ""
+"Сперва укажите почтовый адрес, пароль, имя, фамилию и роль. После этого вы "
+"сможете указать дополнительные сведения."
+
+#: templates/admin/auth/user/stricter_add_form.html:8
+msgid "Enter a a user email address, password, first name, last name and role."
+msgstr "Введите почтовый адрес, пароль, имя, фамилию и роль."
+
+#: users/admin.py:37
 msgid "Personal Info"
 msgstr "Персональная информация"
 
-#: users/admin.py:38
+#: users/admin.py:41
 msgid "Permissions"
 msgstr "Права доступа"
 
-#: users/admin.py:48
+#: users/admin.py:51
 msgid "Important dates"
 msgstr "Важные даты"
 
-#: users/apps.py:8 users/models.py:69
+#: users/apps.py:8 users/models.py:71
 msgid "users"
 msgstr "Пользователи"
 
-#: users/models.py:11
+#: users/models.py:12
 msgid "Only letters, spaces, and hyphens are allowed."
 msgstr "Разрешены только буквы, пробелы и дефисы."
 
-#: users/models.py:17
+#: users/models.py:18
 msgid "doctor"
 msgstr "Врач"
 
-#: users/models.py:18
+#: users/models.py:19
 msgid "moderator"
 msgstr "Модератор"
 
-#: users/models.py:19
+#: users/models.py:20
 msgid "admin"
 msgstr "Администратор"
 
-#: users/models.py:36
+#: users/models.py:37
 msgid "first name"
 msgstr "Имя"
 
-#: users/models.py:41
+#: users/models.py:42
 msgid "last name"
 msgstr "Фамилия"
 
-#: users/models.py:51
+#: users/models.py:52
 msgid "A user with that username already exists!"
-msgstr "Пользователь с таким email уже зарегистрирован. Нажмите на ссылку «Войти», чтобы авторизоваться"
+msgstr ""
+"Пользователь с таким email уже зарегистрирован. Нажмите на ссылку «Войти», "
+"чтобы авторизоваться"
 
-#: users/models.py:55
+#: users/models.py:57
 msgid "role"
 msgstr "Роль"
 
-#: users/validators.py:15 users/validators.py:22
+#: users/validators.py:17 users/validators.py:24
 #, python-format
 msgid "The password must not be longer than %(max_length)d characters."
 msgstr "Пароль не должен быть длиннее %(max_length)d символов."
 
-#: users/validators.py:36 users/validators.py:45
+#: users/validators.py:38 users/validators.py:47
 #, fuzzy
 #| msgid "The password must not be longer than %(max_length)d characters."
 msgid "The password can not contain prohibited characters "
