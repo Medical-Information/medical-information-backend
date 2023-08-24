@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Exists, OuterRef, Q, Sum, Value
+from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.db.models import Count, Exists, F, OuterRef, Q, Sum, Value
 from django.db.models.functions import Coalesce
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
@@ -9,7 +10,7 @@ from djoser.views import TokenCreateView as DjoserTokenCreateView
 from djoser.views import TokenDestroyView as DjoserTokenDestroyView
 from djoser.views import UserViewSet as DjoserUserViewSet
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -130,15 +131,8 @@ class ArticleViewSet(
     serializer_class = ArticleSerializer
     pagination_class = CursorPagination
     permission_classes = (IsAuthenticatedOrReadOnly & ArticleOwnerPermission,)
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = ArticleFilter
-    search_fields = (
-        'title',
-        'text',
-        'source_name',
-        'author__first_name',
-        'author__last_name',
-    )
 
     def get_queryset(self):
         qs = (
@@ -208,6 +202,29 @@ class ArticleViewSet(
             {'detail': _('The most popular article not found.')},
             status.HTTP_404_NOT_FOUND,
         )
+
+    @action(
+        methods=['get'],
+        detail=False,
+    )
+    def search(self, request) -> Response:
+        query = self.request.query_params.get('query')
+        if not query:
+            return Response(
+                {'Fail': _('You need to pass a parameter "query" with a search query!')},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+
+        query = SearchQuery(query)
+        rank = SearchRank(F('search_vector'), query)
+        qs = (
+            self.get_queryset()
+            .annotate(rank=rank)
+            .filter(search_vector=query)
+            .order_by('-rank')
+        )
+        serializer = self.get_serializer(qs, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def _create_favorite(self, request, pk):
         # проверяем, что статья опубликована

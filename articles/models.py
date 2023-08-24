@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -64,11 +66,13 @@ class Article(UUIDMixin, TimeStampedMixin):
     )
     votes = GenericRelation(Vote, related_query_name='articles')
     viewers = models.ManyToManyField(Viewer, related_name='articles')
+    search_vector = SearchVectorField(null=True)
 
     class Meta:
         ordering = ['-created_at']
         verbose_name = _('article')
         verbose_name_plural = _('articles')
+        indexes = [GinIndex(fields=['search_vector'])]
 
     def __str__(self):
         return self.title
