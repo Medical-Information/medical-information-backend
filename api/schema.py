@@ -122,6 +122,22 @@ ARTICLE_VIEW_SET_SCHEMA = {
             status.HTTP_404_NOT_FOUND: NotFoundSerializer,
         },
     ),
+    'search': extend_schema(
+        summary='Полнотекстовый поиск.',
+        request=None,
+        parameters=[
+            OpenApiParameter(
+                name='query',
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+                description='Поисковый запрос',
+            ),
+        ],
+        responses={
+            status.HTTP_200_OK: ArticleSerializer(many=True),
+            status.HTTP_422_UNPROCESSABLE_ENTITY: None,
+        },
+    ),
 }
 
 TOKEN_CREATE_VIEW_SCHEMA = {

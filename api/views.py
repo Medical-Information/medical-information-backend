@@ -223,8 +223,10 @@ class ArticleViewSet(
             .filter(search_vector=query)
             .order_by('-rank')
         )
+        qs = self.filter_queryset(qs)
+        qs = self.paginate_queryset(qs)
         serializer = self.get_serializer(qs, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
 
     def _create_favorite(self, request, pk):
         # проверяем, что статья опубликована
