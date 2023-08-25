@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 
 from likes.models import Vote
+from likes.utils import annotate_user_queryset
 
 User = get_user_model()
 
@@ -49,7 +50,9 @@ def is_object_voted_by_user(obj, user, vote_type=None) -> bool:
 def get_voters_by_object(obj, vote_group):
     """Возвращает всех пользователей, голосовавших по объекту."""
     obj_type = ContentType.objects.get_for_model(obj)
-    return User.objects.filter(
+    users = User.objects.all()
+    users = annotate_user_queryset(users)
+    return users.filter(
         likes__content_type=obj_type,
         likes__object_id=obj.id,
         likes__vote=vote_group,

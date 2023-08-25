@@ -4,7 +4,7 @@ skip-magic-trailing-comma=false
 line-length=89
 
 [tool.flake8]
-ignore=['WPS100', 'W503', 'D100', 'D101', 'D102', 'D103', 'D104', 'D105', 'D106']
+ignore=['WPS100', 'W503', 'D100', 'D101', 'D102', 'D103', 'D104', 'D105', 'D106', 'D107']
 exclude=['.git', 'env/', 'venv/', 'temp/', '*.md', '__pycache__/']
 max-cognitive-complexity=10
 max-line-length=89
@@ -17,3 +17,6 @@ profile='black'
 [tool.mypy]
 exclude=['venv/']
 ignore_missing_imports=true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "stethoscope.settings"

@@ -1,0 +1,51 @@
+version: '3.9'
+name: 'stethoscope_dev'
+
+services:
+  redis:
+    image: redis:7-alpine
+    command: redis-server
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    volumes:
+      - redis_value:/data
+
+  postgres:
+    image: postgres:14
+    volumes:
+      - postgres_value:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready --username ${POSTGRES_USER} --dbname ${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+  mailhog:
+    image: mailhog/mailhog
+    env_file:
+      - ./.env
+    environment:
+      MH_SMTP_BIND_ADDR: "0.0.0.0:1025"
+      MH_API_BIND_ADDR: "0.0.0.0:8025"
+      MH_UI_BIND_ADDR: "0.0.0.0:8025"
+      MH_STORAGE: "maildir"
+    volumes:
+      - ./maildir:/maildir
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  postgres_value:
+  redis_value:

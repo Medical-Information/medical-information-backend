@@ -1,31 +1,26 @@
 from __future__ import absolute_import, unicode_literals
 
-import os
-
 from celery import shared_task
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from dotenv import load_dotenv
 
-from mailings.models import TopArticles
+from mailings.models import TopArticle
 from users.models import User
-
-load_dotenv()
 
 
 @shared_task
 def send_weekly_email():
-    top_articles = TopArticles.objects.values_list(
-        'articles__title',
-        'articles__pk',
+    top_articles = TopArticle.objects.select_related('article').values_list(
+        'article__title',
+        'article__pk',
     )
     links_articles = []
-    url_articles = os.environ.get('URL_ARTICLES')
     for title_article, id__article in top_articles:
         links_articles.append(
             {
                 'title': title_article,
-                'url': f'{url_articles}{id__article}',
+                'url': f'{settings.URL_ARTICLES}{id__article}',
             },
         )
     template_name = 'email_weekly.html'
@@ -41,8 +36,8 @@ def send_weekly_email():
             flat=True,
         ),
     )
-    subject = os.environ.get('WEEKLY_SUBJECT')
-    from_email = os.environ.get('EMAIL_HOST_USER')
+    subject = settings.WEEKLY_SUBJECT
+    from_email = settings.EMAIL_HOST_USER
 
     email = EmailMultiAlternatives(
         subject=subject,

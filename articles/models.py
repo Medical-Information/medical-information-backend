@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +11,24 @@ from core.models import TimeStampedMixin, UUIDMixin
 from likes.models import Vote
 
 User = get_user_model()
+
+
+class Viewer(UUIDMixin):
+    created_at = models.DateTimeField(_('created_at'), auto_now_add=True)
+    ipaddress = models.GenericIPAddressField(_('IP address'), blank=True, null=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='viewers',
+        verbose_name=_('user'),
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('viewer')
+        verbose_name_plural = _('viewers')
 
 
 class Article(UUIDMixin, TimeStampedMixin):
@@ -32,13 +52,11 @@ class Article(UUIDMixin, TimeStampedMixin):
         blank=True,
     )
     is_published = models.BooleanField(_('is published'), default=False)
-    views_count = models.IntegerField(_('views'), default=0, editable=False)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='articles',
-        null=True,
-        blank=True,
+        verbose_name=_('user'),
     )
     tags = TreeManyToManyField(
         'Tag',
@@ -47,30 +65,17 @@ class Article(UUIDMixin, TimeStampedMixin):
         blank=True,
     )
     votes = GenericRelation(Vote, related_query_name='articles')
+    viewers = models.ManyToManyField(Viewer, related_name='articles')
+    search_vector = SearchVectorField(null=True)
 
     class Meta:
         ordering = ['-created_at']
         verbose_name = _('article')
         verbose_name_plural = _('articles')
+        indexes = [GinIndex(fields=['search_vector'])]
 
     def __str__(self):
         return self.title
-
-    @property
-    def likes_count(self):
-        return self.votes.likes().count()
-
-    @property
-    def dislikes_count(self):
-        return self.votes.dislikes().count()
-
-    @property
-    def rating(self):
-        return self.votes.sum_rating()
-
-    def increment_views_count(self):
-        self.views_count += 1
-        self.save()
 
 
 class Tag(UUIDMixin, MPTTModel):
@@ -136,3 +141,27 @@ class FavoriteArticle(UUIDMixin):
 
     def __str__(self) -> str:
         return f'Избранное (пользователь: {self.user}, статья {self.article})'
+
+
+class Comment(UUIDMixin, TimeStampedMixin):
+    text = models.TextField(_('text'))
+    author = models.ForeignKey(
+        User,
+        verbose_name=_('author'),
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
+    article = models.ForeignKey(
+        Article,
+        verbose_name=_('article'),
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('comment')
+        verbose_name_plural = _('comments')
+
+    def __str__(self):
+        return self.text[:25]

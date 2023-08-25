@@ -1,12 +1,11 @@
-﻿from typing import List
-
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinLengthValidator, RegexValidator
+﻿from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinLengthValidator, RegexValidator, validate_email
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedMixin, UUIDMixin
 from users.managers import UserManager
+from users.validators import validate_restricted_email
 
 validate_name = RegexValidator(
     r'^[a-zA-Zа-яА-Я\s\-]+$',
@@ -32,7 +31,7 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     """
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS: List[str] = []
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     first_name = models.CharField(
         _('first name'),
@@ -46,13 +45,21 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
     )
     date_joined = None
     username = None
-    email = models.EmailField(unique=True)
+    email = models.EmailField(
+        max_length=50,
+        unique=True,
+        error_messages={
+            'unique': _('A user with that username already exists!'),
+        },
+        validators=[validate_email, validate_restricted_email],
+    )
     role = models.CharField(
         verbose_name=_('role'),
         choices=RolesTypes.choices,
         default=RolesTypes.USER,
         max_length=50,
     )
+    avatar = models.ImageField(upload_to='avatars/', blank=True)
     is_active = models.BooleanField(default=False)
     subscribed = models.BooleanField(default=False)
 
@@ -68,8 +75,8 @@ class User(TimeStampedMixin, UUIDMixin, AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == self.MODER
+        return self.role == RolesTypes.MODER
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN
+        return self.role == RolesTypes.ADMIN

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-22 19:34+0000\n"
+"POT-Creation-Date: 2023-08-22 01:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,153 +16,390 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: api/views.py:83
+#: api/constants.py:5
+msgid "Unable to log in with provided credentials!"
+msgstr "Не удается войти с предоставленными учетными данными."
+
+#: api/constants.py:6
+msgid "User account is disabled."
+msgstr ""
+
+#: api/constants.py:7
+msgid "Invalid token for given user."
+msgstr ""
+
+#: api/constants.py:8
+msgid "Invalid user id or user doesn't exist."
+msgstr ""
+
+#: api/constants.py:9
+msgid "Stale token for given user."
+msgstr ""
+
+#: api/constants.py:10
+msgid "The two password fields didn't match."
+msgstr ""
+
+#: api/constants.py:11
+#, python-brace-format
+msgid "The two {0} fields didn't match."
+msgstr ""
+
+#: api/constants.py:12
+msgid "Invalid password."
+msgstr ""
+
+#: api/constants.py:13
+msgid "User with given email does not exist!"
+msgstr "Пользователь не зарегистрирован"
+
+#: api/constants.py:14
+msgid "Unable to create account."
+msgstr ""
+
+#: api/validators.py:11
+#, python-brace-format
+msgid "File size exceeded (currently {image.size})."
+msgstr ""
+
+#: api/validators.py:25 api/validators.py:46
+#: venv/lib/python3.11/site-packages/drf_extra_fields/fields.py:134
+msgid "Please upload a valid image."
+msgstr ""
+
+#: api/validators.py:30
+msgid "Image dimensions exceeded "
+msgstr ""
+
+#: api/validators.py:50
+#, python-brace-format
+msgid "Type disallowed (currently {image.format})."
+msgstr ""
+
+#: api/views.py:208
+msgid "The most popular article not found."
+msgstr "Самая популярная статья не найдена."
+
+#: api/views.py:223
 msgid "Article is favorited already."
 msgstr "Статья уже в избранном."
 
-#: api/views.py:96
+#: api/views.py:237
 msgid "Article is not favorited yet."
 msgstr "Статья еще не в избранном."
 
-#: articles/admin.py:36
+#: articles/admin.py:42
 #, python-format
-msgid "You can't assign related tags <%(reltags)s> to content!"
+msgid "You can't assign related tags <%(related_tags)s> to content!"
 msgstr ""
 
-#: articles/admin.py:60
+#: articles/admin.py:67
 msgid "Statistics"
 msgstr "Статистика"
 
-#: articles/apps.py:8 articles/models.py:54
+#: articles/admin.py:101
+msgid "views_count"
+msgstr "Просмотров"
+
+#: articles/apps.py:8 articles/models.py:71
 msgid "articles"
-msgstr "статьи"
+msgstr "Статьи"
+
+#: articles/models.py:15 core/models.py:8
+msgid "created_at"
+msgstr "Создано"
 
 #: articles/models.py:16
-msgid "title"
-msgstr "заголовок"
+msgid "IP address"
+msgstr "IP адрес"
 
-#: articles/models.py:18
-msgid "annotation"
-msgstr "аннотация"
+#: articles/models.py:23 articles/models.py:57 articles/models.py:116
+#: likes/models.py:26 users/models.py:17 users/models.py:70
+msgid "user"
+msgstr "Пользователь"
 
-#: articles/models.py:21
-msgid "text"
-msgstr "текст"
-
-#: articles/models.py:23
-msgid "source name"
-msgstr "источник"
+#: articles/models.py:28
+msgid "viewer"
+msgstr "Зритель"
 
 #: articles/models.py:29
-msgid "source link"
-msgstr "ссылка на источник"
+msgid "viewers"
+msgstr "Зрители"
 
 #: articles/models.py:34
+msgid "title"
+msgstr "Заголовок"
+
+#: articles/models.py:36
+msgid "annotation"
+msgstr "Аннотация"
+
+#: articles/models.py:39 articles/models.py:143
+msgid "text"
+msgstr "Текст"
+
+#: articles/models.py:41
+msgid "source name"
+msgstr "Источник"
+
+#: articles/models.py:47
+msgid "source link"
+msgstr "Ссылка на источник"
+
+#: articles/models.py:52
 msgid "is published"
-msgstr "опубликовано"
+msgstr "Опубликовано"
 
-#: articles/models.py:35
-msgid "views"
-msgstr "Количество просмотров"
-
-#: articles/models.py:46
+#: articles/models.py:62
 msgid "tags"
-msgstr "теги"
+msgstr "Теги"
 
-#: articles/models.py:53 articles/models.py:123
+#: articles/models.py:70 articles/models.py:124 articles/models.py:152
 msgid "article"
-msgstr "статья"
+msgstr "Статья"
 
-#: articles/models.py:80
+#: articles/models.py:81
 msgid "Tag name"
 msgstr "Наименование"
 
-#: articles/models.py:87
+#: articles/models.py:88
 msgid "Parent category"
 msgstr "Родительский тег"
 
-#: articles/models.py:95
+#: articles/models.py:96
 msgid "Tags"
 msgstr "Теги"
 
-#: articles/models.py:96
+#: articles/models.py:97
 msgid "Tag"
 msgstr "Тег"
 
-#: articles/models.py:115 likes/models.py:26 users/models.py:54
-msgid "user"
-msgstr "пользователь"
-
-#: articles/models.py:116
+#: articles/models.py:117
 msgid "select user"
-msgstr "выбрать пользователя"
+msgstr "Выбрать пользователя"
 
-#: articles/models.py:124
+#: articles/models.py:125
 msgid "select article"
-msgstr "выбрать статью"
-
-#: articles/models.py:134
-msgid "favorite article"
-msgstr "избранное"
+msgstr "Выбрать статью"
 
 #: articles/models.py:135
-msgid "favorite articles"
-msgstr "избранное"
+msgid "favorite article"
+msgstr "Избранное"
 
-#: core/models.py:8
-msgid "created_at"
-msgstr "создано"
+#: articles/models.py:136
+msgid "favorite articles"
+msgstr "Избранное"
+
+#: articles/models.py:146
+msgid "author"
+msgstr "Автор"
+
+#: articles/models.py:159
+msgid "comment"
+msgstr "Комментарий"
+
+#: articles/models.py:160
+msgid "comments"
+msgstr "Комментарии"
 
 #: core/models.py:9
 msgid "updated_at"
-msgstr "изменено"
+msgstr "Изменено"
 
 #: core/models.py:17
 msgid "id"
-msgstr ""
+msgstr "Идентификатор"
+
+#: likes/apps.py:8
+msgid "likes"
+msgstr "Оценки"
 
 #: likes/models.py:13
 msgid "Like"
-msgstr ""
+msgstr "Лайк"
 
 #: likes/models.py:14
 msgid "Dislike"
-msgstr ""
+msgstr "Дизлайк"
 
-#: likes/models.py:21
-msgid "Vote"
+#: likes/models.py:21 likes/models.py:35
+msgid "vote"
 msgstr "Голос"
 
-#: mailings/models.py:10
-msgid "Article"
-msgstr "Статья"
+#: likes/models.py:36
+msgid "votes"
+msgstr "Голоса"
 
-#: users/admin.py:31
+#: mailings/apps.py:8
+msgid "mailings"
+msgstr "Рассылки"
+
+#: mailings/models.py:10 mailings/models.py:16
+msgid "TopArticle"
+msgstr "Популярная статья"
+
+#: mailings/models.py:17
+msgid "TopArticles"
+msgstr "Популярные статьи"
+
+#: mailings/templates/email_djoser/activation.html:4
+#, python-format
+msgid "Account activation on %(site_name)s"
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:8
+#: mailings/templates/email_djoser/activation.html:19
+#, python-format
+msgid ""
+"You're receiving this email because you need to finish activation process on "
+"%(site_name)s."
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:10
+#: mailings/templates/email_djoser/activation.html:21
+msgid "Please go to the following page to activate account:"
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:13
+#: mailings/templates/email_djoser/activation.html:24
+#: mailings/templates/email_djoser/confirmation.html:10
+#: mailings/templates/email_djoser/confirmation.html:18
+#: mailings/templates/email_djoser/password_changed_confirmation.html:10
+#: mailings/templates/email_djoser/password_changed_confirmation.html:18
+#: mailings/templates/email_djoser/password_reset.html:14
+#: mailings/templates/email_djoser/password_reset.html:26
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: mailings/templates/email_djoser/activation.html:15
+#: mailings/templates/email_djoser/activation.html:26
+#: mailings/templates/email_djoser/confirmation.html:12
+#: mailings/templates/email_djoser/confirmation.html:20
+#: mailings/templates/email_djoser/password_changed_confirmation.html:12
+#: mailings/templates/email_djoser/password_changed_confirmation.html:20
+#: mailings/templates/email_djoser/password_reset.html:16
+#: mailings/templates/email_djoser/password_reset.html:28
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: mailings/templates/email_djoser/confirmation.html:4
+#, python-format
+msgid ""
+"%(site_name)s - Your account has been successfully created and activated!"
+msgstr ""
+
+#: mailings/templates/email_djoser/confirmation.html:8
+#: mailings/templates/email_djoser/confirmation.html:16
+msgid "Your account has been created and is ready to use!"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_changed_confirmation.html:4
+#, python-format
+msgid "%(site_name)s - Your password has been successfully changed!"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_changed_confirmation.html:8
+#: mailings/templates/email_djoser/password_changed_confirmation.html:16
+msgid "Your password has been changed!"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:8
+#: mailings/templates/email_djoser/password_reset.html:20
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:10
+#: mailings/templates/email_djoser/password_reset.html:22
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: mailings/templates/email_djoser/password_reset.html:12
+#: mailings/templates/email_djoser/password_reset.html:24
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: templates/admin/auth/user/stricter_add_form.html:6
+msgid ""
+"First, enter a user email address, password, first name, last name and role. "
+"Then, you’ll be able to edit more user options."
+msgstr ""
+"Сперва укажите почтовый адрес, пароль, имя, фамилию и роль. После этого вы "
+"сможете указать дополнительные сведения."
+
+#: templates/admin/auth/user/stricter_add_form.html:8
+msgid "Enter a a user email address, password, first name, last name and role."
+msgstr "Введите почтовый адрес, пароль, имя, фамилию и роль."
+
+#: users/admin.py:37
 msgid "Personal Info"
 msgstr "Персональная информация"
 
-#: users/admin.py:33
+#: users/admin.py:41
 msgid "Permissions"
-msgstr ""
+msgstr "Права доступа"
 
-#: users/admin.py:43
+#: users/admin.py:51
 msgid "Important dates"
 msgstr "Важные даты"
 
-#: users/models.py:13
-msgid "Only letters, spaces, and hyphens are allowed."
-msgstr ""
+#: users/apps.py:8 users/models.py:71
+msgid "users"
+msgstr "Пользователи"
 
-#: users/models.py:36
+#: users/models.py:12
+msgid "Only letters, spaces, and hyphens are allowed."
+msgstr "Разрешены только буквы, пробелы и дефисы."
+
+#: users/models.py:18
+msgid "doctor"
+msgstr "Врач"
+
+#: users/models.py:19
+msgid "moderator"
+msgstr "Модератор"
+
+#: users/models.py:20
+msgid "admin"
+msgstr "Администратор"
+
+#: users/models.py:37
 msgid "first name"
 msgstr "Имя"
 
-#: users/models.py:41
+#: users/models.py:42
 msgid "last name"
 msgstr "Фамилия"
 
-#: users/models.py:55
-msgid "users"
-msgstr "пользователи"
+#: users/models.py:52
+msgid "A user with that username already exists!"
+msgstr ""
+"Пользователь с таким email уже зарегистрирован. Нажмите на ссылку «Войти», "
+"чтобы авторизоваться"
+
+#: users/models.py:57
+msgid "role"
+msgstr "Роль"
+
+#: users/validators.py:17 users/validators.py:24
+#, python-format
+msgid "The password must not be longer than %(max_length)d characters."
+msgstr "Пароль не должен быть длиннее %(max_length)d символов."
+
+#: users/validators.py:38 users/validators.py:47
+#, fuzzy
+#| msgid "The password must not be longer than %(max_length)d characters."
+msgid "The password can not contain prohibited characters "
+msgstr "Пароль не должен быть длиннее %(max_length)d символов."

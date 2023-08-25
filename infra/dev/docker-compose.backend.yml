@@ -1,0 +1,48 @@
+version: '3.9'
+name: 'stethoscope_dev'
+
+services:
+  redis:
+    image: redis:7-alpine
+    command: redis-server
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    volumes:
+      - redis_value:/data
+
+  postgres:
+    image: postgres:14
+    volumes:
+      - postgres_value:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready --username ${POSTGRES_USER} --dbname ${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+  backend:
+    build:
+      context: ../../
+    env_file:
+      - ./.env
+    volumes:
+      - backend_value:/app/data
+    ports:
+      - "8000:8000"
+      - "5555:5555"
+
+volumes:
+  postgres_value:
+  redis_value:
+  backend_value:
